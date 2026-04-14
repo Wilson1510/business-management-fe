@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@theme {
+    --color-primary: #3b82f6;
+    --color-surface-dim: #f3f4f6;
+}
+
+body {
+    @apply bg-surface-dim;
+}
