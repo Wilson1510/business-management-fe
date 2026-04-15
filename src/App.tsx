@@ -6,6 +6,7 @@ import SalesLayout from './components/layout/SalesLayout';
 import PurchasesLayout from './components/layout/PurchasesLayout';
 import ContactsLayout from './components/layout/ContactsLayout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AuthProvider } from './components/auth/AuthContext';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -29,57 +30,59 @@ import ChangePassword from './pages/ChangePassword';
 
 function App() {
   return (
-    <Routes>
-        <Route path="/login" element={<Login />} />
-  
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="catalog" element={<CatalogLayout />}>
-              <Route index element={<Catalog />} />
-              <Route path="product/new" element={<ProductForm />} />
-              <Route path="product/:id" element={<ProductForm />} />
-              <Route path="categories" element={<Categories />} />
-              <Route path="units" element={<Units />} />
-            </Route>
-            <Route path="sales" element={<SalesLayout />}>
-              <Route index element={<SalesOrders />} />
-              <Route path="new" element={<SalesOrderForm />} />
-              <Route path=":id" element={<SalesOrderForm />} />
-              <Route path="deliveries" element={<Deliveries />} />
-              <Route path="deliveries/:id" element={<DeliveryDetail />} />
-            </Route>
-            <Route path="purchases" element={<PurchasesLayout />}>
-              <Route index element={<PurchaseOrders />} />
-              <Route path="new" element={<PurchaseOrderForm />} />
-              <Route path=":id" element={<PurchaseOrderForm />} />
-              <Route path="receipts" element={<Receipts />} />
-              <Route path="receipts/:id" element={<ReceiptDetail />} />
-            </Route>
-            <Route path="contacts" element={<ContactsLayout />}>
-              <Route index element={<Navigate to="customers" replace />} />
-              <Route path="customers" element={<Customers />} />
-              <Route path="suppliers" element={<Suppliers />} />
-            </Route>
-            
-            <Route path="settings">
-              <Route path="users">
-                <Route index element={<Users />} />
-                <Route path="new" element={<UserForm />} />
-                <Route path=":id" element={<UserForm />} />
-                <Route path=":id/password" element={<ChangePassword />} />
+    <AuthProvider>
+      <Routes>
+          <Route path="/login" element={<Login />} />
+    
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="catalog" element={<CatalogLayout />}>
+                <Route index element={<Catalog />} />
+                <Route path="product/new" element={<ProductForm />} />
+                <Route path="product/:id" element={<ProductForm />} />
+                <Route path="categories" element={<Categories />} />
+                <Route path="units" element={<Units />} />
+              </Route>
+              <Route path="sales" element={<SalesLayout />}>
+                <Route index element={<SalesOrders />} />
+                <Route path="new" element={<SalesOrderForm />} />
+                <Route path=":id" element={<SalesOrderForm />} />
+                <Route path="deliveries" element={<Deliveries />} />
+                <Route path="deliveries/:id" element={<DeliveryDetail />} />
+              </Route>
+              <Route path="purchases" element={<PurchasesLayout />}>
+                <Route index element={<PurchaseOrders />} />
+                <Route path="new" element={<PurchaseOrderForm />} />
+                <Route path=":id" element={<PurchaseOrderForm />} />
+                <Route path="receipts" element={<Receipts />} />
+                <Route path="receipts/:id" element={<ReceiptDetail />} />
+              </Route>
+              <Route path="contacts" element={<ContactsLayout />}>
+                <Route index element={<Navigate to="customers" replace />} />
+                <Route path="customers" element={<Customers />} />
+                <Route path="suppliers" element={<Suppliers />} />
+              </Route>
+              
+              <Route path="settings">
+                <Route path="users">
+                  <Route index element={<Users />} />
+                  <Route path="new" element={<UserForm />} />
+                  <Route path=":id" element={<UserForm />} />
+                  <Route path=":id/password" element={<ChangePassword />} />
+                </Route>
+              </Route>
+
+              <Route path="profile">
+                <Route path="password" element={<ChangePassword />} />
               </Route>
             </Route>
-
-            <Route path="profile">
-              <Route path="password" element={<ChangePassword />} />
-            </Route>
           </Route>
-        </Route>
 
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-    </Routes>
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </AuthProvider>
   )
 }
 

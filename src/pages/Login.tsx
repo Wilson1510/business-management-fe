@@ -2,6 +2,7 @@ import { LogIn, AlertCircle, UserRound, KeyRound } from "lucide-react"
 import { useState } from "react"
 import { login } from "../services/auth"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "../components/auth/AuthContext"
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -9,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const { loadUser } = useAuth()
 
   async function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -18,6 +20,7 @@ export default function Login() {
       const response = await login(username, password)
       localStorage.setItem('access', response.access)
       localStorage.setItem('refresh', response.refresh)
+      await loadUser()
       navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))

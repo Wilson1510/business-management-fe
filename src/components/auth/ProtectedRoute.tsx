@@ -1,14 +1,26 @@
-import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from './AuthContext'
 
 export const ProtectedRoute: React.FC = () => {
-  const isAuthenticated = localStorage.getItem('access') !== null;
+  const { user, isAuthReady } = useAuth()
+  const hasToken = localStorage.getItem('access') !== null
 
-  // Jika tidak memiliki token, arahkan ke login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  if (!hasToken) {
+    return <Navigate to="/login" replace />
   }
 
-  // Jika sudah login, render child routes (Outlet)
-  return <Outlet />;
-};
+  if (!isAuthReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-surface-dim dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm">
+        Loading…
+      </div>
+    )
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  return <Outlet />
+}
