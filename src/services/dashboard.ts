@@ -13,12 +13,14 @@ export type DashboardTopData = {
     sku_number: string
     name: string
     sold_qty: number
+    unit: string
   }[]
   slow_moving_products: {
     id: number
     sku_number: string
     name: string
     sold_qty: number
+    unit: string
   }[]
   top_customers: {
     id: number

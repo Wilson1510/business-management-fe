@@ -20,6 +20,42 @@ function formatQty(n: number): string {
   return new Intl.NumberFormat('id-ID').format(n);
 }
 
+type TopCustomerRowClasses = { row: string; name: string; amount: string };
+
+function getTopCustomerRowClasses(rank: number): TopCustomerRowClasses {
+  const rowFlex = 'flex justify-between items-center gap-3 transition-colors';
+  const rowMedal = 'rounded-xl px-3 py-2.5 -mx-1 border bg-gradient-to-r';
+  const nameBase = 'text-sm transition-colors min-w-0';
+  const amountBase = 'text-sm font-bold shrink-0 tabular-nums transition-colors';
+
+  if (rank === 1) {
+    return {
+      row: `${rowFlex} group ${rowMedal} from-amber-50 via-yellow-50 to-amber-50 dark:from-amber-950/45 dark:via-yellow-950/25 dark:to-amber-950/45 border-amber-200/90 dark:border-amber-700/50`,
+      name: `${nameBase} font-semibold text-[#B8860B] dark:text-[#FFD700]`,
+      amount: `${amountBase} text-[#9A7209] dark:text-[#E8C547]`,
+    };
+  }
+  if (rank === 2) {
+    return {
+      row: `${rowFlex} group ${rowMedal} from-slate-100 to-gray-100 dark:from-slate-900/55 dark:to-gray-900/40 border-slate-200/90 dark:border-slate-600/45`,
+      name: `${nameBase} font-semibold text-[#5c6b7a] dark:text-[#C8D0D8]`,
+      amount: `${amountBase} text-[#4a5568] dark:text-[#B8C0C8]`,
+    };
+  }
+  if (rank === 3) {
+    return {
+      row: `${rowFlex} group ${rowMedal} from-orange-50 to-amber-50/80 dark:from-orange-950/35 dark:to-amber-950/30 border-orange-200/80 dark:border-orange-800/40`,
+      name: `${nameBase} font-semibold text-[#8B4513] dark:text-[#CD7F32]`,
+      amount: `${amountBase} text-[#7a3d18] dark:text-[#D4915A]`,
+    };
+  }
+  return {
+    row: `${rowFlex} group`,
+    name: `${nameBase} font-medium text-gray-900 dark:text-white group-hover:text-primary`,
+    amount: `${amountBase} text-gray-700 dark:text-gray-300`,
+  };
+}
+
 export default function Dashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [topData, setTopData] = useState<DashboardTopData | null>(null);
@@ -99,8 +135,6 @@ export default function Dashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 transition-colors">Dashboard Overview</h1>
-
       {error ? (
         <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
           {error}
@@ -146,8 +180,9 @@ export default function Dashboard() {
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.sku_number}</p>
                   </div>
-                  <div className="text-sm font-bold text-gray-700 dark:text-gray-300 shrink-0">
-                    {formatQty(item.sold_qty)}
+                  <div className="text-xs font-semibold px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md">
+                  {/* <div className="text-sm font-bold text-gray-700 dark:text-gray-300 shrink-0"> */}
+                    {formatQty(item.sold_qty)} {item.unit}
                   </div>
                 </div>
               ))}
@@ -171,10 +206,10 @@ export default function Dashboard() {
                     <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-amber-500 transition-colors">
                       {item.name}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">SKU {item.sku_number}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{item.sku_number}</p>
                   </div>
-                  <div className="text-xs font-semibold px-2 py-1 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-md">
-                    {formatQty(item.sold_qty)} sold
+                  <div className="text-xs font-semibold px-2 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-md">
+                    {formatQty(item.sold_qty)} {item.unit}
                   </div>
                 </div>
               ))}
@@ -192,16 +227,18 @@ export default function Dashboard() {
             <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
           ) : (
             <div className="space-y-4">
-              {topCustomers.map((item) => (
-                <div key={item.id} className="flex justify-between items-center group">
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary transition-colors">
-                      {item.name}
-                    </p>
+              {topCustomers.map((item, index) => {
+                const rank = index + 1;
+                const c = getTopCustomerRowClasses(rank);
+                return (
+                  <div key={item.id} className={c.row}>
+                    <div className="min-w-0">
+                      <p className={c.name}>{item.name}</p>
+                    </div>
+                    <div className={c.amount}>{formatMoney(item.total_purchased)}</div>
                   </div>
-                  <div className="text-sm font-bold text-gray-700 dark:text-gray-300">{formatMoney(item.total_purchased)}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
