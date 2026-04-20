@@ -23,60 +23,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null)
   const [isAuthReady, setIsAuthReady] = useState(false)
 
-  const logout = useCallback(function() {
+  const logout = useCallback(function () {
     localStorage.removeItem('access')
     localStorage.removeItem('refresh')
     setUser(null)
   }, [])
 
-  const loadUser = useCallback(async function() {
-    const token = localStorage.getItem('access')
-    if (!token) {
-      setUser(null)
-      return
-    }
-    try {
-      const profile = await fetchCurrentUser(token)
-      setUser(profile)
-    } catch {
-      logout()
-    }
-  }, [logout])
+  const syncSession = useCallback(
+    async function (isCancelled: () => boolean, completeAuthReady: boolean) {
+      const alive = () => !isCancelled()
 
-  useEffect(function() {
-    let cancelled = false;
-    async function loadData() {
-      const token = localStorage.getItem('access')
-      if (!token) {
-        if (!cancelled) {
-          setUser(null)
-          setIsAuthReady(true)
-        }
-        return
-      }
       try {
-        const profile = await fetchCurrentUser(token)
-        if (!cancelled) setUser(profile)
+        const token = localStorage.getItem('access')
+        if (!token) {
+          if (alive()) setUser(null)
+          return
+        }
+        const profile = await fetchCurrentUser()
+        if (alive()) setUser(profile)
       } catch {
-        if (!cancelled) logout()
+        if (alive()) logout()
       } finally {
-        if (!cancelled) setIsAuthReady(true)
+        if (completeAuthReady && alive()) setIsAuthReady(true)
       }
-    }
-    loadData();
+    },
+    [logout],
+  )
+
+  const loadUser = useCallback(
+    async function () {
+      await syncSession(() => false, false)
+    },
+    [syncSession],
+  )
+
+  useEffect(function () {
+    let cancelled = false
+    void syncSession(() => cancelled, true)
     return function cleanup() {
       cancelled = true
     }
-  }, [logout])
+  }, [syncSession])
 
-  const value = useMemo(function() {
-    return { 
-      user: user, 
-      isAuthReady: isAuthReady, 
-      loadUser: loadUser, 
-      logout: logout 
-    };
-  }, [user, isAuthReady, loadUser, logout]);
+  const value = useMemo(
+    function () {
+      return { user, isAuthReady, loadUser, logout }
+    },
+    [user, isAuthReady, loadUser, logout],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

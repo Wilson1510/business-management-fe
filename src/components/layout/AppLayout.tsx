@@ -31,7 +31,7 @@ export default function AppLayout() {
   const { user, logout } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(readStoredThemeIsDark)
-  
+
   useEffect(function() {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');

@@ -63,22 +63,13 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(function () {
-    const token = localStorage.getItem('access');
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
 
     async function loadData() {
       setLoading(true);
       setError(null);
       try {
-        const [m, top] = await Promise.all([
-          getDashboardMetrics(token),
-          getDashboardTopData(token),
-        ]);
+        const [m, top] = await Promise.all([getDashboardMetrics(), getDashboardTopData()]);
         if (!cancelled) {
           setMetrics(m);
           setTopData(top);

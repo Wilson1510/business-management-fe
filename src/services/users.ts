@@ -1,4 +1,4 @@
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN
+import { apiFetch } from './api'
 
 export type CurrentUser = {
   id: number
@@ -9,12 +9,8 @@ export type CurrentUser = {
   is_active: boolean
 }
 
-export async function fetchCurrentUser(accessToken: string): Promise<CurrentUser> {
-  const response = await fetch(`${API_ORIGIN}/api/users/me/`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
+export async function fetchCurrentUser(): Promise<CurrentUser> {
+  const response = await apiFetch('/api/users/me/')
   if (!response.ok) {
     throw new Error(response.statusText)
   }

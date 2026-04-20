@@ -1,4 +1,4 @@
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN
+import { apiFetch } from './api'
 
 export type DashboardMetrics = {
   total_revenue: number
@@ -29,24 +29,16 @@ export type DashboardTopData = {
   }[]
 }
 
-export async function getDashboardMetrics(accessToken: string): Promise<DashboardMetrics> {
-  const response = await fetch(`${API_ORIGIN}/api/dashboard/metrics/`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
+export async function getDashboardMetrics(): Promise<DashboardMetrics> {
+  const response = await apiFetch('/api/dashboard/metrics/')
   if (!response.ok) {
     throw new Error(response.statusText)
   }
   return response.json()
 }
 
-export async function getDashboardTopData(accessToken: string): Promise<DashboardTopData> {
-  const response = await fetch(`${API_ORIGIN}/api/dashboard/top-data/`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
+export async function getDashboardTopData(): Promise<DashboardTopData> {
+  const response = await apiFetch('/api/dashboard/top-data/')
   if (!response.ok) {
     throw new Error(response.statusText)
   }
