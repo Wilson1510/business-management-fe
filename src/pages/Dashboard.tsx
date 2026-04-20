@@ -6,19 +6,7 @@ import {
   type DashboardMetrics,
   type DashboardTopData,
 } from '../services/dashboard';
-
-function formatMoney(n: number): string {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(n);
-}
-
-function formatQty(n: number): string {
-  return new Intl.NumberFormat('id-ID').format(n);
-}
+import { formatMoney, formatQty } from '../utils/format';
 
 type TopCustomerRowClasses = { row: string; name: string; amount: string };
 
