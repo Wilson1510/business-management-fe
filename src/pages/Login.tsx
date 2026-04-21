@@ -3,6 +3,7 @@ import { useState } from "react"
 import { login } from "../services/auth"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../components/auth/AuthContext"
+import { getDefaultAuthenticatedPath } from "../utils/authPaths"
 
 export default function Login() {
   const [username, setUsername] = useState('')
@@ -20,8 +21,10 @@ export default function Login() {
       const response = await login(username, password)
       localStorage.setItem('access', response.access)
       localStorage.setItem('refresh', response.refresh)
-      await loadUser()
-      navigate('/dashboard')
+      const profile = await loadUser()
+      if (profile) {
+        navigate(getDefaultAuthenticatedPath(profile.role))
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     }

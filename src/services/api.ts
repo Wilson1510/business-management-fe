@@ -1,4 +1,4 @@
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN_LOCAL as string;
+const API_ORIGIN = import.meta.env.VITE_API_ORIGIN as string;
 
 export type ApiFetchInit = RequestInit & {
   /** Jangan sertakan Bearer (mis. endpoint login). */

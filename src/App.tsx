@@ -1,11 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
+import { useAuth } from './components/auth/AuthContext';
 import AppLayout from './components/layout/AppLayout';
 import CatalogLayout from './components/layout/CatalogLayout';
 import SalesLayout from './components/layout/SalesLayout';
 import PurchasesLayout from './components/layout/PurchasesLayout';
 import ContactsLayout from './components/layout/ContactsLayout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { StaffRouteGuard } from './components/auth/StaffRouteGuard';
 import { AuthProvider } from './components/auth/AuthContext';
 
 import Login from './pages/Login';
@@ -27,16 +29,24 @@ import Suppliers from './pages/Suppliers';
 import Users from './pages/Users';
 import UserForm from './pages/UserForm';
 import ChangePassword from './pages/ChangePassword';
+import { getDefaultAuthenticatedPath } from './utils/authPaths';
+
+function RoleAwareHomeRedirect() {
+  const { user } = useAuth()
+  if (!user) return null
+  return <Navigate to={getDefaultAuthenticatedPath(user.role)} replace />
+}
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
-          <Route path="/login" element={<Login />} />
-    
-          <Route element={<ProtectedRoute />}>
+        <Route path="/login" element={<Login />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<StaffRouteGuard />}>
             <Route path="/" element={<AppLayout />}>
-              <Route index element={<Navigate to="/dashboard" replace />} />
+              <Route index element={<RoleAwareHomeRedirect />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="catalog" element={<CatalogLayout />}>
                 <Route index element={<Catalog />} />
@@ -64,7 +74,7 @@ function App() {
                 <Route path="customers" element={<Customers />} />
                 <Route path="suppliers" element={<Suppliers />} />
               </Route>
-              
+
               <Route path="settings">
                 <Route path="users">
                   <Route index element={<Users />} />
@@ -79,8 +89,9 @@ function App() {
               </Route>
             </Route>
           </Route>
+        </Route>
 
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AuthProvider>
   )

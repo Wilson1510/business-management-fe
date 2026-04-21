@@ -13,7 +13,7 @@ import { fetchCurrentUser, type CurrentUser } from '../../services/users'
 type AuthContextValue = {
   user: CurrentUser | null
   isAuthReady: boolean
-  loadUser: () => Promise<void>
+  loadUser: () => Promise<CurrentUser | null>
   logout: () => void
 }
 
@@ -30,19 +30,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const syncSession = useCallback(
-    async function (isCancelled: () => boolean, completeAuthReady: boolean) {
+    async function (
+      isCancelled: () => boolean,
+      completeAuthReady: boolean,
+    ): Promise<CurrentUser | null> {
       const alive = () => !isCancelled()
 
       try {
         const token = localStorage.getItem('access')
         if (!token) {
           if (alive()) setUser(null)
-          return
+          return null
         }
         const profile = await fetchCurrentUser()
         if (alive()) setUser(profile)
+        return alive() ? profile : null
       } catch {
         if (alive()) logout()
+        return null
       } finally {
         if (completeAuthReady && alive()) setIsAuthReady(true)
       }
@@ -52,14 +57,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUser = useCallback(
     async function () {
-      await syncSession(() => false, false)
+      return await syncSession(() => false, false)
     },
     [syncSession],
   )
 
   useEffect(function () {
     let cancelled = false
-    void syncSession(() => cancelled, true)
+    syncSession(() => cancelled, true)
     return function cleanup() {
       cancelled = true
     }
