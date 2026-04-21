@@ -16,7 +16,7 @@ export default function CatalogLayout() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 flex items-center justify-between transition-colors">
           <span>{user.role === 'admin' ? 'Catalog Hub' : 'Products'}</span>
         </h1>
         
@@ -33,8 +33,8 @@ export default function CatalogLayout() {
                     className={({ isActive }) =>
                       `group inline-flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                         isActive
-                          ? 'border-primary text-primary'
-                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          ? 'border-primary text-primary dark:text-blue-400'
+                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-500'
                       }`
                     }
                   >

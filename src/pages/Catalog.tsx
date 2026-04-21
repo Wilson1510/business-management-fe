@@ -91,18 +91,21 @@ export default function Catalog() {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex gap-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex gap-4">
            {/* Basic search dummy header */}
            <div className="relative flex-1 max-w-md">
-             <PackageSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-             <input type="text" placeholder="Search by SKU or Name..." className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
+             <PackageSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
+             <input
+              type="text"
+              placeholder="Search by SKU or Name..."
+              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
            </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-[11px] text-gray-500 uppercase tracking-wider bg-gray-50/80">
+            <thead className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50/80 dark:bg-gray-900/40">
               <tr>
                 <th className="px-6 py-4 font-semibold">Nama Produk</th>
                 <th className="px-6 py-4 font-semibold">Kategori</th>
@@ -112,37 +115,37 @@ export default function Catalog() {
                 {isAdmin && <th className="px-6 py-4 font-semibold text-right">Aksi</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400">Loading products...</td>
+                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading products...</td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400">No products found. Start by creating one.</td>
+                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">No products found. Start by creating one.</td>
                 </tr>
               ) : (
                 products.map((product) => (
                   <tr 
                     key={product.id} 
                     onClick={() => navigate(`/catalog/product/${product.id}`)}
-                    className="hover:bg-gray-50/50 transition-colors group cursor-pointer"
+                    className="hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group cursor-pointer"
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-bold text-gray-900">{product.name}</span>
-                        <span className="text-xs font-mono text-gray-500 mt-0.5">{product.sku_number}</span>
+                        <span className="font-bold text-gray-900 dark:text-gray-100">{product.name}</span>
+                        <span className="text-xs font-mono text-gray-500 dark:text-gray-400 mt-0.5">{product.sku_number}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600">
+                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                         {product.category.name}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-medium text-gray-900 tabular-nums">
+                    <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-gray-100 tabular-nums">
                       {formatQty(product.quantity)} {product.unit}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono text-gray-600 tracking-tight tabular-nums">
+                    <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
                       {formatMoney(product.base_price)}
                     </td>
                     <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
@@ -171,19 +174,19 @@ export default function Catalog() {
       {/* Delete Confirmation */}
       {isDeleteOpen && deletingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
             <div className="p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-6 text-red-500">
+              <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center mx-auto mb-6 text-red-500 dark:text-red-400">
                 <Trash2 size={28} />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Product</h3>
-              <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-                You are about to delete <span className="font-bold text-gray-900">"{deletingProduct.name}"</span>. 
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Delete Product</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                You are about to delete <span className="font-bold text-gray-900 dark:text-gray-100">"{deletingProduct.name}"</span>. 
                 This action is permanent and cannot be reversed.
               </p>
               
               {deleteError && (
-                <div className="mb-8 flex items-center justify-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100">
+                <div className="mb-8 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
                   <AlertCircle size={16} />
                   <p className="font-medium">{deleteError}</p>
                 </div>
@@ -193,7 +196,7 @@ export default function Catalog() {
                 <button
                   type="button"
                   onClick={closeDelete}
-                  className="flex-1 py-3 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                  className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
