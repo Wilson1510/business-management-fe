@@ -24,7 +24,7 @@ export default function ProductForm() {
   
   const [formData, setFormData] = useState<ProductCreate>({
     name: '',
-    category_id: undefined,
+    category_id: 0,
     units: [],
     prices: []
   });
@@ -89,7 +89,7 @@ export default function ProductForm() {
       units: [
         ...formData.units,
         {
-          unit_id: unitsList[0]?.id || 0,
+          unit_id: 0,
           multiplier: 1,
           is_base_unit: formData.units.length === 0
         }
@@ -122,7 +122,7 @@ export default function ProductForm() {
       prices: [
         ...formData.prices,
         {
-          unit_id: unitsList[0]?.id || 0,
+          unit_id: 0,
           minimum_quantity: 1,
           price: 0
         }
@@ -234,11 +234,11 @@ export default function ProductForm() {
                   <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
                   <select
                     required
-                    value={formData.category_id}
+                    value={formData.category_id || ''}
                     onChange={e => setFormData({ ...formData, category_id: Number(e.target.value) })}
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                   >
-                    <option value="" disabled>Select a category</option>
+                    <option value="" disabled hidden>Select a category</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
@@ -272,10 +272,12 @@ export default function ProductForm() {
                       return (
                         <div key={index} className="flex items-center gap-4">
                           <select
-                            value={u.unit_id}
+                            required
+                            value={u.unit_id || ''}
                             onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
                             className="w-1/3 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
+                            <option value="" disabled hidden>Select unit...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                           
@@ -344,11 +346,12 @@ export default function ProductForm() {
                       <div key={i} className="flex items-center gap-4">
                         <div className="flex-1">
                           <select
-                            value={p.unit_id}
+                            required
+                            value={p.unit_id || ''}
                             onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
                             className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
-                            <option value={0} disabled>Select configured unit...</option>
+                            <option value="" disabled hidden>Select configured unit...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                         </div>
