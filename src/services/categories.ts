@@ -1,5 +1,6 @@
 import { apiFetch } from './api';
 import type { Metadata } from '../utils/metadata';
+import { handleCommonErrors } from '../utils/errorHandling';
 
 interface BaseCategory extends Metadata {
   name: string;
@@ -18,7 +19,7 @@ export type CategoryDetail = BaseCategory;
 export async function getCategories(): Promise<CategoryList> {
   const response = await apiFetch('/api/categories/')
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -26,7 +27,7 @@ export async function getCategories(): Promise<CategoryList> {
 export async function getCategory(id: number): Promise<CategoryDetail> {
   const response = await apiFetch(`/api/categories/${id}/`)
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -34,7 +35,7 @@ export async function getCategory(id: number): Promise<CategoryDetail> {
 export async function createCategory(payload: CategoryCreate): Promise<CategoryDetail> {
   const response = await apiFetch('/api/categories/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -42,15 +43,20 @@ export async function createCategory(payload: CategoryCreate): Promise<CategoryD
 export async function updateCategory(id: number, payload: CategoryUpdate): Promise<CategoryDetail> {
   const response = await apiFetch(`/api/categories/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
 
 export async function deleteCategory(id: number): Promise<void> {
   const response = await apiFetch(`/api/categories/${id}/`, { method: 'DELETE' });
-  console.log(response)
   if (!response.ok) {
-    throw new Error(response.statusText)
+    if (response.status === 409) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "category_has_products") {
+        throw new Error("Kategori ini masih digunakan oleh produk");
+      }
+    }
+    await handleCommonErrors(response)
   }
 }
