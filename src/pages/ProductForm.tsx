@@ -365,13 +365,13 @@ export default function ProductForm() {
                           />
                         </div>
                         <div className="w-1/3 relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">$</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
                           <input
                             type="text"
                             value={p.price}
-                            onChange={e => updateProductPrice(i, 'price', Number(e.target.value))}
+                            onChange={e => updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))}
                             placeholder="0.00"
-                            className="w-full pl-8 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                           />
                         </div>
                         <div className="w-10 flex justify-center">

@@ -136,12 +136,16 @@ describe('Catalog Page', () => {
 
     expect(screen.queryByRole('button', { name: /create product/i })).not.toBeInTheDocument();
     expect(screen.queryByText('Aksi')).not.toBeInTheDocument();
+    expect(screen.queryByText('Harga Dasar')).not.toBeInTheDocument();
+    expect(screen.queryByText('Harga Jual')).not.toBeInTheDocument();
     
     // No trash icon in the document since non-admin
     const rows = screen.getAllByRole('row');
     // First row is the header
     const firstProductRow = rows[1];
     expect(within(firstProductRow).queryByRole('button')).not.toBeInTheDocument();
+    expect(within(firstProductRow).queryByText(/Rp.*3\.000/)).not.toBeInTheDocument();
+    expect(within(firstProductRow).queryByText(/Rp.*5\.000/)).not.toBeInTheDocument();
   });
 
   it('navigates to create product page when clicking Create Product button', async () => {

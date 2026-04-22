@@ -123,8 +123,8 @@ export default function Catalog() {
                 <th className="px-6 py-4 font-semibold">Nama Produk</th>
                 <th className="px-6 py-4 font-semibold">Kategori</th>
                 <th className="px-6 py-4 font-semibold text-right">Stok</th>
-                <th className="px-6 py-4 font-semibold text-right">Harga Dasar</th>
-                <th className="px-6 py-4 font-semibold text-right">Harga Jual</th>
+                {isAdmin && <th className="px-6 py-4 font-semibold text-right">Harga Dasar</th>}
+                {isAdmin && <th className="px-6 py-4 font-semibold text-right">Harga Jual</th>}
                 {isAdmin && <th className="px-6 py-4 font-semibold text-right">Aksi</th>}
               </tr>
             </thead>
@@ -163,12 +163,16 @@ export default function Catalog() {
                     <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-gray-100 tabular-nums">
                       {formatQty(product.quantity)} {product.unit}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
-                      {formatMoney(product.base_price)}
-                    </td>
-                    <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
-                      {formatMoney(product.price)}
-                    </td>
+                    {isAdmin && (
+                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                        {formatMoney(product.base_price)}
+                      </td>
+                    )}
+                    {isAdmin && (
+                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                        {formatMoney(product.price)}
+                      </td>
+                    )}
                     {isAdmin && (
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
