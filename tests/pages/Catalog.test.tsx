@@ -48,7 +48,7 @@ const MOCK_PRODUCTS = [
 function setupRouter(role: string = 'admin') {
   vi.mocked(useAuth).mockReturnValue({
     user: { role },
-  } as unknown as ReturnType<typeof useAuth>);
+  } as ReturnType<typeof useAuth>);
 
   return render(
     <MemoryRouter initialEntries={['/catalog']}>
@@ -98,7 +98,7 @@ describe('Catalog Page', () => {
   });
 
   it('displays products and formats correctly for admin', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     setupRouter('admin');
 
     await waitFor(() => {
@@ -127,7 +127,7 @@ describe('Catalog Page', () => {
   });
 
   it('hides admin elements for non-admin user', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     setupRouter('staff');
 
     await waitFor(() => {
@@ -145,7 +145,7 @@ describe('Catalog Page', () => {
   });
 
   it('navigates to create product page when clicking Create Product button', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     const user = userEvent.setup();
     setupRouter('admin');
 
@@ -156,7 +156,7 @@ describe('Catalog Page', () => {
   });
 
   it('navigates to product detail when clicking a row as admin', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     const user = userEvent.setup();
     setupRouter('admin');
 
@@ -170,7 +170,7 @@ describe('Catalog Page', () => {
   });
 
   it('does not navigate when clicking a row as non-admin', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     const user = userEvent.setup();
     setupRouter('staff');
 
@@ -182,7 +182,7 @@ describe('Catalog Page', () => {
   });
 
   it('opens delete confirmation and cancels', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     const user = userEvent.setup();
     setupRouter('admin');
 
@@ -207,7 +207,7 @@ describe('Catalog Page', () => {
   });
 
   it('deletes a product successfully', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     vi.mocked(deleteProduct).mockResolvedValue(undefined);
     
     const user = userEvent.setup();
@@ -238,7 +238,7 @@ describe('Catalog Page', () => {
   });
 
   it('handles delete error', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     vi.mocked(deleteProduct).mockRejectedValue(new Error('Cannot delete item in use'));
     
     const user = userEvent.setup();
@@ -264,7 +264,7 @@ describe('Catalog Page', () => {
   });
 
   it('filters products based on search input', async () => {
-    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as unknown as ProductList);
+    vi.mocked(getProducts).mockResolvedValue(MOCK_PRODUCTS as ProductList);
     const user = userEvent.setup();
     setupRouter('admin');
 
