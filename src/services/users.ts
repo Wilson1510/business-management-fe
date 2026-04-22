@@ -1,4 +1,5 @@
 import { apiFetch } from './api'
+import { handleCommonErrors } from '../utils/errorHandling'
 
 export type CurrentUser = {
   id: number
@@ -12,7 +13,7 @@ export type CurrentUser = {
 export async function fetchCurrentUser(): Promise<CurrentUser> {
   const response = await apiFetch('/api/users/me/')
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }

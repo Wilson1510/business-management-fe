@@ -1,4 +1,5 @@
 import { apiFetch } from './api'
+import { handleCommonErrors } from '../utils/errorHandling'
 
 export type DashboardMetrics = {
   total_revenue: number
@@ -32,7 +33,7 @@ export type DashboardTopData = {
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   const response = await apiFetch('/api/dashboard/metrics/')
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -40,7 +41,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 export async function getDashboardTopData(): Promise<DashboardTopData> {
   const response = await apiFetch('/api/dashboard/top-data/')
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }

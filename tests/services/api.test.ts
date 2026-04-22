@@ -128,4 +128,18 @@ describe('apiFetch', () => {
       expect.objectContaining({ method: 'PUT', cache: 'no-store' }),
     );
   });
+
+  it('throws "Tidak dapat terhubung ke server..." when fetch fails with network error', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('Failed to fetch'));
+    const { apiFetch } = await loadApi();
+
+    await expect(apiFetch('/v1/items')).rejects.toThrow('Tidak dapat terhubung ke server. Silahkan coba lagi nanti');
+  });
+
+  it('throws original error when fetch fails with other errors', async () => {
+    vi.mocked(fetch).mockRejectedValue(new Error('DNS Error or Timeout'));
+    const { apiFetch } = await loadApi();
+
+    await expect(apiFetch('/v1/items')).rejects.toThrow('DNS Error or Timeout');
+  });
 });

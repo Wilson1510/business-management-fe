@@ -1,3 +1,5 @@
+import { handleUnexpectedError } from '../utils/errorHandling';
+
 const API_ORIGIN = import.meta.env.VITE_API_ORIGIN as string;
 
 export type ApiFetchInit = RequestInit & {
@@ -17,5 +19,10 @@ export async function apiFetch(path: string, init: ApiFetchInit = {}): Promise<R
   if (rest.body && !(rest.body instanceof FormData) && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  return fetch(`${API_ORIGIN}${path}`, { ...rest, headers });
+  
+  try {
+    return await fetch(`${API_ORIGIN}${path}`, { ...rest, headers });
+  } catch (error) {
+    handleUnexpectedError(error);
+  }
 }

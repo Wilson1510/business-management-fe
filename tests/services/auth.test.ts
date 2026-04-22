@@ -84,12 +84,6 @@ describe('login', () => {
     await expect(login('u', 'p')).rejects.toThrow('Terjadi kesalahan pada server');
   });
 
-  it('throws "Tidak dapat terhubung ke server..." when fetch fails with network error', async () => {
-    vi.mocked(apiFetch).mockRejectedValue(new Error('Failed to fetch'));
-
-    await expect(login('u', 'p')).rejects.toThrow('Tidak dapat terhubung ke server. Silahkan coba lagi nanti');
-  });
-
   it('throws original error if fetch fails with a different error', async () => {
     vi.mocked(apiFetch).mockRejectedValue(new Error('DNS lookup failed'));
 

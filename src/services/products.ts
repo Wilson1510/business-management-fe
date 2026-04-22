@@ -1,5 +1,6 @@
 import { apiFetch } from './api'
 import type { Metadata } from '../utils/metadata';
+import { handleCommonErrors } from '../utils/errorHandling'
 
 interface BaseProduct extends Metadata {
   name: string;
@@ -64,7 +65,7 @@ export type ProductUpdate = Partial<ProductCreate>;
 export async function getProducts(): Promise<ProductList> {
   const response = await apiFetch('/api/products/')
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -72,7 +73,7 @@ export async function getProducts(): Promise<ProductList> {
 export async function getProduct(id: number): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`)
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -80,7 +81,7 @@ export async function getProduct(id: number): Promise<ProductDetail> {
 export async function createProduct(payload: ProductCreate): Promise<ProductDetail> {
   const response = await apiFetch('/api/products/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -88,7 +89,7 @@ export async function createProduct(payload: ProductCreate): Promise<ProductDeta
 export async function updateProduct(id: number, payload: ProductUpdate): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
-    throw new Error(response.statusText)
+    await handleCommonErrors(response)
   }
   return response.json()
 }
@@ -96,6 +97,6 @@ export async function updateProduct(id: number, payload: ProductUpdate): Promise
 export async function deleteProduct(id: number): Promise<void> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'DELETE' });
   if (!response.ok) {
-    throw new Error(response.statusText);
+    await handleCommonErrors(response)
   }
 }
