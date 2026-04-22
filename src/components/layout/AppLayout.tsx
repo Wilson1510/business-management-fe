@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- default layout + getNavItems for tests */
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -6,8 +7,8 @@ import {
 import { useAuth } from "../auth/AuthContext";
 import { readStoredThemeIsDark } from "../../theme";
 
-function getNavItems(role: string) {
-  if (role === 'staff') {
+export function getNavItems(role: string) {
+  if (role !== 'admin') {
     return [
       { name: 'Products', path: '/catalog', icon: Package },
       { name: 'Deliveries', path: '/sales/deliveries', icon: Truck },
