@@ -288,7 +288,7 @@ describe('Categories Page', () => {
       const deleteBtn = within(firstRow).getAllByRole('button')[1];
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /^delete$/i });
+      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
@@ -313,7 +313,7 @@ describe('Categories Page', () => {
       const deleteBtn = within(firstRow).getAllByRole('button')[1];
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /^delete$/i });
+      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
