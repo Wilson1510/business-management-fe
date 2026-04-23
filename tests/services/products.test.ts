@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createProduct, updateProduct } from '../../src/services/products';
+import { createProduct, updateProduct, deleteProduct } from '../../src/services/products';
 import { apiFetch } from '../../src/services/api';
 
 vi.mock('../../src/services/api', () => ({
@@ -128,6 +128,44 @@ describe('handleProductErrors', () => {
       );
 
       await expect(updateProduct(1, PAYLOAD)).resolves.toEqual(product);
+    });
+  });
+
+  describe('deleteProduct', () => {
+    it('throws when product has references', async () => {
+      vi.mocked(apiFetch).mockResolvedValue(mockErrorResponse('product_has_references', 409));
+
+      await expect(deleteProduct(1)).rejects.toThrow('Produk ini masih digunakan oleh sales order atau purchase order');
+    });
+
+    it('falls back to handleCommonErrors for unknown error codes', async () => {
+      vi.mocked(apiFetch).mockResolvedValue(
+        new Response(JSON.stringify({ code: 'some_other_code', detail: 'Some server error' }), {
+          status: 422,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+
+      await expect(deleteProduct(1)).rejects.toThrow('Some server error');
+    });
+
+    it('falls back to handleCommonErrors when response body is not JSON', async () => {
+      vi.mocked(apiFetch).mockResolvedValue(
+        new Response('Internal Server Error', {
+          status: 500,
+          statusText: 'Internal Server Error',
+        }),
+      );
+
+      await expect(deleteProduct(1)).rejects.toThrow('Internal Server Error');
+    });
+
+    it('returns void on success', async () => {
+      vi.mocked(apiFetch).mockResolvedValue(
+        new Response(null, { status: 204 }),
+      );
+
+      await expect(deleteProduct(1)).resolves.toBeUndefined();
     });
   });
 });

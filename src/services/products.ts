@@ -114,6 +114,13 @@ export async function updateProduct(id: number, payload: ProductUpdate): Promise
 export async function deleteProduct(id: number): Promise<void> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'DELETE' });
   if (!response.ok) {
+    if (response.status === 409) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "product_has_references") {
+        throw new Error("Produk ini masih digunakan oleh sales order atau purchase order");
+      }
+    }
+
     await handleCommonErrors(response)
   }
 }
