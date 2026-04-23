@@ -52,6 +52,7 @@ export default function ProductForm() {
               category_id: product.category.id,
               units: product.units.map(
                 u => ({
+                  id: u.id,
                   unit_id: u.unit.id,
                   multiplier: u.multiplier,
                   is_base_unit: u.is_base_unit
@@ -59,6 +60,7 @@ export default function ProductForm() {
               ),
               prices: product.prices.map(
                 p => ({
+                  id: p.id,
                   unit_id: p.unit.id,
                   minimum_quantity: p.minimum_quantity,
                   price: p.price
@@ -268,9 +270,10 @@ export default function ProductForm() {
                       const baseUnitObj = formData.units.find(u => u.is_base_unit);
                       const baseUnitName = baseUnitObj ? unitsList.find(ul => ul.id === baseUnitObj.unit_id)?.name : 'base unit';
                       const isBase = u.is_base_unit;
+                      const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
                       return (
-                        <div key={index} className="flex items-center gap-4">
+                        <div key={rowKey} className="flex items-center gap-4">
                           <select
                             required
                             value={u.unit_id || ''}
@@ -342,8 +345,10 @@ export default function ProductForm() {
                       <div className="w-10"></div>
                     </div>
 
-                    {formData.prices.map((p, i) => (
-                      <div key={i} className="flex items-center gap-4">
+                    {formData.prices.map((p, i) => {
+                      const rowKey = p.id != null ? `price-${p.id}` : `price-new-${i}`;
+                      return (
+                      <div key={rowKey} className="flex items-center gap-4">
                         <div className="flex-1">
                           <select
                             required
@@ -380,7 +385,8 @@ export default function ProductForm() {
                           </button>
                         </div>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 )}
               </div>

@@ -42,12 +42,14 @@ export interface ProductDetail extends BaseProduct {
 export type ProductList = ProductListItem[];
 
 export interface ProductUnit {
+  id?: number;
   unit_id: number;
   multiplier: number;
   is_base_unit: boolean;
 }
 
 export interface ProductPrice {
+  id?: number;
   unit_id: number;
   minimum_quantity: number;
   price: number;
@@ -61,6 +63,21 @@ export interface ProductCreate {
 }
 
 export type ProductUpdate = Partial<ProductCreate>;
+
+async function handleProductErrors(response: Response): Promise<never> {
+  const errorData = await response.clone().json().catch(() => null);
+  if (errorData) {
+    switch (errorData.code) {
+      case 'duplicate_unit_in_payload':
+        throw new Error('Tidak boleh ada produk yang memiliki unit yang sama lebih dari satu');
+      case 'duplicate_price_in_payload':
+        throw new Error(
+          'Tidak boleh ada produk yang memiliki unit dan kuantitas minimal yang sama lebih dari satu'
+        );
+    }
+  }
+  return handleCommonErrors(response);
+}
 
 export async function getProducts(): Promise<ProductList> {
   const response = await apiFetch('/api/products/')
@@ -81,7 +98,7 @@ export async function getProduct(id: number): Promise<ProductDetail> {
 export async function createProduct(payload: ProductCreate): Promise<ProductDetail> {
   const response = await apiFetch('/api/products/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
-    await handleCommonErrors(response)
+    await handleProductErrors(response)
   }
   return response.json()
 }
@@ -89,7 +106,7 @@ export async function createProduct(payload: ProductCreate): Promise<ProductDeta
 export async function updateProduct(id: number, payload: ProductUpdate): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
-    await handleCommonErrors(response)
+    await handleProductErrors(response)
   }
   return response.json()
 }
