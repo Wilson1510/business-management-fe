@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-primary: #3b82f6;
+    --color-surface-dim: #f3f4f6;
+}
+
+body {
+    @apply bg-surface-dim;
+}
