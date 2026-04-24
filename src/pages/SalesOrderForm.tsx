@@ -16,6 +16,19 @@ import {
 } from '../services/sales';
 import { formatMoney, formatQty } from '../utils/format';
 
+/** Harga per satuan: ambil tier dengan minimum_quantity terbesar yang masih memenuhi qty. */
+function pickUnitPriceForQuantity(
+  prices: ProductDetail['prices'],
+  unitId: number,
+  quantity: number
+): number {
+  const rows = prices.filter(
+    p => p.unit.id === unitId && p.minimum_quantity <= quantity
+  );
+  if (rows.length === 0) return 0;
+  return rows.reduce((best, p) => (p.minimum_quantity > best.minimum_quantity ? p : best)).price;
+}
+
 export default function SalesOrderForm() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -97,7 +110,8 @@ export default function SalesOrderForm() {
   async function resolveLineUnitPrice(
     lineIndex: number,
     productId: number,
-    unitId: number
+    unitId: number,
+    quantity: number
   ) {
     if (!productId || !unitId) return;
     try {
@@ -106,13 +120,14 @@ export default function SalesOrderForm() {
         detail = await getProduct(productId);
         productDetailCache.current.set(productId, detail);
       }
-      const match = detail.prices.find(p => p.unit.id === unitId);
-      const nextPrice = match ? match.price : 0;
+      const nextPrice = pickUnitPriceForQuantity(detail.prices, unitId, quantity);
       setFormData(prev => {
         const newItems = [...prev.items];
         if (lineIndex < 0 || lineIndex >= newItems.length) return prev;
         const it = newItems[lineIndex];
-        if (it.product_id !== productId || it.unit_id !== unitId) return prev;
+        if (it.product_id !== productId || it.unit_id !== unitId || it.quantity !== quantity) {
+          return prev;
+        }
         newItems[lineIndex] = { ...it, price: nextPrice };
         return { ...prev, items: newItems };
       });
@@ -121,7 +136,9 @@ export default function SalesOrderForm() {
         const newItems = [...prev.items];
         if (lineIndex < 0 || lineIndex >= newItems.length) return prev;
         const it = newItems[lineIndex];
-        if (it.product_id !== productId || it.unit_id !== unitId) return prev;
+        if (it.product_id !== productId || it.unit_id !== unitId || it.quantity !== quantity) {
+          return prev;
+        }
         newItems[lineIndex] = { ...it, price: 0 };
         return { ...prev, items: newItems };
       });
@@ -335,7 +352,7 @@ export default function SalesOrderForm() {
                             const unitId = item.unit_id;
                             updateItem(i, 'product_id', v);
                             if (v && unitId) {
-                              void resolveLineUnitPrice(i, v, unitId);
+                              void resolveLineUnitPrice(i, v, unitId, item.quantity);
                             }
                           }}
                           className="flex-1 min-w-[200px] px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70"
@@ -348,7 +365,15 @@ export default function SalesOrderForm() {
                           type="number"
                           min="1"
                           value={item.quantity}
-                          onChange={e => updateItem(i, 'quantity', Number(e.target.value))}
+                          onChange={e => {
+                            const v = Number(e.target.value);
+                            const productId = item.product_id;
+                            const unitId = item.unit_id;
+                            updateItem(i, 'quantity', v);
+                            if (v > 0 && productId && unitId) {
+                              void resolveLineUnitPrice(i, productId, unitId, v);
+                            }
+                          }}
                           className="w-1/4 min-w-[80px] px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70"
                         />
 
@@ -359,7 +384,7 @@ export default function SalesOrderForm() {
                             const productId = item.product_id;
                             updateItem(i, 'unit_id', v);
                             if (v && productId) {
-                              void resolveLineUnitPrice(i, productId, v);
+                              void resolveLineUnitPrice(i, productId, v, item.quantity);
                             }
                           }}
                           className="w-1/4 min-w-[100px] px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70"
