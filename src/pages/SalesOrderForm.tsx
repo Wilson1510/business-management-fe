@@ -17,19 +17,6 @@ import {
 import { formatMoney, formatQty } from '../utils/format';
 import { StatusBadge } from '../components/StatusBadge';
 
-/** Harga per satuan: ambil tier dengan minimum_quantity terbesar yang masih memenuhi qty. */
-function pickUnitPriceForQuantity(
-  prices: ProductDetail['prices'],
-  unitId: number,
-  quantity: number
-): number {
-  const rows = prices.filter(
-    p => p.unit.id === unitId && p.minimum_quantity <= quantity
-  );
-  if (rows.length === 0) return 0;
-  return rows.reduce((best, p) => (p.minimum_quantity > best.minimum_quantity ? p : best)).price;
-}
-
 export default function SalesOrderForm() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -53,6 +40,9 @@ export default function SalesOrderForm() {
   const [orderActionDialog, setOrderActionDialog] = useState<'confirm' | 'cancel' | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const productDetailCache = useRef<Map<number, ProductDetail>>(new Map());
+
+  /** Hanya order draft yang masih boleh diedit; selain itu hanya tampilan. */
+  const isOrderLocked = Boolean(isEditing && status && status !== 'draft');
 
   useEffect(function () {
     let cancelled = false;
@@ -121,7 +111,14 @@ export default function SalesOrderForm() {
         detail = await getProduct(productId);
         productDetailCache.current.set(productId, detail);
       }
-      const nextPrice = pickUnitPriceForQuantity(detail.prices, unitId, quantity);
+
+      const rows = detail.prices.filter(
+        p => p.unit.id === unitId && p.minimum_quantity <= quantity
+      );
+      const nextPrice = rows.length > 0 ? rows.reduce(
+        (best, p) => (p.minimum_quantity > best.minimum_quantity ? p : best)
+      ).price : 0;
+
       setFormData(prev => {
         const newItems = [...prev.items];
         if (lineIndex < 0 || lineIndex >= newItems.length) return prev;
@@ -159,6 +156,7 @@ export default function SalesOrderForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isOrderLocked) return;
     setError(null);
     if (!formData.customer_id || !formData.delivery_date) {
       setError('Customer and Delivery Date are required.');
@@ -299,8 +297,9 @@ export default function SalesOrderForm() {
             <div className="space-y-2">
               <label className="text-sm font-semibold text-gray-700">Customer</label>
               <select
-                required
+                required={!isOrderLocked}
                 value={formData.customer_id}
+                disabled={isOrderLocked}
                 onChange={e => setFormData({ ...formData, customer_id: Number(e.target.value) })}
                 className="w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60"
               >
@@ -312,8 +311,9 @@ export default function SalesOrderForm() {
               <label className="text-sm font-semibold text-gray-700">Estimated Delivery Date</label>
               <input
                 type="date"
-                required
+                required={!isOrderLocked}
                 value={formData.delivery_date}
+                disabled={isOrderLocked}
                 onChange={e => setFormData({ ...formData, delivery_date: e.target.value })}
                 className="w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60"
               />
@@ -326,9 +326,15 @@ export default function SalesOrderForm() {
               <div className="border-l-4 border-primary pl-3">
                 <h3 className="text-lg font-bold text-gray-900">Order Items</h3>
               </div>
-              <button type="button" onClick={addItem} className="text-sm font-semibold text-primary hover:text-primary/80 bg-primary/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer">
-                <Plus size={16} /> Add Product
-              </button>
+              {!isOrderLocked && (
+                <button
+                  type="button"
+                  onClick={addItem}
+                  className="text-sm font-semibold text-primary hover:text-primary/80 bg-primary/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <Plus size={16} /> Add Product
+                </button>
+              )}
             </div>
 
             <div className="border border-gray-200 rounded-xl bg-white p-6 shadow-sm">
@@ -342,7 +348,7 @@ export default function SalesOrderForm() {
                     <div className="w-1/4 min-w-[100px]"><label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Unit</label></div>
                     <div className="w-1/4 min-w-[100px]"><label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Unit Price</label></div>
                     <div className="w-1/4 min-w-[100px] text-right"><label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Line Total</label></div>
-                    <div className="w-10"></div>
+                    {!isOrderLocked && <div className="w-10" aria-hidden />}
                   </div>
 
                   {formData.items.map((item, i) => {
@@ -352,6 +358,7 @@ export default function SalesOrderForm() {
                       <div key={i} className="flex items-center gap-4">
                         <select
                           value={item.product_id}
+                          disabled={isOrderLocked}
                           onChange={e => {
                             const v = Number(e.target.value);
                             const unitId = item.unit_id;
@@ -370,6 +377,7 @@ export default function SalesOrderForm() {
                           type="number"
                           min="1"
                           value={item.quantity}
+                          disabled={isOrderLocked}
                           onChange={e => {
                             const v = Number(e.target.value);
                             const productId = item.product_id;
@@ -384,6 +392,7 @@ export default function SalesOrderForm() {
 
                         <select
                           value={item.unit_id}
+                          disabled={isOrderLocked}
                           onChange={e => {
                             const v = Number(e.target.value);
                             const productId = item.product_id;
@@ -403,6 +412,7 @@ export default function SalesOrderForm() {
                           <input
                             type="text"
                             value={formatQty(Number(item.price))}
+                            disabled={isOrderLocked}
                             onChange={e => updateItem(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))}
                             className="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70"
                           />
@@ -412,11 +422,17 @@ export default function SalesOrderForm() {
                           {formatMoney(lineTotal)}
                         </div>
 
-                        <div className="w-10 flex justify-center">
-                          <button type="button" onClick={() => removeItem(i)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
+                        {!isOrderLocked && (
+                          <div className="w-10 flex justify-center">
+                            <button
+                              type="button"
+                              onClick={() => removeItem(i)}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -436,15 +452,17 @@ export default function SalesOrderForm() {
             </div>
           </section>
 
-          <div className="flex justify-end pt-6 border-t border-gray-100">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-8 py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/25 cursor-pointer disabled:opacity-70"
-            >
-              {saving ? 'Saving...' : 'Save Draft Request'}
-            </button>
-          </div>
+          {!isOrderLocked && (
+            <div className="flex justify-end pt-6 border-t border-gray-100">
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-8 py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/25 cursor-pointer disabled:opacity-70"
+              >
+                {saving ? 'Saving...' : 'Save Draft Request'}
+              </button>
+            </div>
+          )}
         </form>
       </div>
 
