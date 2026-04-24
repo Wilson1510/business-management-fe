@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Trash2, Plus, AlertCircle } from 'lucide-react';
+import { Pencil, Trash2, Plus } from 'lucide-react';
+import { ErrorAlert } from '../components/ErrorAlert';
 import {
   getCategories,
   createCategory,
@@ -122,11 +123,7 @@ export default function Categories() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Categories</h1>
@@ -213,12 +210,7 @@ export default function Categories() {
                     autoFocus
                   />
                 </div>
-                {formError && (
-                  <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                    <AlertCircle size={16} />
-                    {formError}
-                  </div>
-                )}
+                {formError && <ErrorAlert message={formError} variant="inline" />}
               </div>
               <div className="mt-6 flex justify-end gap-3">
                 <button
@@ -254,12 +246,7 @@ export default function Categories() {
                 This action is permanent and cannot be reversed.
               </p>
               
-              {deleteError && (
-                <div className="mb-8 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                  <AlertCircle size={16} />
-                  <p className="font-medium">{deleteError}</p>
-                </div>
-              )}
+              {deleteError && <ErrorAlert message={deleteError} variant="dialog" />}
 
               <div className="flex gap-3">
                 <button

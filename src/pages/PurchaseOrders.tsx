@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, CheckCircle2, Clock, XCircle, HelpCircle, Trash2, AlertCircle } from 'lucide-react';
+import { Plus, Search, CheckCircle2, Clock, XCircle, HelpCircle, Trash2 } from 'lucide-react';
+import { ErrorAlert } from '../components/ErrorAlert';
 import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type PurchaseOrderListItem } from '../services/purchases';
 
 export default function PurchaseOrders() {
@@ -86,11 +87,7 @@ export default function PurchaseOrders() {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-gray-900">Manage Purchase Orders</h2>
@@ -189,12 +186,7 @@ export default function PurchaseOrders() {
                 This action is permanent and cannot be reversed.
               </p>
               
-              {deleteError && (
-                <div className="mb-8 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                  <AlertCircle size={16} />
-                  <p className="font-medium">{deleteError}</p>
-                </div>
-              )}
+              {deleteError && <ErrorAlert message={deleteError} variant="dialog" />}
 
               <div className="flex gap-3">
                 <button

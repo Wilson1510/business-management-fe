@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, CheckCircle2, PackageOpen, HelpCircle } from 'lucide-react';
 import { getReceipts, type ReceiptListItem } from '../services/receipts';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 export default function Receipts() {
   const navigate = useNavigate();
@@ -58,11 +59,7 @@ export default function Receipts() {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">Inbound Receipts</h2>

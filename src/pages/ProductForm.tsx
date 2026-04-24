@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Trash2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { ErrorAlert } from '../components/ErrorAlert';
 import {
   getProduct,
   createProduct,
@@ -207,12 +208,7 @@ export default function ProductForm() {
 
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
           <form id="product-form" onSubmit={handleSubmit} className="p-8 space-y-10">
-            {error && (
-              <div className="flex items-center gap-3 p-4 text-sm text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-2xl">
-                <AlertCircle size={18} className="shrink-0" />
-                <p className="font-medium">{error}</p>
-              </div>
-            )}
+            {error && <ErrorAlert message={error} variant="form" />}
 
             {/* SECTION: GENERAL INFO */}
             <section className="space-y-5">
