@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, CheckCircle2, PackageOpen, HelpCircle } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { getReceipts, type ReceiptListItem } from '../services/receipts';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { StatusBadge } from '../components/StatusBadge';
 
 export default function Receipts() {
   const navigate = useNavigate();
@@ -43,19 +44,6 @@ export default function Receipts() {
       receipt.purchase_order.number.toLowerCase().includes(query)
     );
   }, [receipts, searchQuery]);
-
-  function getStatusBadge(status: ReceiptListItem['status']) {
-    switch (status) {
-      case 'done':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><CheckCircle2 size={12} /> Received</span>;
-      case 'draft':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"><PackageOpen size={12} /> Expected</span>;
-      case 'cancelled':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 border border-red-200">Cancelled</span>;
-      default:
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200"><HelpCircle size={12} /> {status}</span>;
-    }
-  }
 
   return (
     <div className="space-y-6">
@@ -116,7 +104,7 @@ export default function Receipts() {
                     <td className="px-6 py-4 text-primary font-mono">{rec.purchase_order.number}</td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300 transition-colors">{new Date(rec.arrival_date).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300 font-medium transition-colors">{rec.method}</td>
-                    <td className="px-6 py-4">{getStatusBadge(rec.status)}</td>
+                    <td className="px-6 py-4"><StatusBadge status={rec.status} /></td>
                   </tr>
                 ))
               )}

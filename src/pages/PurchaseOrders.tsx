@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, CheckCircle2, Clock, XCircle, HelpCircle, Trash2 } from 'lucide-react';
+import { Plus, Search, Trash2 } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type PurchaseOrderListItem } from '../services/purchases';
+import { StatusBadge } from '../components/StatusBadge';
 
 export default function PurchaseOrders() {
   const navigate = useNavigate();
@@ -70,19 +71,6 @@ export default function PurchaseOrders() {
       closeDelete();
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus purchase order.');
-    }
-  };
-
-  function getStatusBadge(status: PurchaseOrderListItem['status']) {
-    switch (status) {
-      case 'confirmed':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><CheckCircle2 size={12} /> Confirmed</span>;
-      case 'draft':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200"><Clock size={12} /> Draft</span>;
-      case 'cancelled':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 border border-red-200"><XCircle size={12} /> Cancelled</span>;
-      default:
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200"><HelpCircle size={12} /> {status}</span>;
     }
   };
 
@@ -156,7 +144,7 @@ export default function PurchaseOrders() {
                       {order.total.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
                     </td>
                     <td className="px-6 py-4">
-                      {getStatusBadge(order.status)}
+                      <StatusBadge status={order.status} />
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button

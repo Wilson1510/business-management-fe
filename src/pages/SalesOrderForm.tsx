@@ -15,6 +15,7 @@ import {
   type SalesOrderProduct
 } from '../services/sales';
 import { formatMoney, formatQty } from '../utils/format';
+import { StatusBadge } from '../components/StatusBadge';
 
 /** Harga per satuan: ambil tier dengan minimum_quantity terbesar yang masih memenuhi qty. */
 function pickUnitPriceForQuantity(
@@ -248,8 +249,12 @@ export default function SalesOrderForm() {
               <ShoppingCart size={24} className="text-primary"/>
               {isEditing ? orderNumber : 'Create Sales Order'}
             </h1>
-            <p className="text-sm text-gray-500 mt-1 font-medium">
-              {isEditing ? `Status: ${status}` : 'Draft new outbound SO request'}
+            <p
+              className={isEditing ? 'mt-1' : 'text-sm text-gray-500 mt-1 font-medium'}
+            >
+              {isEditing
+                ? (status ? <StatusBadge status={status} /> : null)
+                : 'Draft new outbound SO request'}
             </p>
           </div>
         </div>
