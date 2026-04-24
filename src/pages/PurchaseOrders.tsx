@@ -5,6 +5,7 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type PurchaseOrderListItem } from '../services/purchases';
 import { StatusBadge } from '../components/StatusBadge';
+import { formatDate, formatMoney } from '../utils/format';
 
 export default function PurchaseOrders() {
   const navigate = useNavigate();
@@ -138,10 +139,10 @@ export default function PurchaseOrders() {
                       {order.supplier.name}
                     </td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
-                      {new Date(order.arrival_date).toLocaleDateString()}
+                      {formatDate(order.arrival_date)}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono font-medium text-gray-900 dark:text-white">
-                      {order.total.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' })}
+                    <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
+                      {formatMoney(Number(order.total))}
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={order.status} />
