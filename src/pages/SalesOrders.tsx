@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, CheckCircle2, Clock, XCircle, HelpCircle, Trash2 } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getSalesOrders, deleteSalesOrder, type SalesOrderList, type SalesOrderListItem } from '../services/sales';
 
 export default function SalesOrders() {
@@ -174,39 +175,14 @@ export default function SalesOrders() {
       </div>
 
       {isDeleteOpen && deletingOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center mx-auto mb-6 text-red-500 dark:text-red-400">
-                <Trash2 size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Delete Sales Order</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                You are about to delete <span className="font-bold text-gray-900 dark:text-gray-100">"{deletingOrder.number}"</span>. 
-                This action is permanent and cannot be reversed.
-              </p>
-              
-              {deleteError && <ErrorAlert message={deleteError} variant="dialog" />}
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={closeDelete}
-                  className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="flex-1 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-md shadow-red-600/20 cursor-pointer"
-                >
-                  Delete Sales Order
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ConfirmDeleteModal
+          title="Delete Sales Order"
+          itemName={deletingOrder.number}
+          errorMessage={deleteError}
+          onCancel={closeDelete}
+          onConfirm={handleDelete}
+          confirmLabel="Delete Sales Order"
+        />
       )}
     </div>
   );
