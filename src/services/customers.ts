@@ -2,9 +2,11 @@ import { apiFetch } from './api';
 import type { Metadata } from '../utils/metadata';
 import { handleCommonErrors } from '../utils/errorHandling';
 
+type BusinessEntity = 'pt' | 'cv' | 'perorangan' | 'ud' | 'lainnya';
+
 interface BaseCustomer extends Metadata {
   name: string;
-  business_entity: string;
+  business_entity: BusinessEntity;
   email: string;
   phone: string;
   address: string;
@@ -12,7 +14,7 @@ interface BaseCustomer extends Metadata {
 
 export interface CustomerCreate {
   name: string;
-  business_entity: string;
+  business_entity: BusinessEntity;
   email: string;
   phone: string;
   address: string;
@@ -21,9 +23,9 @@ export interface CustomerCreate {
 export type CustomerUpdate = Partial<CustomerCreate>;
 
 export interface CustomerListItem extends BaseCustomer {
-    count_sales_orders: number;
-    last_sales_order_date: string;
-    total_sales_amount: number;
+  count_sales_orders: number;
+  last_sales_order_date: string | null;
+  total_sales_amount: number;
 }
 export type CustomerList = CustomerListItem[];
 export type CustomerDetail = BaseCustomer;

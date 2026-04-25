@@ -2,9 +2,11 @@ import { apiFetch } from './api';
 import type { Metadata } from '../utils/metadata';
 import { handleCommonErrors } from '../utils/errorHandling';
 
+type BusinessEntity = 'pt' | 'cv' | 'perorangan' | 'ud' | 'lainnya';
+
 interface BaseSupplier extends Metadata {
   name: string;
-  business_entity: string;
+  business_entity: BusinessEntity;
   email: string;
   phone: string;
   address: string;
@@ -12,7 +14,7 @@ interface BaseSupplier extends Metadata {
 
 export interface SupplierCreate {
   name: string;
-  business_entity: string;
+  business_entity: BusinessEntity;
   email: string;
   phone: string;
   address: string;
@@ -21,9 +23,9 @@ export interface SupplierCreate {
 export type SupplierUpdate = Partial<SupplierCreate>;
 
 export interface SupplierListItem extends BaseSupplier {
-    count_purchase_orders: number;
-    last_purchase_order_date: string;
-    total_purchase_amount: number;
+  count_purchase_orders: number;
+  last_purchase_order_date: string | null;
+  total_purchase_amount: number;
 }
 export type SupplierList = SupplierListItem[];
 export type SupplierDetail = BaseSupplier;
