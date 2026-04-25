@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Truck, ArrowLeft, CheckCircle2, AlertCircle, Save } from 'lucide-react';
+import { Truck } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { StatusBadge } from '../components/StatusBadge';
+import {
+  OrderActionDialog,
+  OrderFormActions,
+  OrderFormHeader,
+  OrderFormItemSection,
+  OrderFormSaveFooter
+} from '../components/order-form';
 import {
   getDelivery,
   updateDelivery,
   doneDelivery,
   cancelDelivery,
-  type DeliveryDetail,
   type DeliveryUpdate,
   type DeliveryProduct
 } from '../services/deliveries';
-
 type ReadOnlyData = {
   number: string;
   sales_order: {
@@ -38,7 +43,7 @@ type ReadOnlyData = {
 export default function DeliveryDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const [readOnlyData, setReadOnlyData] = useState<ReadOnlyData | null>(null);
   const [formData, setFormData] = useState<DeliveryUpdate>({
     notes: '',
@@ -167,149 +172,191 @@ export default function DeliveryDetail() {
     );
   }
 
+  const lineControlClass =
+    'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
+  const destFieldClass =
+    'w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60';
+
   return (
     <div className="space-y-6 max-w-5xl animate-in fade-in duration-500 pb-12">
       <div className="flex items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate('/sales/deliveries')}
-            className="p-2 text-gray-400 hover:text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-              <Truck size={24} className="text-primary"/>
-              {readOnlyData.number}
-            </h1>
-            <p className="text-sm text-gray-500 mt-1 font-medium">
-              Source Order: {readOnlyData.sales_order.number || `SO ID: ${readOnlyData.sales_order.id}`}
-            </p>
-          </div>
-        </div>
-
-        {!isDeliveryLocked && (
-          <div className="flex gap-2.5">
-            <button
-              type="button"
-              disabled={saving}
-              onClick={handleSaveDraft}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer"
-            >
-              <Save size={18} />
-              Save Changes
-            </button>
-            <button
-              disabled={saving}
-              onClick={handleDeliveryAction}
-              className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/20 cursor-pointer"
-            >
-              <CheckCircle2 size={18} />
-              Complete Delivery
-            </button>
-          </div>
-        )}
+        <OrderFormHeader
+          onBack={() => navigate('/sales/deliveries')}
+          titleIcon={<Truck size={24} className="text-primary" />}
+          title={readOnlyData.number}
+          subtitle={
+            <>
+              {status && (
+                <div className="mb-1">
+                  <StatusBadge status={status} />
+                </div>
+              )}
+              <span className="text-sm text-gray-500 font-medium block">
+                Source order:{' '}
+                {readOnlyData.sales_order.number}
+              </span>
+            </>
+          }
+        />
+        <OrderFormActions
+          saving={saving}
+          showCancel={Boolean(status && status !== 'cancelled')}
+          showConfirm={Boolean(status && status === 'draft')}
+          confirmLabel="Done"
+          onRequestCancel={function () {
+            setActionError(null);
+            setDeliveryActionDialog('cancel');
+          }}
+          onRequestConfirm={function () {
+            setActionError(null);
+            setDeliveryActionDialog('done');
+          }}
+        />
       </div>
 
-      {error && <ErrorAlert message={error} variant="page" />}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <form id="delivery-form" onSubmit={handleSaveDraft} className="p-8 space-y-8">
+          {error && <ErrorAlert message={error} variant="form" />}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {/* Logistics Meta Side */}
-        <div className="md:col-span-1 space-y-6">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 space-y-6">
-            <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Destination</h3>
-                <p>{readOnlyData.destination}</p>
+          <section className="space-y-5 p-6 bg-gray-50/50 rounded-2xl border border-gray-100 dark:border-gray-700 dark:bg-gray-900/20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2 min-w-0">
+                <label
+                  htmlFor="delivery-destination"
+                  className="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  Destination Address
+                </label>
+                <input
+                  id="delivery-destination"
+                  readOnly
+                  value={readOnlyData.destination}
+                  className={`${destFieldClass} bg-gray-50 text-gray-900`}
+                />
+              </div>
+              <div className="space-y-2 min-w-0">
+                <label
+                  htmlFor="delivery-method"
+                  className="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                >
+                  Shipment Method
+                </label>
+                <select
+                  id="delivery-method"
+                  disabled={isDeliveryLocked}
+                  value={formData.method ?? 'delivery'}
+                  onChange={e => setFormData({ ...formData, method: e.target.value })}
+                  className={destFieldClass}
+                >
+                  <option value="delivery">Delivery</option>
+                  <option value="pickup">Customer Pickup</option>
+                </select>
+              </div>
             </div>
-
             <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Shipment Method</label>
-              <select
-                disabled={isDeliveryLocked}
-                value={formData.method}
-                onChange={e => setFormData({ ...formData, method: e.target.value })}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60"
+              <label
+                htmlFor="delivery-shipment-notes"
+                className="text-sm font-semibold text-gray-700 dark:text-gray-300"
               >
-                <option value="delivery">Delivery</option>
-                <option value="pickup">Customer Pickup</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Shipment Notes</label>
+                Shipment Notes
+              </label>
               <textarea
+                id="delivery-shipment-notes"
                 disabled={isDeliveryLocked}
-                value={formData.notes}
+                value={formData.notes ?? ''}
                 onChange={e => setFormData({ ...formData, notes: e.target.value })}
                 rows={3}
-                placeholder="Logistics instructions..."
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60 resize-none"
+                placeholder="Logistics instructions for this shipment…"
+                className={`${destFieldClass} resize-y min-h-[5.5rem] disabled:cursor-not-allowed`}
               />
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Product Items Execution Side */}
-        <div className="md:col-span-2">
-           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-             <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-               <h3 className="text-lg font-bold text-gray-900 border-l-4 border-primary pl-3">Physical Check</h3>
-             </div>
-
-             <div className="p-6 space-y-4">
-                <div className="flex text-[10px] font-bold text-gray-500 uppercase tracking-wider px-2">
-                  <div className="flex-1">Product Details & Item Notes</div>
-                  <div className="w-24 text-center">Scheduled</div>
-                  <div className="w-28 text-center">Shipped</div>
+          <OrderFormItemSection title="Physical Check">
+            <div className="space-y-4">
+              <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
+                <div className="flex-1 min-w-[12rem]">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                    Product
+                  </p>
                 </div>
+                <div className="w-20 sm:w-24 shrink-0 text-center">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                    Scheduled
+                  </p>
+                </div>
+                <div className="w-24 shrink-0 text-center">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                    Shipped
+                  </p>
+                </div>
+                <div className="min-w-0 flex-1 sm:min-w-[8rem]">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                    Item note
+                  </p>
+                </div>
+              </div>
 
-                {formData.items.map((item, idx) => {
-                  const line = readOnlyData.items.find(row => row.id === item.id);
-                  if (!line) {
-                    setError('Item not found');
-                    return null;
-                  }
-                  return (
-                  <div key={item.id} className="flex flex-col sm:flex-row sm:items-start gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-200">
-                    <div className="flex-1 space-y-3 w-full">
-                      <div>
-                        <p className="font-bold text-gray-900">{line.product.name}</p>
-                        <p className="text-xs text-gray-500 font-medium mt-0.5">Unit: {line.unit.name}</p>
-                      </div>
+              {formData.items?.map((item, idx) => {
+                const line = readOnlyData.items.find(row => row.id === item.id);
+                if (!line) return null;
+                return (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 last:border-0 last:pb-0 pb-4 last:mb-0"
+                  >
+                    <div className="flex-1 min-w-[12rem]">
+                      <p className="font-bold text-gray-900 leading-snug dark:text-gray-100">{line.product.name}</p>
+                      <p className="text-xs text-gray-500 font-medium mt-1 dark:text-gray-400">{line.unit.name}</p>
+                    </div>
+                    <div className="w-20 sm:w-24 shrink-0 text-center text-sm font-mono font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 py-2 rounded-lg tabular-nums self-center">
+                      {line.quantity}
+                    </div>
+                    <div className="w-full sm:w-24 shrink-0 self-center">
+                      <input
+                        type="number"
+                        min={0}
+                        max={line.quantity}
+                        disabled={isDeliveryLocked}
+                        value={item.quantity_delivered}
+                        onChange={e => updateItem(idx, 'quantity_delivered', Number(e.target.value))}
+                        className={`w-full text-center text-sm font-bold ${lineControlClass}`}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1 w-full self-center">
                       <input
                         type="text"
                         disabled={isDeliveryLocked}
-                        placeholder="Item-level logistics note..."
+                        placeholder="Item-level logistics note…"
                         value={item.notes}
                         onChange={e => updateItem(idx, 'notes', e.target.value)}
-                        className="w-full px-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none disabled:opacity-60"
+                        className={`w-full ${lineControlClass}`}
                       />
-                    </div>
-                    <div className="flex items-center gap-4 self-end sm:self-auto w-full sm:w-auto">
-                      <div className="w-24 text-center font-mono font-medium text-gray-500 bg-gray-100 py-2 rounded-lg">
-                        {line.quantity}
-                      </div>
-                      <div className="w-28">
-                        <input
-                          type="number"
-                          min={0}
-                          max={line.quantity}
-                          disabled={isDeliveryLocked}
-                          value={item.quantity_delivered}
-                          onChange={e => updateItem(idx, 'quantity_delivered', Number(e.target.value))}
-                          className="w-full text-center font-bold px-3 py-2 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none disabled:opacity-60"
-                        />
-                      </div>
                     </div>
                   </div>
                 );
-                })}
-             </div>
-           </div>
-        </div>
+              })}
+            </div>
+          </OrderFormItemSection>
 
+          {!isDeliveryLocked && (
+            <OrderFormSaveFooter saving={saving} />
+          )}
+        </form>
       </div>
+
+      {deliveryActionDialog && (
+        <OrderActionDialog
+          mode="delivery"
+          action={deliveryActionDialog === 'done' ? 'confirm' : 'cancel'}
+          orderNumber={readOnlyData.number}
+          saving={saving}
+          actionError={actionError}
+          confirmDetail="This will mark the delivery as completed."
+          onClose={closeDeliveryActionDialog}
+          onSubmit={handleDeliveryAction}
+        />
+      )}
     </div>
   );
 }

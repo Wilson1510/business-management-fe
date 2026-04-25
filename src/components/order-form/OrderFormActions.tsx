@@ -4,6 +4,8 @@ export type OrderFormActionsProps = {
   showConfirm: boolean;
   onRequestCancel: () => void;
   onRequestConfirm: () => void;
+  /** Default: “Confirm” (e.g. sales order). */
+  confirmLabel?: string;
 };
 
 export function OrderFormActions({
@@ -11,7 +13,8 @@ export function OrderFormActions({
   showCancel,
   showConfirm,
   onRequestCancel,
-  onRequestConfirm
+  onRequestConfirm,
+  confirmLabel = 'Confirm'
 }: OrderFormActionsProps) {
   if (!showCancel && !showConfirm) return null;
 
@@ -34,7 +37,7 @@ export function OrderFormActions({
           onClick={onRequestConfirm}
           className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-md shadow-emerald-500/20 cursor-pointer"
         >
-          Confirm
+          {confirmLabel}
         </button>
       )}
     </div>

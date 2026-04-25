@@ -12,3 +12,5 @@ export { OrderFormPartyDateSection } from './OrderFormPartyDateSection';
 export type { OrderFormPartyDateSectionProps, PartyOption } from './OrderFormPartyDateSection';
 export { OrderFormLineItems } from './OrderFormLineItems';
 export type { OrderFormLineItemRow, OrderFormLineItemsProps } from './OrderFormLineItems';
+export { OrderFormItemSection } from './OrderFormItemSection';
+export type { OrderFormItemSectionProps } from './OrderFormItemSection';
