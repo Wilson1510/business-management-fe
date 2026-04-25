@@ -10,7 +10,7 @@ export function OrderFormSaveFooter({
   savingLabel = 'Saving...'
 }: OrderFormSaveFooterProps) {
   return (
-    <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700">
+    <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-700">
       <button
         type="submit"
         disabled={saving}

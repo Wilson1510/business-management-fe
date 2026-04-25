@@ -43,7 +43,7 @@ export function OrderFormLineItems({
   onPriceChange
 }: OrderFormLineItemsProps) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 mb-2">
       <div className="flex justify-between items-end border-b border-gray-100 dark:border-gray-700 pb-3">
         <div className="border-l-4 border-primary pl-3">
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{sectionTitle}</h3>
