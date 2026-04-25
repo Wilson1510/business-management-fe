@@ -339,7 +339,7 @@ export default function ReceiptDetail() {
             </div>
           </OrderFormItemSection>
 
-          {!isReceiptLocked && <OrderFormSaveFooter saving={saving} mode="receipt"/>}
+          {!isReceiptLocked && <OrderFormSaveFooter saving={saving} mode="shipment"/>}
         </form>
       </div>
 
