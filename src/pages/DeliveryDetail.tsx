@@ -340,7 +340,7 @@ export default function DeliveryDetail() {
           </OrderFormItemSection>
 
           {!isDeliveryLocked && (
-            <OrderFormSaveFooter saving={saving} />
+            <OrderFormSaveFooter saving={saving} mode="shipment"/>
           )}
         </form>
       </div>

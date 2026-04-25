@@ -10,7 +10,7 @@ export type OrderActionDialogProps = {
   confirmDetail: string;
   onClose: () => void;
   onSubmit: () => void;
-  mode?: 'order' | 'delivery';
+  mode?: 'order' | 'delivery' | 'receipt';
 };
 
 export function OrderActionDialog({
