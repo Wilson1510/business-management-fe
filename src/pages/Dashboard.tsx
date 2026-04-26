@@ -84,28 +84,28 @@ export default function Dashboard() {
 
   const cards = [
     {
-      title: 'Total Revenue',
+      title: 'Total Penjualan',
       value: metrics ? formatMoney(metrics.total_revenue) : '—',
       icon: DollarSign,
       color: 'text-blue-600',
       bg: 'bg-blue-100',
     },
     {
-      title: 'Gross Margin',
+      title: 'Laba Kotor',
       value: metrics ? formatMoney(metrics.gross_margin) : '—',
       icon: Activity,
       color: 'text-green-600',
       bg: 'bg-green-100',
     },
     {
-      title: 'Active Sales',
+      title: 'Penjualan Aktif',
       value: metrics ? metrics.active_sales_orders : '—',
       icon: ShoppingBag,
       color: 'text-purple-600',
       bg: 'bg-purple-100',
     },
     {
-      title: 'Active Purchases',
+      title: 'Pembelian Aktif',
       value: metrics ? metrics.active_purchase_orders : '—',
       icon: Package,
       color: 'text-orange-600',
@@ -140,7 +140,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Top Selling
+            Produk Terlaris
           </h3>
           {loading ? (
             <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
@@ -168,7 +168,7 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Slow Moving
+            Produk Kurang Laku
           </h3>
           {loading ? (
             <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
@@ -195,7 +195,7 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Top Customers
+            Pelanggan Terbaik
           </h3>
           {loading ? (
             <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
