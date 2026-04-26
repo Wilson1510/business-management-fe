@@ -143,9 +143,9 @@ export default function Dashboard() {
             Produk Terlaris
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : topSelling.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {topSelling.map((item) => (
@@ -157,7 +157,6 @@ export default function Dashboard() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.sku_number}</p>
                   </div>
                   <div className="text-xs font-semibold px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md">
-                  {/* <div className="text-sm font-bold text-gray-700 dark:text-gray-300 shrink-0"> */}
                     {formatQty(item.sold_qty)} {item.unit}
                   </div>
                 </div>
@@ -171,9 +170,9 @@ export default function Dashboard() {
             Produk Kurang Laku
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : slowMoving.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {slowMoving.map((item) => (
@@ -198,9 +197,9 @@ export default function Dashboard() {
             Pelanggan Terbaik
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : topCustomers.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {topCustomers.map((item, index) => {
