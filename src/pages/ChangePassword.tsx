@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { KeyRound, Save } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import { changePassword, type ChangePassword } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { FormActionButton } from '../components/FormActionButton';
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -118,21 +119,12 @@ export default function ChangePassword() {
           </div>
 
           <div className="pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium rounded-xl transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
+            <FormActionButton variant="cancel" text="Cancel" onClick={() => navigate(-1)} />
+            <FormActionButton
+              variant="primary"
+              text={saving ? 'Updating...' : 'Update Password'}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-xl transition-colors disabled:opacity-50"
-            >
-              <Save size={18} />
-              {saving ? 'Updating...' : 'Update Password'}
-            </button>
+            />
           </div>
         </form>
       </div>

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
 import { formatQty } from '../utils/format';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { FormActionButton } from '../components/FormActionButton';
 import {
   getProduct,
   createProduct,
@@ -393,19 +394,16 @@ export default function ProductForm() {
 
             {/* Footer Controls */}
             <div className="flex items-center justify-end gap-3 pt-6 mt-10 border-t border-gray-100 dark:border-gray-700">
-              <button
-                type="button"
+              <FormActionButton
+                variant="cancel"
+                text="Batal"
                 onClick={() => navigate('/catalog')}
-                className="px-6 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-pointer"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                className="px-8 py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/25 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {saving ? 'Menyimpan...' : 'Simpan'}
-              </button>
+              />
+              <FormActionButton
+                variant="primary"
+                text={saving ? 'Menyimpan...' : 'Simpan'}
+                disabled={saving}
+              />
             </div>
           </form>
         </div>

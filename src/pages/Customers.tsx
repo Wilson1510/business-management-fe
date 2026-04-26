@@ -14,6 +14,7 @@ import {
 } from '../services/customers';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
+import { FormActionButton } from '../components/FormActionButton';
 import { formatDate, formatMoney } from '../utils/format';
 
 export default function Customers() {
@@ -329,19 +330,11 @@ export default function Customers() {
               </div>
 
               <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeForm}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-md shadow-primary/20 transition-all cursor-pointer disabled:opacity-70"
-                >
-                  {editingCustomer ? 'Save Changes' : 'Create Customer'}
-                </button>
+                <FormActionButton variant="cancel" text="Cancel" onClick={closeForm} />
+                <FormActionButton
+                  variant="primary"
+                  text={editingCustomer ? 'Save Changes' : 'Create Customer'}
+                />
               </div>
             </form>
           </div>

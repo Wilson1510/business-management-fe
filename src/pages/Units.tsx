@@ -3,6 +3,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
+import { FormActionButton } from '../components/FormActionButton';
 import {
   getUnits,
   createUnit,
@@ -208,19 +209,8 @@ export default function Units() {
                 {formError && <ErrorAlert message={formError} variant="inline" />}
               </div>
               <div className="mt-6 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeForm}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors min-w-[80px] cursor-pointer shadow-sm shadow-primary/20"
-                >
-                  Save
-                </button>
+                <FormActionButton variant="cancel" text="Cancel" onClick={closeForm} />
+                <FormActionButton variant="primary" text="Save" className="min-w-[80px]" />
               </div>
             </form>
           </div>

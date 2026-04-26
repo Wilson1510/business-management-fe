@@ -1,5 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { ErrorAlert } from './ErrorAlert';
+import { FormActionButton } from './FormActionButton';
 
 export type ConfirmDeleteModalProps = {
   title: string;
@@ -45,20 +46,18 @@ export function ConfirmDeleteModal({
           {errorMessage && <ErrorAlert message={errorMessage} variant="dialog" />}
 
           <div className="flex gap-3">
-            <button
-              type="button"
+            <FormActionButton
+              variant="cancel"
+              text={cancelLabel}
               onClick={onCancel}
-              className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-            >
-              {cancelLabel}
-            </button>
-            <button
-              type="button"
+              className="min-w-0 flex-1"
+            />
+            <FormActionButton
+              variant="danger"
+              text={confirmLabel}
               onClick={onConfirm}
-              className="flex-1 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-md shadow-red-600/20 cursor-pointer"
-            >
-              {confirmLabel}
-            </button>
+              className="min-w-0 flex-1"
+            />
           </div>
         </div>
       </div>

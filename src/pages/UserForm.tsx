@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Shield, User as UserIcon, Mail, Key, AtSign } from 'lucide-react';
+import { ArrowLeft, Shield, User as UserIcon, Mail, Key, AtSign } from 'lucide-react';
 import { getUser, createUser, updateUser, type UserCreate, type UserDetail } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { FormActionButton } from '../components/FormActionButton';
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -211,21 +212,18 @@ export default function UserForm() {
               )}
             </div>
             <div className="flex gap-3 w-full sm:w-auto">
-              <button
-                type="button"
+              <FormActionButton
+                variant="cancel"
+                text="Cancel"
                 onClick={() => navigate('/settings/users')}
-                className="flex-1 sm:flex-none px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium rounded-xl transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
+                className="flex-1 sm:flex-none"
+              />
+              <FormActionButton
+                variant="primary"
+                text={saving ? 'Saving...' : 'Save User'}
                 disabled={saving}
-                className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-6 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-xl transition-colors disabled:opacity-50"
-              >
-                <Save size={18} />
-                {saving ? 'Saving...' : 'Save User'}
-              </button>
+                className="flex-1 sm:flex-none"
+              />
             </div>
           </div>
 
