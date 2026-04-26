@@ -10,19 +10,19 @@ import { readStoredThemeIsDark } from "../../theme";
 export function getNavItems(role: string) {
   if (role !== 'admin') {
     return [
-      { name: 'Products', path: '/catalog', icon: Package },
-      { name: 'Deliveries', path: '/sales/deliveries', icon: Truck },
-      { name: 'Receipts', path: '/purchases/receipts', icon: Box },
+      { name: 'Produk', path: '/catalog', icon: Package },
+      { name: 'Pengiriman', path: '/sales/deliveries', icon: Truck },
+      { name: 'Penerimaan', path: '/purchases/receipts', icon: Box },
     ]
   }
 
   return [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Catalog', path: '/catalog', icon: Package },
-    { name: 'Sales', path: '/sales', icon: ShoppingCart },
-    { name: 'Purchases', path: '/purchases', icon: ShoppingBag },
-    { name: 'Contacts', path: '/contacts', icon: Users },
-    { name: 'System Users', path: '/settings/users', icon: Settings },
+    { name: 'Beranda', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Katalog', path: '/catalog', icon: Package },
+    { name: 'Penjualan', path: '/sales', icon: ShoppingCart },
+    { name: 'Pembelian', path: '/purchases', icon: ShoppingBag },
+    { name: 'Kontak', path: '/contacts', icon: Users },
+    { name: 'Pengguna', path: '/settings/users', icon: Settings },
   ]
 }
 
@@ -155,8 +155,8 @@ export default function AppLayout() {
                <div className="absolute top-full right-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all translate-y-2 group-hover:translate-y-0">
                 <div className="w-56 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg p-2">
                   <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700 mb-1">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{user.role} Account</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Settings and preferences</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white capitalize">{user.role}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Pengaturan dan preferensi</p>
                   </div>
                   <button 
                     onClick={() => {
@@ -166,14 +166,14 @@ export default function AppLayout() {
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg transition-colors cursor-pointer"
                   >
                     <KeyRound size={16} />
-                    Change Password
+                    Ubah Kata Sandi
                   </button>
                   <button 
                     onClick={handleLogout}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer mt-1"
                   >
                     <LogOut size={16} />
-                    Sign Out
+                    Keluar
                   </button>
                 </div>
               </div>
