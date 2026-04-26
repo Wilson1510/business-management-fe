@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { KeyRound, Save } from 'lucide-react';
-import { changePassword, type ChangePassword } from '../services/users';
+import { resetPassword, type ResetPassword } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
 
-export default function ChangePassword() {
+export default function ResetPassword() {
   const navigate = useNavigate();
+  const { id } = useParams();
   
-  const [formData, setFormData] = useState<ChangePassword>({
-    old_password: '',
+  const [formData, setFormData] = useState<ResetPassword>({
     new_password: '',
     confirm_password: ''
   });
-
+  
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,10 +20,6 @@ export default function ChangePassword() {
     e.preventDefault();
     setError(null);
 
-    if (!formData.old_password) {
-      setError('Old password is required.');
-      return;
-    }
     if (!formData.new_password) {
       setError('New password is required.');
       return;
@@ -38,24 +34,23 @@ export default function ChangePassword() {
     }
     setSaving(true);
     try {
-      await changePassword(formData);
-      navigate(-1);
+      await resetPassword(Number(id), formData);
+      navigate(`/settings/users/${id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to change password');
+      setError(e instanceof Error ? e.message : 'Failed to reset password');
     } finally {
       setSaving(false);
     }
   }
-
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Change My Password
+            Reset User Password
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Update your account security credentials.
+            Administratively assign a new password for this user.
           </p>
         </div>
       </div>
@@ -65,23 +60,6 @@ export default function ChangePassword() {
           {error && <ErrorAlert message={error} variant="form" />}
 
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Current Password
-              </label>
-              <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="password"
-                  required
-                  value={formData.old_password}
-                  onChange={(e) => setFormData({ ...formData, old_password: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-                  placeholder="Enter current password"
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 New Password

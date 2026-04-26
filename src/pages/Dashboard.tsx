@@ -7,6 +7,7 @@ import {
   type DashboardTopData,
 } from '../services/dashboard';
 import { formatMoney, formatQty } from '../utils/format';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 type TopCustomerRowClasses = { row: string; name: string; amount: string };
 
@@ -114,11 +115,7 @@ export default function Dashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {error ? (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </div>
-      ) : null}
+      {error && <ErrorAlert message={error} />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {cards.map((card, i) => {

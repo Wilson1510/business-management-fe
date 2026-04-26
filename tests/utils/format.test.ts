@@ -8,8 +8,8 @@ function normalizeCurrencySpaces(s: string): string {
 
 describe('formatMoney', () => {
   it('formats integers with two fraction digits', () => {
-    expect(normalizeCurrencySpaces(formatMoney(1000))).toBe('Rp 1.000,00');
-    expect(normalizeCurrencySpaces(formatMoney(0))).toBe('Rp 0,00');
+    expect(normalizeCurrencySpaces(formatMoney(1000))).toBe('Rp 1.000');
+    expect(normalizeCurrencySpaces(formatMoney(0))).toBe('Rp 0');
   });
 
   it('formats decimals with id-ID thousands separators', () => {

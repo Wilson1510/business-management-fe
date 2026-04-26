@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Trash2, Plus, AlertCircle } from 'lucide-react';
+import { Pencil, Trash2, Plus } from 'lucide-react';
+import { ErrorAlert } from '../components/ErrorAlert';
+import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import {
   getUnits,
   createUnit,
@@ -121,11 +123,7 @@ export default function Units() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
-          {error}
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Units</h1>
@@ -212,12 +210,7 @@ export default function Units() {
                     autoFocus
                   />
                 </div>
-                {formError && (
-                  <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                    <AlertCircle size={16} />
-                    {formError}
-                  </div>
-                )}
+                {formError && <ErrorAlert message={formError} variant="inline" />}
               </div>
               <div className="mt-6 flex justify-end gap-3">
                 <button
@@ -239,46 +232,14 @@ export default function Units() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {isDeleteOpen && deletingUnit && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/40 flex items-center justify-center mx-auto mb-6 text-red-500 dark:text-red-400">
-                <Trash2 size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Delete Unit</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                You are about to delete <span className="font-bold text-gray-900 dark:text-gray-100">"{deletingUnit.name}"</span>. 
-                This action is permanent and cannot be reversed.
-              </p>
-              
-              {deleteError && (
-                <div className="mb-8 flex items-center justify-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 p-3 rounded-xl border border-red-100 dark:border-red-900/50">
-                  <AlertCircle size={16} />
-                  <p className="font-medium">{deleteError}</p>
-                </div>
-              )}
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={closeDelete}
-                  className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  className="flex-1 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-md shadow-red-600/20 cursor-pointer"
-                >
-                  Delete Item
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ConfirmDeleteModal
+          title="Delete Unit"
+          itemName={deletingUnit.name}
+          errorMessage={deleteError}
+          onCancel={closeDelete}
+          onConfirm={handleDelete}
+        />
       )}
     </div>
   );

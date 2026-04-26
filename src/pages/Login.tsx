@@ -1,4 +1,5 @@
-import { LogIn, AlertCircle, UserRound, KeyRound } from "lucide-react"
+import { LogIn, UserRound, KeyRound } from "lucide-react"
+import { ErrorAlert } from "../components/ErrorAlert"
 import { useState } from "react"
 import { login } from "../services/auth"
 import { useNavigate } from "react-router-dom"
@@ -50,12 +51,7 @@ export default function Login() {
               <p className="text-sm text-gray-500 mt-2">Sign in to manage your inventory</p>
             </div>
 
-            {error && (
-              <div className="mb-6 flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-2">
-                <AlertCircle size={20} className="shrink-0" />
-                <p className="text-sm font-medium">{error}</p>
-              </div>
-            )}
+            {error && <ErrorAlert message={error} variant="login" />}
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">

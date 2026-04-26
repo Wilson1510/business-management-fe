@@ -30,6 +30,7 @@ import Users from './pages/Users';
 import UserForm from './pages/UserForm';
 import ChangePassword from './pages/ChangePassword';
 import { getDefaultAuthenticatedPath } from './utils/authPaths';
+import ResetPassword from './pages/ResetPassword';
 
 function RoleAwareHomeRedirect() {
   const { user } = useAuth()
@@ -80,7 +81,7 @@ function App() {
                   <Route index element={<Users />} />
                   <Route path="new" element={<UserForm />} />
                   <Route path=":id" element={<UserForm />} />
-                  <Route path=":id/password" element={<ChangePassword />} />
+                  <Route path=":id/password" element={<ResetPassword />} />
                 </Route>
               </Route>
 

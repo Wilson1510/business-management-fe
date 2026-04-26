@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Trash2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { ErrorAlert } from '../components/ErrorAlert';
 import {
   getProduct,
   createProduct,
@@ -52,6 +53,7 @@ export default function ProductForm() {
               category_id: product.category.id,
               units: product.units.map(
                 u => ({
+                  id: u.id,
                   unit_id: u.unit.id,
                   multiplier: u.multiplier,
                   is_base_unit: u.is_base_unit
@@ -59,6 +61,7 @@ export default function ProductForm() {
               ),
               prices: product.prices.map(
                 p => ({
+                  id: p.id,
                   unit_id: p.unit.id,
                   minimum_quantity: p.minimum_quantity,
                   price: p.price
@@ -205,12 +208,7 @@ export default function ProductForm() {
 
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
           <form id="product-form" onSubmit={handleSubmit} className="p-8 space-y-10">
-            {error && (
-              <div className="flex items-center gap-3 p-4 text-sm text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-2xl">
-                <AlertCircle size={18} className="shrink-0" />
-                <p className="font-medium">{error}</p>
-              </div>
-            )}
+            {error && <ErrorAlert message={error} variant="form" />}
 
             {/* SECTION: GENERAL INFO */}
             <section className="space-y-5">
@@ -268,9 +266,10 @@ export default function ProductForm() {
                       const baseUnitObj = formData.units.find(u => u.is_base_unit);
                       const baseUnitName = baseUnitObj ? unitsList.find(ul => ul.id === baseUnitObj.unit_id)?.name : 'base unit';
                       const isBase = u.is_base_unit;
+                      const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
                       return (
-                        <div key={index} className="flex items-center gap-4">
+                        <div key={rowKey} className="flex items-center gap-4">
                           <select
                             required
                             value={u.unit_id || ''}
@@ -342,8 +341,10 @@ export default function ProductForm() {
                       <div className="w-10"></div>
                     </div>
 
-                    {formData.prices.map((p, i) => (
-                      <div key={i} className="flex items-center gap-4">
+                    {formData.prices.map((p, i) => {
+                      const rowKey = p.id != null ? `price-${p.id}` : `price-new-${i}`;
+                      return (
+                      <div key={rowKey} className="flex items-center gap-4">
                         <div className="flex-1">
                           <select
                             required
@@ -380,7 +381,8 @@ export default function ProductForm() {
                           </button>
                         </div>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 )}
               </div>
