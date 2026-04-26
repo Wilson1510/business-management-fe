@@ -65,7 +65,7 @@ export default function Dashboard() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load dashboard');
+          setError(e instanceof Error ? e.message : 'Gagal memuat dashboard');
         }
       } finally {
         if (!cancelled) setLoading(false);

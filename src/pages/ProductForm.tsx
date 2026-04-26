@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { formatQty } from '../utils/format';
 import { ErrorAlert } from '../components/ErrorAlert';
 import {
   getProduct,
@@ -70,11 +71,11 @@ export default function ProductForm() {
             });
             setSkuNumber(product.sku_number);
           } else {
-            setError('Product not found.');
+            setError('Produk tidak ditemukan');
           }
         }
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load required data.');
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat data produk');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -149,12 +150,12 @@ export default function ProductForm() {
     setError(null);
 
     if (!formData.name || !formData.category_id) {
-      setError('Name and Category are required.');
+      setError('Nama dan Kategori wajib diisi');
       return;
     }
 
     if (formData.units.length === 0) {
-      setError('At least one unit is required.');
+      setError('Minimal satu satuan wajib diisi');
       return;
     }
 
@@ -174,7 +175,7 @@ export default function ProductForm() {
       }
       navigate('/catalog');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
     } finally {
       setSaving(false);
     }
@@ -183,7 +184,7 @@ export default function ProductForm() {
   if (loading) {
     return (
       <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-        Loading form...
+        Memuat form...
       </div>
     );
   }
@@ -200,9 +201,9 @@ export default function ProductForm() {
           </button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {isEditing ? 'Edit Product' : 'Create Product'}
+              {isEditing ? 'Edit Produk' : 'Tambah Produk'}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{isEditing ? skuNumber : 'New Entry Setup'}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{isEditing ? skuNumber : 'Pengaturan Entri Baru'}</p>
           </div>
         </div>
 
@@ -213,30 +214,30 @@ export default function ProductForm() {
             {/* SECTION: GENERAL INFO */}
             <section className="space-y-5">
               <div className="border-l-4 border-primary pl-3 mb-6">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">General Information</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Core details identifying this item</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Informasi Umum</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Detail inti yang mengidentifikasi item ini</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Product Name</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Produk</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    placeholder="e.g. Premium Widget v2"
+                    placeholder="e.g. Minuman Mineral"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Category</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Kategori</label>
                   <select
                     required
                     value={formData.category_id || ''}
                     onChange={e => setFormData({ ...formData, category_id: Number(e.target.value) })}
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                   >
-                    <option value="" disabled hidden>Select a category</option>
+                    <option value="" disabled hidden>Pilih kategori</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
@@ -247,24 +248,24 @@ export default function ProductForm() {
             <section className="space-y-4">
               <div className="flex justify-between items-end">
                 <div className="border-l-4 border-indigo-500 pl-3">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Unit Conversions to Base Unit</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Configure how smaller/larger units map to the base</p>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Konversi Satuan ke Satuan Dasar</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan bagaimana satuan lebih kecil/lebih besar berkorelasi dengan satuan dasar</p>
                 </div>
                 <button type="button" onClick={addProductUnit} className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <Plus size={16} /> Add Unit
+                  <Plus size={16} /> Tambah Satuan
                 </button>
               </div>
               
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
                 {formData.units.length === 0 ? (
                   <div className="py-4 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">No units added. You must configure at least one unit.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tidak ada satuan yang ditambahkan. Anda harus mengkonfigurasi minimal satu satuan</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {formData.units.map((u, index) => {
                       const baseUnitObj = formData.units.find(u => u.is_base_unit);
-                      const baseUnitName = baseUnitObj ? unitsList.find(ul => ul.id === baseUnitObj.unit_id)?.name : 'base unit';
+                      const baseUnitName = baseUnitObj ? unitsList.find(ul => ul.id === baseUnitObj.unit_id)?.name : 'satuan dasar';
                       const isBase = u.is_base_unit;
                       const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
@@ -276,7 +277,7 @@ export default function ProductForm() {
                             onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
                             className="w-1/3 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
-                            <option value="" disabled hidden>Select unit...</option>
+                            <option value="" disabled hidden>Pilih satuan...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                           
@@ -307,7 +308,7 @@ export default function ProductForm() {
                       );
                     })}
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                      *The first row automatically acts as the smallest/base unit (Multiplier = 1) for warehouse mapping.
+                      *Baris pertama secara otomatis berfungsi sebagai satuan terkecil/dasar (Pengali = 1)
                     </p>
                   </div>
                 )}
@@ -318,26 +319,26 @@ export default function ProductForm() {
             <section className="space-y-4">
               <div className="flex justify-between items-end">
                 <div className="border-l-4 border-emerald-500 pl-3">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Pricing Tiers</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Configure base price lists across configured units</p>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Harga Jual</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan daftar harga dasar di seluruh satuan yang dikonfigurasi</p>
                 </div>
                 <button type="button" onClick={addProductPrice} className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <Plus size={16} /> Add Price Tier
+                  <Plus size={16} /> Tambah Harga Jual
                 </button>
               </div>
 
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
                 {formData.prices.length === 0 ? (
                   <div className="py-4 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">No pricing configured. Product will inherit dynamic base_price calculations via logic.</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tidak ada harga jual yang dikonfigurasi</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {/* Headers */}
                     <div className="flex items-center gap-4 px-2">
-                      <div className="flex-1"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sell Unit</label></div>
-                      <div className="w-1/4"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Min Qty</label></div>
-                      <div className="w-1/3"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Price</label></div>
+                      <div className="flex-1"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Satuan Jual</label></div>
+                      <div className="w-1/4"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jumlah Minimum</label></div>
+                      <div className="w-1/3"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Harga</label></div>
                       <div className="w-10"></div>
                     </div>
 
@@ -352,7 +353,7 @@ export default function ProductForm() {
                             onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
                             className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
-                            <option value="" disabled hidden>Select configured unit...</option>
+                            <option value="" disabled hidden>Pilih satuan jual...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                         </div>
@@ -369,8 +370,10 @@ export default function ProductForm() {
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
                           <input
                             type="text"
-                            value={p.price}
-                            onChange={e => updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))}
+                            value={formatQty(Number(p.price))}
+                            onChange={e =>
+                              updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
+                            }
                             placeholder="0.00"
                             className="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                           />
@@ -395,13 +398,13 @@ export default function ProductForm() {
                 onClick={() => navigate('/catalog')}
                 className="px-6 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors cursor-pointer"
               >
-                Cancel
+                Batal
               </button>
               <button
                 type="submit"
                 className="px-8 py-3 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl transition-all shadow-md shadow-primary/25 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {saving ? 'Saving...' : 'Save Product Data'}
+                {saving ? 'Menyimpan...' : 'Simpan'}
               </button>
             </div>
           </form>

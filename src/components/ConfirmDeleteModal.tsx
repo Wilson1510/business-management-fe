@@ -19,8 +19,8 @@ export function ConfirmDeleteModal({
   onCancel,
   onConfirm,
   errorMessage,
-  cancelLabel = 'Cancel',
-  confirmLabel = 'Delete Item',
+  cancelLabel = 'Batal',
+  confirmLabel = 'Hapus',
 }: ConfirmDeleteModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -38,8 +38,8 @@ export function ConfirmDeleteModal({
             {title}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            You are about to delete <span className="font-bold text-gray-900 dark:text-gray-100">{`"${itemName}"`}</span>.
-            This action is permanent and cannot be reversed.
+            Anda akan menghapus <span className="font-bold text-gray-900 dark:text-gray-100">{`${itemName}`}</span>.
+            Aksi ini tidak dapat dibatalkan.
           </p>
 
           {errorMessage && <ErrorAlert message={errorMessage} variant="dialog" />}
@@ -48,7 +48,7 @@ export function ConfirmDeleteModal({
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
+              className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
             >
               {cancelLabel}
             </button>

@@ -20,6 +20,7 @@ const mockAdmin: CurrentUser = {
   name: 'Admin User',
   role: 'admin',
   is_active: true,
+  last_login: new Date().toISOString(),
 };
 
 const mockStaff: CurrentUser = {
@@ -29,6 +30,7 @@ const mockStaff: CurrentUser = {
   name: 'Staff User',
   role: 'staff',
   is_active: true,
+  last_login: new Date().toISOString(),
 };
 
 function renderLayout(user: CurrentUser) {
@@ -62,15 +64,15 @@ describe('CatalogLayout', () => {
   describe('when user is admin', () => {
     it('renders "Catalog Hub" title', () => {
       renderLayout(mockAdmin);
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Catalog Hub');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Katalog');
     });
 
     it('renders 3 navigation tabs', () => {
       renderLayout(mockAdmin);
       // We expect the text within the links
-      expect(screen.getByRole('link', { name: /products/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /categories/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /units/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /produk/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /kategori/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /satuan/i })).toBeInTheDocument();
     });
     
     it('renders the Outlet content', () => {
@@ -82,7 +84,7 @@ describe('CatalogLayout', () => {
   describe('when user is non-admin (staff)', () => {
     it('renders "Products" title', () => {
       renderLayout(mockStaff);
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Products');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Produk');
     });
 
     it('does not render navigation tabs', () => {

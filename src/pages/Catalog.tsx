@@ -85,17 +85,17 @@ export default function Catalog() {
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Product List</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage inventory items, units, and pricing</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Daftar Produk</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengelola item inventaris, satuan, dan harga</p>
         </div>
         
         {isAdmin && (
           <button
             onClick={() => navigate('/catalog/product/new')}
-            className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 cursor-pointer"
+            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm shadow-primary/20"
           >
             <Plus size={18} />
-            Create Product
+            Tambah Produk
           </button>
         )}
       </div>
@@ -109,7 +109,7 @@ export default function Catalog() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by SKU or Name..."
+              placeholder="Cari berdasarkan SKU atau Nama..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
            </div>
         </div>
@@ -129,12 +129,12 @@ export default function Catalog() {
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading products...</td>
+                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat produk...</td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
-                    {products.length === 0 ? 'No products found. Start by creating one.' : 'No products match your search.'}
+                    {products.length === 0 ? 'Tidak ada produk yang ditemukan' : 'Tidak ada produk yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (
@@ -162,12 +162,12 @@ export default function Catalog() {
                       {formatQty(product.quantity)} {product.unit}
                     </td>
                     {isAdmin && (
-                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                      <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white tracking-tight tabular-nums">
                         {formatMoney(product.base_price)}
                       </td>
                     )}
                     {isAdmin && (
-                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                      <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white tracking-tight tabular-nums">
                         {formatMoney(product.price)}
                       </td>
                     )}
@@ -193,7 +193,7 @@ export default function Catalog() {
 
       {isDeleteOpen && deletingProduct && (
         <ConfirmDeleteModal
-          title="Delete Product"
+          title="Hapus Produk"
           itemName={deletingProduct.name}
           errorMessage={deleteError}
           onCancel={closeDelete}
