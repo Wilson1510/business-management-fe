@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { Trash2, ArrowLeft } from 'lucide-react';
 import { formatQty } from '../utils/format';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
+import { InlineAddItemButton } from '../components/InlineAddItemButton';
 import {
   getProduct,
   createProduct,
@@ -252,9 +253,7 @@ export default function ProductForm() {
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Konversi Satuan ke Satuan Dasar</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan bagaimana satuan lebih kecil/lebih besar berkorelasi dengan satuan dasar</p>
                 </div>
-                <button type="button" onClick={addProductUnit} className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <Plus size={16} /> Tambah Satuan
-                </button>
+                <InlineAddItemButton tone="indigo" text="Tambah Satuan" onClick={addProductUnit} />
               </div>
               
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
@@ -323,9 +322,7 @@ export default function ProductForm() {
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Harga Jual</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan daftar harga dasar di seluruh satuan yang dikonfigurasi</p>
                 </div>
-                <button type="button" onClick={addProductPrice} className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <Plus size={16} /> Tambah Harga Jual
-                </button>
+                <InlineAddItemButton tone="emerald" text="Tambah Harga Jual" onClick={addProductPrice} />
               </div>
 
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">

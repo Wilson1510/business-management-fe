@@ -1,4 +1,5 @@
-import { Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { InlineAddItemButton } from '../InlineAddItemButton';
 import type { ProductListItem } from '../../services/products';
 import type { UnitListItem } from '../../services/units';
 import { formatMoney, formatQty } from '../../utils/format';
@@ -49,13 +50,7 @@ export function OrderFormLineItems({
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{sectionTitle}</h3>
         </div>
         {!isOrderLocked && (
-          <button
-            type="button"
-            onClick={onAddItem}
-            className="text-sm font-semibold text-primary hover:text-primary/80 bg-primary/10 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <Plus size={16} /> Add Product
-          </button>
+          <InlineAddItemButton tone="primary" text="Add Product" onClick={onAddItem} />
         )}
       </div>
 
