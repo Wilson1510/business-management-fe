@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Search, Trash2 } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type PurchaseOrderListItem } from '../services/purchases';
 import { StatusBadge } from '../components/StatusBadge';
@@ -83,13 +84,7 @@ export default function PurchaseOrders() {
           <h2 className="text-lg font-bold text-gray-900">Manage Purchase Orders</h2>
           <p className="text-sm text-gray-500">Track and confirm orders from suppliers</p>
         </div>
-        <button
-          onClick={() => navigate('/purchases/new')}
-          className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 cursor-pointer"
-        >
-          <Plus size={18} />
-          Create PO
-        </button>
+        <AddItemButton text="Create PO" onClick={() => navigate('/purchases/new')} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Plus, PackageSearch } from 'lucide-react';
+import { Trash2, PackageSearch } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getProducts, deleteProduct, type ProductList, type ProductListItem } from '../services/products';
 import { formatMoney, formatQty } from '../utils/format';
@@ -90,13 +91,7 @@ export default function Catalog() {
         </div>
         
         {isAdmin && (
-          <button
-            onClick={() => navigate('/catalog/product/new')}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm shadow-primary/20"
-          >
-            <Plus size={18} />
-            Tambah Produk
-          </button>
+          <AddItemButton text="Tambah Produk" onClick={() => navigate('/catalog/product/new')} />
         )}
       </div>
 

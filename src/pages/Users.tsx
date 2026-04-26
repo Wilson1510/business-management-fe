@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, UserCog, Clock, Trash2 } from 'lucide-react';
+import { Search, UserCog, Clock, Trash2 } from 'lucide-react';
 import { getUsers, deleteUser, type UserList, type UserListItem } from '../services/users';
 import { RoleBadge } from '../components/RoleBadge';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { formatDate } from '../utils/format';
 
@@ -87,13 +88,7 @@ export default function Users() {
           </p>
         </div>
         
-        <button 
-          onClick={() => navigate('/settings/users/new')}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium"
-        >
-          <Plus size={20} />
-          Add User
-        </button>
+        <AddItemButton text="Add User" onClick={() => navigate('/settings/users/new')} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

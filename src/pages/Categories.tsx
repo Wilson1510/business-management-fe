@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import {
   getCategories,
@@ -130,13 +131,7 @@ export default function Categories() {
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Categories</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage product categories</p>
         </div>
-        <button
-          onClick={() => openForm()}
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm shadow-primary/20"
-        >
-          <Plus size={16} />
-          Add Category
-        </button>
+        <AddItemButton text="Add Category" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

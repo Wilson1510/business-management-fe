@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Trash2, Truck } from 'lucide-react';
+import { Search, Trash2, Truck } from 'lucide-react';
 import { getSuppliers, createSupplier, updateSupplier, deleteSupplier, type SupplierList, type SupplierListItem, type SupplierDetail, type SupplierCreate, type SupplierUpdate } from '../services/suppliers';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { formatDate, formatMoney } from '../utils/format';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 
@@ -160,13 +161,7 @@ export default function Suppliers() {
           <h2 className="text-lg font-bold text-gray-900">Manage Suppliers</h2>
           <p className="text-sm text-gray-500">Track and manage inventory vendors</p>
         </div>
-        <button
-          onClick={() => openForm()}
-          className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 cursor-pointer"
-        >
-          <Plus size={18} />
-          Add Supplier
-        </button>
+        <AddItemButton text="Add Supplier" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
