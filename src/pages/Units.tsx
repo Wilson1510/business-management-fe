@@ -154,7 +154,7 @@ export default function Units() {
                 </tr>
               ) : (
                 units.map((unit) => (
-                  <tr key={unit.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group">
+                  <tr key={unit.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors group">
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{unit.name}</td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

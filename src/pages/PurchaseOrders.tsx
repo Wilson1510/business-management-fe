@@ -127,7 +127,7 @@ export default function PurchaseOrders() {
                   <tr 
                     key={order.id} 
                     onClick={() => navigate(`/purchases/${order.id}`)}
-                    className="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group cursor-pointer"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group cursor-pointer"
                   >
                     <td className="px-6 py-4 font-bold text-gray-900 dark:text-white">{order.number}</td>
                     <td className="px-6 py-4 font-medium text-gray-700 dark:text-gray-300">

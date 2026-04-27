@@ -137,11 +137,11 @@ export default function Catalog() {
                 </tr>
               ) : (
                 filteredProducts.map((product) => (
-                  <tr 
+                  <tr
                     key={product.id} 
                     onClick={isAdmin ? () => navigate(`/catalog/product/${product.id}`) : undefined}
                     className={`
-                      hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group
+                      hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors group
                       ${isAdmin ? 'cursor-pointer' : 'cursor-default'}`
                     }
                   >
