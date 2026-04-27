@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, UserCog, Clock } from 'lucide-react';
+import { UserCog, Clock } from 'lucide-react';
+import { TableSearchInput } from '../components/TableSearchInput';
 import { DeleteIconButton } from '../components/DeleteIconButton';
 import { getUsers, deleteUser, type UserList, type UserListItem } from '../services/users';
 import { RoleBadge } from '../components/RoleBadge';
@@ -95,16 +96,11 @@ export default function Users() {
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
         <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
-            <input 
-              type="text" 
-              placeholder="Cari pengguna berdasarkan nama, email, atau peran..." 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" 
-            />
-          </div>
+          <TableSearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari pengguna berdasarkan nama, email, atau peran..."
+          />
         </div>
 
         <div className="overflow-x-auto">
