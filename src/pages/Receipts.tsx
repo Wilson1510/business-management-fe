@@ -72,11 +72,11 @@ export default function Receipts() {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700">Receipt No.</th>
-                <th className="px-6 py-4 font-semibold">Source Order</th>
-                <th className="px-6 py-4 font-semibold">Arrival Date</th>
-                <th className="px-6 py-4 font-semibold">Ship Method</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Receipt No.</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Source Order</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Arrival Date</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Ship Method</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -101,7 +101,7 @@ export default function Receipts() {
                         Order: {rec.purchase_order.number}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-primary font-mono">{rec.purchase_order.number}</td>
+                    <td className="px-6 py-4 text-primary dark:text-blue-400 font-mono">{rec.purchase_order.number}</td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300 transition-colors">{new Date(rec.arrival_date).toLocaleDateString()}</td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300 font-medium transition-colors">{rec.method}</td>
                     <td className="px-6 py-4"><StatusBadge status={rec.status} /></td>

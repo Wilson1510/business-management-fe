@@ -174,9 +174,11 @@ export default function ReceiptDetail() {
   }
 
   const lineControlClass =
-    'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
+    'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
   const destFieldClass =
-    'w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-60';
+    'w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 disabled:opacity-60';
+  const destReadOnlyClass =
+    'w-full px-4 py-3 bg-gray-100/50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600 rounded-xl outline-none text-sm font-medium text-gray-900 dark:text-gray-100 cursor-default';
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
@@ -231,7 +233,7 @@ export default function ReceiptDetail() {
                   id="receipt-destination"
                   readOnly
                   value={readOnlyData.destination}
-                  className={`${destFieldClass} bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-100`}
+                  className={destReadOnlyClass}
                 />
               </div>
               <div className="space-y-2 min-w-0">

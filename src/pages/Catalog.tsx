@@ -174,7 +174,7 @@ export default function Catalog() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={(e) => { e.stopPropagation(); openDelete(product); }}
-                            className="p-2 text-gray-400 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                            className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                           >
                             <Trash2 size={18} />
                           </button>

@@ -156,7 +156,7 @@ export default function Users() {
                     <td className="px-6 py-4 align-middle text-gray-500 dark:text-gray-400 transition-colors text-xs">
                       {user.last_login ? (
                         <div className="flex items-center gap-1.5">
-                          <Clock size={14} className="text-gray-400 shrink-0" />
+                          <Clock size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
                           {formatDate(user.last_login, true)}
                         </div>
                       ) : (
@@ -167,7 +167,7 @@ export default function Users() {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => openDelete(user)}
-                          className="p-1.5 rounded-lg transition-colors text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="p-1.5 rounded-lg transition-colors text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                         >
                           <Trash2 size={16} />
                         </button>

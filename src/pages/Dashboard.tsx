@@ -87,29 +87,29 @@ export default function Dashboard() {
       title: 'Total Penjualan',
       value: metrics ? formatMoney(metrics.total_revenue) : '—',
       icon: DollarSign,
-      color: 'text-blue-600',
-      bg: 'bg-blue-100',
+      color: 'text-blue-600 dark:text-blue-400',
+      bg: 'bg-blue-100 dark:bg-blue-950/40',
     },
     {
       title: 'Laba Kotor',
       value: metrics ? formatMoney(metrics.gross_margin) : '—',
       icon: Activity,
-      color: 'text-green-600',
-      bg: 'bg-green-100',
+      color: 'text-green-600 dark:text-green-400',
+      bg: 'bg-green-100 dark:bg-green-950/40',
     },
     {
       title: 'Penjualan Aktif',
       value: metrics ? metrics.active_sales_orders : '—',
       icon: ShoppingBag,
-      color: 'text-purple-600',
-      bg: 'bg-purple-100',
+      color: 'text-purple-600 dark:text-purple-400',
+      bg: 'bg-purple-100 dark:bg-purple-950/40',
     },
     {
       title: 'Pembelian Aktif',
       value: metrics ? metrics.active_purchase_orders : '—',
       icon: Package,
-      color: 'text-orange-600',
-      bg: 'bg-orange-100',
+      color: 'text-orange-600 dark:text-orange-400',
+      bg: 'bg-orange-100 dark:bg-orange-950/40',
     },
   ];
 
@@ -126,7 +126,7 @@ export default function Dashboard() {
               className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl ${card.bg} dark:bg-opacity-20 ${card.color}`}>
+                <div className={`p-3 rounded-xl ${card.bg} ${card.color}`}>
                   <Icon size={24} />
                 </div>
               </div>

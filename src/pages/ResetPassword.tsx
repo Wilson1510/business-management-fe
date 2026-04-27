@@ -66,13 +66,13 @@ export default function ResetPassword() {
                 New Password
               </label>
               <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                 <input
                   type="password"
                   required
                   value={formData.new_password}
                   onChange={(e) => setFormData({ ...formData, new_password: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="Enter new password"
                 />
               </div>
@@ -83,13 +83,13 @@ export default function ResetPassword() {
                 Confirm New Password
               </label>
               <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
                 <input
                   type="password"
                   required
                   value={formData.confirm_password}
                   onChange={(e) => setFormData({ ...formData, confirm_password: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="Confirm new password"
                 />
               </div>

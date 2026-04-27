@@ -85,7 +85,7 @@ export default function UserForm() {
       <div className="flex items-center gap-4">
         <button 
           onClick={() => navigate('/settings/users')}
-          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+          className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
         >
           <ArrowLeft size={20} />
         </button>
@@ -109,14 +109,14 @@ export default function UserForm() {
                 Username
               </label>
               <div className="relative">
-                <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
                 <input
                   type="text"
                   required
                   autoComplete="username"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="jane.doe"
                 />
               </div>
@@ -127,13 +127,13 @@ export default function UserForm() {
                 Full Name
               </label>
               <div className="relative">
-                <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="John Doe"
                 />
               </div>
@@ -144,13 +144,13 @@ export default function UserForm() {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="john@example.com"
                 />
               </div>
@@ -161,11 +161,11 @@ export default function UserForm() {
                 System Role
               </label>
               <div className="relative">
-                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
                 <select
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value as UserDetail['role'] })}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white appearance-none"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 appearance-none"
                 >
                   <option value="admin">Admin</option>
                   <option value="staff">Staff</option>
@@ -180,7 +180,7 @@ export default function UserForm() {
               <select
                 value={formData.is_active ? 'active' : 'inactive'}
                 onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'active' })}
-                className="w-full px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
               >
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>

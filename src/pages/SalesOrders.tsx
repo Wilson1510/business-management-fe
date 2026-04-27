@@ -145,7 +145,7 @@ export default function SalesOrders() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                       >
                         <Trash2 size={18} />
                       </button>
