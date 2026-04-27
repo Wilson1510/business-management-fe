@@ -17,6 +17,9 @@ import {
 import { getCategories, type CategoryListItem } from '../services/categories';
 import { getUnits, type UnitListItem } from '../services/units';
 
+const productPriceRowGridClass =
+  'grid w-full min-w-0 [grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,1.05fr)_2.5rem] gap-3 sm:gap-4';
+
 export default function ProductForm() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -185,14 +188,14 @@ export default function ProductForm() {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-gray-500 dark:text-gray-400">
+      <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
         Memuat form...
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-4xl animate-in fade-in duration-500 pb-12">
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
       <fieldset disabled={saving}>
         <div className="flex items-center gap-4 mb-4">
           <button 
@@ -270,34 +273,36 @@ export default function ProductForm() {
                       const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
                       return (
-                        <div key={rowKey} className="flex items-center gap-4">
+                        <div key={rowKey} className="flex w-full min-w-0 items-center gap-3 sm:gap-4">
                           <select
                             required
                             value={u.unit_id || ''}
                             onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
-                            className="w-1/3 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                            className="min-w-0 flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
                             <option value="" disabled hidden>Pilih satuan...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                           
-                          <span className="text-gray-400 dark:text-gray-500 font-bold">=</span>
+                          <span className="shrink-0 text-gray-400 dark:text-gray-500 font-bold" aria-hidden>
+                            =
+                          </span>
                           
-                          <div className="flex items-center gap-3 w-1/3">
+                          <div className="flex min-w-0 flex-1 items-center gap-3">
                             <input
                               type="number"
                               min="1"
                               readOnly={isBase}
                               value={isBase ? 1 : u.multiplier}
                               onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
-                              className={`w-full px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`}
+                              className={`min-w-0 flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`}
                             />
-                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 whitespace-nowrap min-w-[50px]">
+                            <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 min-w-0 text-right sm:min-w-[4.5rem]">
                               {baseUnitName}
                             </span>
                           </div>
                           
-                          <div className="w-10 flex justify-center">
+                          <div className="w-10 shrink-0 flex justify-center">
                             {!isBase && (
                               <button type="button" onClick={() => removeProductUnit(index)} className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer">
                                 <Trash2 size={18} />
@@ -331,53 +336,70 @@ export default function ProductForm() {
                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tidak ada harga jual yang dikonfigurasi</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {/* Headers */}
-                    <div className="flex items-center gap-4 px-2">
-                      <div className="flex-1"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Satuan Jual</label></div>
-                      <div className="w-1/4"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jumlah Minimum</label></div>
-                      <div className="w-1/3"><label className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Harga</label></div>
-                      <div className="w-10"></div>
+                  <div className="space-y-3">
+                    <div
+                      className={`${productPriceRowGridClass} mb-1 items-end border-b border-gray-100 pb-2.5 dark:border-gray-700`}
+                    >
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Satuan Jual</span>
+                      <span
+                        className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                        title="Jumlah Minimum"
+                      >
+                        Jml. min.
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Harga</span>
+                      <span className="w-10 shrink-0" />
                     </div>
 
                     {formData.prices.map((p, i) => {
                       const rowKey = p.id != null ? `price-${p.id}` : `price-new-${i}`;
                       return (
-                      <div key={rowKey} className="flex items-center gap-4">
-                        <div className="flex-1">
+                      <div
+                        key={rowKey}
+                        className={`${productPriceRowGridClass} items-center`}
+                      >
+                        <div className="min-w-0">
+                          <label htmlFor={`price-unit-${rowKey}`} className="sr-only">Satuan jual</label>
                           <select
+                            id={`price-unit-${rowKey}`}
                             required
                             value={p.unit_id || ''}
                             onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
-                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
+                            className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
                           >
                             <option value="" disabled hidden>Pilih satuan jual...</option>
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                         </div>
-                        <div className="w-1/4">
+                        <div className="min-w-0">
+                          <label htmlFor={`price-minqty-${rowKey}`} className="sr-only">Jumlah minimum</label>
                           <input
+                            id={`price-minqty-${rowKey}`}
                             type="number"
                             min="1"
                             value={p.minimum_quantity}
                             onChange={e => updateProductPrice(i, 'minimum_quantity', Number(e.target.value))}
-                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
+                            className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
                           />
                         </div>
-                        <div className="w-1/3 relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
-                          <input
-                            type="text"
-                            value={formatQty(Number(p.price))}
-                            onChange={e =>
-                              updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
-                            }
-                            placeholder="0.00"
-                            className="w-full pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                          />
+                        <div className="min-w-0">
+                          <label htmlFor={`price-amount-${rowKey}`} className="sr-only">Harga</label>
+                          <div className="relative">
+                            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
+                            <input
+                              id={`price-amount-${rowKey}`}
+                              type="text"
+                              value={formatQty(Number(p.price))}
+                              onChange={e =>
+                                updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
+                              }
+                              placeholder="0.00"
+                              className="w-full min-w-0 pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            />
+                          </div>
                         </div>
-                        <div className="w-10 flex justify-center">
-                          <button type="button" onClick={() => removeProductPrice(i)} className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer">
+                        <div className="flex w-10 shrink-0 justify-center">
+                          <button type="button" onClick={() => removeProductPrice(i)} className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer" aria-label="Hapus baris harga">
                             <Trash2 size={18} />
                           </button>
                         </div>

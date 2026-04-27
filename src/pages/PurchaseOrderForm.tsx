@@ -189,14 +189,14 @@ export default function PurchaseOrderForm() {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-gray-500">
+      <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
         Loading form...
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-5xl animate-in fade-in duration-500 pb-12">
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
       <div className="flex items-center justify-between gap-4 mb-4">
         <OrderFormHeader
           onBack={() => navigate('/purchases')}

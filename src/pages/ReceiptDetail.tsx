@@ -167,7 +167,7 @@ export default function ReceiptDetail() {
 
   if (loading) {
     return (
-      <div className="p-12 text-center text-gray-500">
+      <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
         Loading form...
       </div>
     );
@@ -179,7 +179,7 @@ export default function ReceiptDetail() {
     'w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60';
 
   return (
-    <div className="space-y-6 max-w-5xl animate-in fade-in duration-500 pb-12">
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
       <div className="flex items-center justify-between gap-4 mb-4">
         <OrderFormHeader
           onBack={() => navigate('/purchases/receipts')}
