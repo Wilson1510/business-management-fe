@@ -11,15 +11,15 @@ describe('deleteCategory', () => {
     vi.mocked(apiFetch).mockReset();
   });
 
-  it('throws custom error when category is used by products (409 status with category_has_products code)', async () => {
+  it('throws custom error when category is used by products (409 status with has_references code)', async () => {
     vi.mocked(apiFetch).mockResolvedValue(
-      new Response(JSON.stringify({ code: 'category_has_products', detail: 'This category cannot be deleted...' }), {
+      new Response(JSON.stringify({ code: 'has_references', detail: 'This category cannot be deleted...' }), {
         status: 409,
         headers: { 'Content-Type': 'application/json' },
       }),
     );
 
-    await expect(deleteCategory(1)).rejects.toThrow('Kategori ini masih digunakan oleh produk');
+    await expect(deleteCategory(1)).rejects.toThrow('Kategori ini masih digunakan oleh penjualan atau pembelian');
   });
 
   it('handles regular API errors fallback through handleCommonErrors', async () => {

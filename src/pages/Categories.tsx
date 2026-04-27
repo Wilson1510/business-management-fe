@@ -43,7 +43,7 @@ export default function Categories() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load categories');
+          setError(e instanceof Error ? e.message : 'Gagal memuat kategori');
         }
       } finally {
         if (!cancelled) setLoading(false);
