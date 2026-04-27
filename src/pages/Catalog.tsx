@@ -7,6 +7,7 @@ import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getProducts, deleteProduct, type ProductList, type ProductListItem } from '../services/products';
 import { formatMoney, formatQty } from '../utils/format';
 import { useAuth } from '../components/auth/AuthContext';
+import { toast } from 'sonner';
 
 export default function Catalog() {
   const { user } = useAuth();
@@ -68,11 +69,13 @@ export default function Catalog() {
   async function handleDelete() {
     if (!deletingProduct) return;
     const id = deletingProduct.id;
+    const name = deletingProduct.name;
     setDeleteError(null);
     try {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       closeDelete();
+      toast.success(`${name} berhasil dihapus`);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus produk.');
     }

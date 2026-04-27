@@ -48,14 +48,6 @@ export default function AppLayout() {
     return getNavItems(user.role)
   }, [user])
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-dim dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm">
-        Loading…
-      </div>
-    )
-  }
-
   function handleLogout() {
     logout()
     navigate('/login', { replace: true })
