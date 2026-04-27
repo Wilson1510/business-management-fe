@@ -119,7 +119,7 @@ export async function deleteProduct(id: number): Promise<void> {
   if (!response.ok) {
     if (response.status === 409) {
       const errorData = await response.clone().json().catch(() => null);
-      if (errorData && errorData.code === "product_has_references") {
+      if (errorData && errorData.code === "has_references") {
         throw new Error("Produk ini masih digunakan oleh sales order atau purchase order");
       }
     }

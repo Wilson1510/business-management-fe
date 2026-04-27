@@ -53,7 +53,7 @@ export async function deleteCategory(id: number): Promise<void> {
   if (!response.ok) {
     if (response.status === 409) {
       const errorData = await response.clone().json().catch(() => null);
-      if (errorData && errorData.code === "category_has_products") {
+      if (errorData && errorData.code === "has_references") {
         throw new Error("Kategori ini masih digunakan oleh produk");
       }
     }
