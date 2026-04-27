@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { getDeliveries, type DeliveryList } from '../services/deliveries';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { StatusBadge } from '../components/StatusBadge';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Deliveries() {
   const navigate = useNavigate();
@@ -49,10 +50,7 @@ export default function Deliveries() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Outbound Deliveries</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and execute shipments to customers</p>
-        </div>
+        <PageHeading title="Daftar Pengiriman" description="Mengelola pengiriman ke pelanggan" />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

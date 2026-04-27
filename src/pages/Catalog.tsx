@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PackageSearch } from 'lucide-react';
 import { DeleteIconButton } from '../components/DeleteIconButton';
+import { PageHeading } from '../components/PageHeading';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
@@ -89,10 +90,10 @@ export default function Catalog() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Daftar Produk</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Mengelola item inventaris, satuan, dan harga</p>
-        </div>
+        <PageHeading
+          title="Daftar Produk"
+          description="Mengelola item inventaris, satuan, dan harga"
+        />
         
         {isAdmin && (
           <AddItemButton text="Tambah Produk" onClick={() => navigate('/catalog/product/new')} />

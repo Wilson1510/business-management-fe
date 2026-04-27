@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { getReceipts, type ReceiptListItem } from '../services/receipts';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { StatusBadge } from '../components/StatusBadge';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Receipts() {
   const navigate = useNavigate();
@@ -49,10 +50,10 @@ export default function Receipts() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Inbound Receipts</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and receive inbound supplier deliveries</p>
-        </div>
+        <PageHeading
+          title="Inbound Receipts"
+          description="Manage and receive inbound supplier deliveries"
+        />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

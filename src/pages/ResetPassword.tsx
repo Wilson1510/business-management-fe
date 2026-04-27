@@ -4,6 +4,7 @@ import { KeyRound } from 'lucide-react';
 import { resetPassword, type ResetPassword } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
+import { PageHeading } from '../components/PageHeading';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -46,14 +47,10 @@ export default function ResetPassword() {
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Reset User Password
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Administratively assign a new password for this user.
-          </p>
-        </div>
+        <PageHeading
+          title="Reset User Password"
+          description="Administratively assign a new password for this user."
+        />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">

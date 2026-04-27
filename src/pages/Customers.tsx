@@ -17,6 +17,7 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { FormActionButton } from '../components/FormActionButton';
 import { formatDate, formatMoney } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Customers() {
   const emptyCustomerData: CustomerCreate = {
@@ -170,10 +171,7 @@ export default function Customers() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Manage Customers</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track and manage client organizations</p>
-        </div>
+        <PageHeading title="Manage Customers" description="Track and manage client organizations" />
         <AddItemButton text="Add Customer" onClick={() => openForm()} />
       </div>
 

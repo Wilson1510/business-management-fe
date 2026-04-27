@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DeleteIconButton } from '../components/DeleteIconButton';
+import { PageHeading } from '../components/PageHeading';
 import { toastSuccessCreate, toastSuccessUpdate, toastSuccessDelete } from '../utils/toast';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
@@ -129,10 +130,7 @@ export default function Categories() {
     <div className="space-y-6 animate-in fade-in duration-500">
       {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Kategori</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola kategori produk</p>
-        </div>
+        <PageHeading title="Kategori" description="Kelola kategori produk" />
         <AddItemButton text="Tambah Kategori" onClick={() => openForm()} />
       </div>
 

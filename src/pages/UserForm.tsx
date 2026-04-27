@@ -4,6 +4,7 @@ import { ArrowLeft, Shield, User as UserIcon, Mail, Key, AtSign } from 'lucide-r
 import { getUser, createUser, updateUser, type UserCreate, type UserDetail } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
+import { PageHeading } from '../components/PageHeading';
 
 export default function UserForm() {
   const navigate = useNavigate();
@@ -89,14 +90,12 @@ export default function UserForm() {
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            {isEditing ? 'Edit User' : 'Add New User'}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {isEditing ? 'Update internal account details.' : 'Create a new internal system account.'}
-          </p>
-        </div>
+        <PageHeading
+          title={isEditing ? 'Edit User' : 'Add New User'}
+          description={
+            isEditing ? 'Update internal account details.' : 'Create a new internal system account.'
+          }
+        />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">

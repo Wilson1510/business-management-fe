@@ -6,6 +6,7 @@ import { formatQty } from '../utils/format';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
 import { InlineAddItemButton } from '../components/InlineAddItemButton';
+import { PageHeading } from '../components/PageHeading';
 import {
   getProduct,
   createProduct,
@@ -204,12 +205,10 @@ export default function ProductForm() {
           >
             <ArrowLeft size={20} />
           </button>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-              {isEditing ? 'Edit Produk' : 'Tambah Produk'}
-            </h1>
-            {isEditing && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{skuNumber}</p>}
-          </div>
+          <PageHeading
+            title={isEditing ? 'Edit Produk' : 'Tambah Produk'}
+            description={isEditing ? skuNumber : undefined}
+          />
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

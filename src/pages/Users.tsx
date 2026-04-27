@@ -8,6 +8,7 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { formatDate } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Users() {
   const navigate = useNavigate();
@@ -79,15 +80,15 @@ export default function Users() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <UserCog className="text-primary" size={24} />
-            User Management
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Manage system access, administrative privileges, and staff accounts
-          </p>
-        </div>
+        <PageHeading
+          title={
+            <span className="flex items-center gap-2">
+              <UserCog className="text-primary" size={24} />
+              User Management
+            </span>
+          }
+          description="Manage system access, administrative privileges, and staff accounts"
+        />
         
         <AddItemButton text="Add User" onClick={() => navigate('/settings/users/new')} />
       </div>

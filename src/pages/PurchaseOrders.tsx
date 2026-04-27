@@ -8,6 +8,7 @@ import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type PurchaseOrderListItem } from '../services/purchases';
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate, formatMoney } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
 
 export default function PurchaseOrders() {
   const navigate = useNavigate();
@@ -81,10 +82,10 @@ export default function PurchaseOrders() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Manage Purchase Orders</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track and confirm orders from suppliers</p>
-        </div>
+        <PageHeading
+          title="Manage Purchase Orders"
+          description="Track and confirm orders from suppliers"
+        />
         <AddItemButton text="Create PO" onClick={() => navigate('/purchases/new')} />
       </div>
 

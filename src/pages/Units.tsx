@@ -16,6 +16,7 @@ import {
   type UnitUpdate,
 } from '../services/units';
 import { toastSuccessCreate, toastSuccessDelete, toastSuccessUpdate } from '../utils/toast';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Units() {
   const [units, setUnits] = useState<UnitList>([]);
@@ -131,10 +132,7 @@ export default function Units() {
     <div className="space-y-6 animate-in fade-in duration-500">
       {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Satuan</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola satuan pengukuran</p>
-        </div>
+        <PageHeading title="Satuan" description="Kelola satuan pengukuran" />
         <AddItemButton text="Tambah Satuan" onClick={() => openForm()} />
       </div>
 

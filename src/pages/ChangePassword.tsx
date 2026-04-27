@@ -4,6 +4,7 @@ import { KeyRound } from 'lucide-react';
 import { changePassword, type ChangePassword } from '../services/users';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
+import { PageHeading } from '../components/PageHeading';
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -51,14 +52,10 @@ export default function ChangePassword() {
   return (
     <div className="max-w-xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Change My Password
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Update your account security credentials.
-          </p>
-        </div>
+        <PageHeading
+          title="Change My Password"
+          description="Update your account security credentials."
+        />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
