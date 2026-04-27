@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Trash2, Truck } from 'lucide-react';
+import { Search, Truck } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { getSuppliers, createSupplier, updateSupplier, deleteSupplier, type SupplierList, type SupplierListItem, type SupplierDetail, type SupplierCreate, type SupplierUpdate } from '../services/suppliers';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
@@ -230,12 +231,10 @@ export default function Suppliers() {
                       {formatMoney(supplier.total_purchase_amount)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(supplier); }}
-                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        aria-label="Hapus pemasok"
+                      />
                     </td>
                   </tr>
                 ))

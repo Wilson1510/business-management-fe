@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Trash2, Users } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { AddItemButton } from '../components/AddItemButton';
 import {
   getCustomers,
@@ -241,12 +242,10 @@ export default function Customers() {
                       {formatMoney(customer.total_sales_amount)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(customer); }}
-                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        aria-label="Hapus pelanggan"
+                      />
                     </td>
                   </tr>
                 ))

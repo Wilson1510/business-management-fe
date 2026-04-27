@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, UserCog, Clock, Trash2 } from 'lucide-react';
+import { Search, UserCog, Clock } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { getUsers, deleteUser, type UserList, type UserListItem } from '../services/users';
 import { RoleBadge } from '../components/RoleBadge';
 import { ErrorAlert } from '../components/ErrorAlert';
@@ -165,12 +166,10 @@ export default function Users() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => openDelete(user)}
-                          className="p-1.5 rounded-lg transition-colors text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <DeleteIconButton
+                          onClick={(e) => { e.stopPropagation(); openDelete(user); }}
+                          aria-label="Hapus pengguna"
+                        />
                       </div>
                     </td>
                   </tr>

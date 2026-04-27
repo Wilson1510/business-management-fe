@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Trash2 } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
@@ -143,12 +144,10 @@ export default function PurchaseOrders() {
                       <StatusBadge status={order.status} />
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        aria-label="Hapus purchase order"
+                      />
                     </td>
                   </tr>
                 ))

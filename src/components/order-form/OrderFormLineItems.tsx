@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { DeleteIconButton } from '../DeleteIconButton';
 import { InlineAddItemButton } from '../InlineAddItemButton';
 import type { ProductListItem } from '../../services/products';
 import type { UnitListItem } from '../../services/units';
@@ -155,13 +155,10 @@ export function OrderFormLineItems({
 
                   {!isOrderLocked && (
                     <div className="w-10 flex justify-center">
-                      <button
-                        type="button"
+                      <DeleteIconButton
                         onClick={() => onRemoveItem(i)}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-red-950/40"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                        aria-label="Hapus baris"
+                      />
                     </div>
                   )}
                 </div>

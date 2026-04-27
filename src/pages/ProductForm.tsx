@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Trash2, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { formatQty } from '../utils/format';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { FormActionButton } from '../components/FormActionButton';
@@ -302,9 +303,10 @@ export default function ProductForm() {
                           
                           <div className="w-10 shrink-0 flex justify-center">
                             {!isBase && (
-                              <button type="button" onClick={() => removeProductUnit(index)} className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer">
-                                <Trash2 size={18} />
-                              </button>
+                              <DeleteIconButton
+                                onClick={() => removeProductUnit(index)}
+                                aria-label="Hapus satuan"
+                              />
                             )}
                           </div>
                         </div>
@@ -397,9 +399,10 @@ export default function ProductForm() {
                           </div>
                         </div>
                         <div className="flex w-10 shrink-0 justify-center">
-                          <button type="button" onClick={() => removeProductPrice(i)} className="p-2 text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors cursor-pointer" aria-label="Hapus baris harga">
-                            <Trash2 size={18} />
-                          </button>
+                          <DeleteIconButton
+                            onClick={() => removeProductPrice(i)}
+                            aria-label="Hapus baris harga"
+                          />
                         </div>
                       </div>
                     );

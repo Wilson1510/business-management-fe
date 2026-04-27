@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2 } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { toastSuccessCreate, toastSuccessUpdate, toastSuccessDelete } from '../utils/toast';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
@@ -163,12 +163,10 @@ export default function Categories() {
                   >
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{category.name}</td>
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(category); }}
-                        className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                        aria-label="Hapus kategori"
+                      />
                     </td>
                   </tr>
                 ))
