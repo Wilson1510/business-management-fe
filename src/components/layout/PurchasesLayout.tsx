@@ -7,43 +7,43 @@ export default function PurchasesLayout() {
 
   const tabs = [
     ...(user.role === 'admin' ? [
-      { name: 'Purchase Orders', path: '/purchases', end: true, icon: ShoppingBag }
+      { name: 'Pembelian', path: '/purchases', end: true, icon: ShoppingBag }
     ] : []),
-    { name: 'Receipts', path: '/purchases/receipts', end: false, icon: Box },
+    { name: 'Penerimaan', path: '/purchases/receipts', end: false, icon: Box },
   ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 mb-6 flex items-center justify-between">
-          <span>{user.role === 'admin' ? 'Purchases Hub' : 'Receipts'}</span>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 flex items-center justify-between transition-colors">
+          <span>{user.role === 'admin' ? 'Pembelian dan Penerimaan' : 'Penerimaan'}</span>
         </h1>
-        
+
         {tabs.length > 1 && (
           <div className="border-b border-gray-200 dark:border-gray-700">
-          <nav className="-mb-px flex space-x-8">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <NavLink
-                  key={tab.name}
-                  to={tab.path}
-                  end={tab.end}
-                  className={({ isActive }) =>
-                    `group inline-flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                      isActive
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`
-                  }
-                >
-                  <Icon size={18} />
-                  {tab.name}
-                </NavLink>
-              );
-            })}
-          </nav>
-        </div>
+            <nav className="-mb-px flex space-x-8">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <NavLink
+                    key={tab.name}
+                    to={tab.path}
+                    end={tab.end}
+                    className={({ isActive }) =>
+                      `group inline-flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                        isActive
+                          ? 'border-primary text-primary dark:text-blue-400'
+                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-500'
+                      }`
+                    }
+                  >
+                    <Icon size={18} />
+                    {tab.name}
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
         )}
       </div>
 
