@@ -90,6 +90,9 @@ export async function getProducts(): Promise<ProductList> {
 export async function getProduct(id: number): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`)
   if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Produk tidak ditemukan');
+    }
     await handleCommonErrors(response)
   }
   return response.json()

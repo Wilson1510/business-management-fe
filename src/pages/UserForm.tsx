@@ -29,18 +29,8 @@ export default function UserForm() {
       setError(null);
       try {
         if (isEditing && id) {
-          const user = await getUser(Number(id));
-          if (user) {
-            setFormData({
-              username: user.username,
-              name: user.name,
-              email: user.email,
-              role: user.role,
-              is_active: user.is_active
-            });
-          } else {
-            setError('User not found.');
-          }
+          const { username, name, email, role, is_active } = await getUser(Number(id));
+          setFormData({ username, name, email, role, is_active });
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load user');

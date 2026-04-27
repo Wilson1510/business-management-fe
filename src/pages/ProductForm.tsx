@@ -16,6 +16,7 @@ import {
 } from '../services/products';
 import { getCategories, type CategoryListItem } from '../services/categories';
 import { getUnits, type UnitListItem } from '../services/units';
+import { toast } from 'sonner';
 
 const productPriceRowGridClass =
   'grid w-full min-w-0 [grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,1.05fr)_2.5rem] gap-3 sm:gap-4';
@@ -53,31 +54,27 @@ export default function ProductForm() {
 
         if (isEditing && id) {
           const product = await getProduct(Number(id));
-          if (product) {
-            setFormData({
-              name: product.name,
-              category_id: product.category.id,
-              units: product.units.map(
-                u => ({
-                  id: u.id,
-                  unit_id: u.unit.id,
-                  multiplier: u.multiplier,
-                  is_base_unit: u.is_base_unit
-                })
-              ),
-              prices: product.prices.map(
-                p => ({
-                  id: p.id,
-                  unit_id: p.unit.id,
-                  minimum_quantity: p.minimum_quantity,
-                  price: p.price
-                })
-              )
-            });
-            setSkuNumber(product.sku_number);
-          } else {
-            setError('Produk tidak ditemukan');
-          }
+          setFormData({
+            name: product.name,
+            category_id: product.category.id,
+            units: product.units.map(
+              u => ({
+                id: u.id,
+                unit_id: u.unit.id,
+                multiplier: u.multiplier,
+                is_base_unit: u.is_base_unit
+              })
+            ),
+            prices: product.prices.map(
+              p => ({
+                id: p.id,
+                unit_id: p.unit.id,
+                minimum_quantity: p.minimum_quantity,
+                price: p.price
+              })
+            )
+          });
+          setSkuNumber(product.sku_number);
         }
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat data produk');
@@ -154,8 +151,8 @@ export default function ProductForm() {
     e.preventDefault();
     setError(null);
 
-    if (!formData.name || !formData.category_id) {
-      setError('Nama dan Kategori wajib diisi');
+    if (!formData.name.trim()) {
+      setError('Nama wajib diisi');
       return;
     }
 
@@ -175,8 +172,10 @@ export default function ProductForm() {
 
       if (isEditing && id) {
         await updateProduct(Number(id), payload as ProductUpdate);
+        toast.success(`${formData.name} berhasil diperbarui`);
       } else {
         await createProduct(payload);
+        toast.success(`${formData.name} berhasil dibuat`);
       }
       navigate('/catalog');
     } catch (err) {
@@ -208,7 +207,7 @@ export default function ProductForm() {
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
               {isEditing ? 'Edit Produk' : 'Tambah Produk'}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{isEditing ? skuNumber : 'Pengaturan Entri Baru'}</p>
+            {isEditing && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{skuNumber}</p>}
           </div>
         </div>
 
@@ -220,7 +219,6 @@ export default function ProductForm() {
             <section className="space-y-5">
               <div className="border-l-4 border-primary pl-3 mb-6">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Informasi Umum</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Detail inti yang mengidentifikasi item ini</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -262,7 +260,7 @@ export default function ProductForm() {
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
                 {formData.units.length === 0 ? (
                   <div className="py-4 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tidak ada satuan yang ditambahkan. Anda harus mengkonfigurasi minimal satu satuan</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Belum ada satuan yang ditambahkan. Anda harus mengkonfigurasi minimal satu satuan</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -333,7 +331,7 @@ export default function ProductForm() {
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
                 {formData.prices.length === 0 ? (
                   <div className="py-4 text-center">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Tidak ada harga jual yang dikonfigurasi</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Belum ada harga jual yang dikonfigurasi</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
