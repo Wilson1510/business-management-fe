@@ -7,7 +7,7 @@ import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getProducts, deleteProduct, type ProductList, type ProductListItem } from '../services/products';
 import { formatMoney, formatQty } from '../utils/format';
 import { useAuth } from '../components/auth/AuthContext';
-import { toast } from 'sonner';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function Catalog() {
   const { user } = useAuth();
@@ -75,7 +75,7 @@ export default function Catalog() {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       closeDelete();
-      toast.success(`${name} berhasil dihapus`);
+      toastSuccessDelete(name);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus produk.');
     }

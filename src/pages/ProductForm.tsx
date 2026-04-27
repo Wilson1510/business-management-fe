@@ -16,7 +16,7 @@ import {
 } from '../services/products';
 import { getCategories, type CategoryListItem } from '../services/categories';
 import { getUnits, type UnitListItem } from '../services/units';
-import { toast } from 'sonner';
+import { toastSuccessCreate, toastSuccessUpdate } from '../utils/toast';
 
 const productPriceRowGridClass =
   'grid w-full min-w-0 [grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,1.05fr)_2.5rem] gap-3 sm:gap-4';
@@ -172,10 +172,10 @@ export default function ProductForm() {
 
       if (isEditing && id) {
         await updateProduct(Number(id), payload as ProductUpdate);
-        toast.success(`${formData.name} berhasil diperbarui`);
+        toastSuccessUpdate(formData.name);
       } else {
         await createProduct(payload);
-        toast.success(`${formData.name} berhasil dibuat`);
+        toastSuccessCreate(formData.name);
       }
       navigate('/catalog');
     } catch (err) {
