@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+import { toastSuccessCreate, toastSuccessUpdate, toastSuccessDelete } from '../utils/toast';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
@@ -21,14 +22,11 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Modal states
   const [isFormOpen, setIsFormOpen] = useState(false);
-  /** Baris yang sedang diedit (punya `id` + metadata); null = mode buat baru */
   const [editingCategory, setEditingCategory] = useState<CategoryListItem | null>(null);
   const [formData, setFormData] = useState<CategoryCreate>({ name: '' });
   const [formError, setFormError] = useState<string | null>(null);
   
-  // Delete modal states
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingCategory, setDeletingCategory] = useState<CategoryDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -79,7 +77,7 @@ export default function Categories() {
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formData.name.trim()) {
-      setFormError('Name is required');
+      setFormError('Nama wajib diisi');
       return;
     }
     setFormError(null);
@@ -89,14 +87,16 @@ export default function Categories() {
         const payload: CategoryUpdate = { name: formData.name.trim() };
         const updated = await updateCategory(editingCategory.id, payload);
         setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+        toastSuccessUpdate(updated.name);
       } else {
         const payload: CategoryCreate = { name: formData.name.trim() };
         const created = await createCategory(payload);
         setCategories((prev) => [...prev, created]);
+        toastSuccessCreate(created.name);
       }
       closeForm();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan kategori');
     }
   };
 
@@ -119,8 +119,9 @@ export default function Categories() {
       await deleteCategory(id);
       setCategories((prev) => prev.filter((c) => c.id !== id));
       closeDelete();
+      toastSuccessDelete(deletingCategory.name);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete category');
+      setDeleteError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menghapus kategori');
     }
   };
 
@@ -129,10 +130,10 @@ export default function Categories() {
       {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Categories</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage product categories</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Kategori</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Kelola kategori produk</p>
         </div>
-        <AddItemButton text="Add Category" onClick={() => openForm()} />
+        <AddItemButton text="Tambah Kategori" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -140,38 +141,34 @@ export default function Categories() {
           <table className="w-full text-sm text-left">
             <thead className="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50/50 dark:bg-gray-900/40">
               <tr>
-                <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-6 py-4 font-medium">Nama</th>
+                <th className="px-6 py-4 font-medium text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Loading categories...</td>
+                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Memuat kategori...</td>
                 </tr>
               ) : categories.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">No categories found.</td>
+                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Tidak ada kategori yang ditemukan.</td>
                 </tr>
               ) : (
                 categories.map((category) => (
-                  <tr key={category.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group">
+                  <tr
+                    key={category.id}
+                    onClick={() => openForm(category)}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors group cursor-pointer"
+                  >
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{category.name}</td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => openForm(category)}
-                          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => openDelete(category)}
-                          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); openDelete(category); }}
+                        className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -187,14 +184,15 @@ export default function Categories() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
             <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {editingCategory ? 'Edit Category' : 'New Category'}
+                {editingCategory ? 'Edit Kategori' : 'Tambah Kategori'}
               </h3>
             </div>
-            <form onSubmit={handleFormSubmit} className="p-6">
+            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+              {formError && <ErrorAlert message={formError} variant="inline" />}
               <div className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Category Name
+                    Nama Kategori
                   </label>
                   <input
                     id="name"
@@ -203,15 +201,14 @@ export default function Categories() {
                     required
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-2 bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    placeholder="e.g. Electronics"
+                    placeholder="e.g. Elektronik"
                     autoFocus
                   />
                 </div>
-                {formError && <ErrorAlert message={formError} variant="inline" />}
               </div>
               <div className="mt-6 flex justify-end gap-3">
-                <FormActionButton variant="cancel" text="Cancel" onClick={closeForm} />
-                <FormActionButton variant="primary" text="Save" className="min-w-[80px]" />
+                <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
+                <FormActionButton variant="primary" text="Simpan" className="min-w-[80px]" />
               </div>
             </form>
           </div>
@@ -220,7 +217,7 @@ export default function Categories() {
 
       {isDeleteOpen && deletingCategory && (
         <ConfirmDeleteModal
-          title="Delete Category"
+          title="Hapus Kategori"
           itemName={deletingCategory.name}
           errorMessage={deleteError}
           onCancel={closeDelete}

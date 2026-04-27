@@ -35,6 +35,12 @@ export async function getCategory(id: number): Promise<CategoryDetail> {
 export async function createCategory(payload: CategoryCreate): Promise<CategoryDetail> {
   const response = await apiFetch('/api/categories/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Kategori dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -43,6 +49,12 @@ export async function createCategory(payload: CategoryCreate): Promise<CategoryD
 export async function updateCategory(id: number, payload: CategoryUpdate): Promise<CategoryDetail> {
   const response = await apiFetch(`/api/categories/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Kategori dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()

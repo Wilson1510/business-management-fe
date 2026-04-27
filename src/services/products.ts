@@ -101,6 +101,12 @@ export async function getProduct(id: number): Promise<ProductDetail> {
 export async function createProduct(payload: ProductCreate): Promise<ProductDetail> {
   const response = await apiFetch('/api/products/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleProductErrors(response)
   }
   return response.json()
@@ -109,6 +115,12 @@ export async function createProduct(payload: ProductCreate): Promise<ProductDeta
 export async function updateProduct(id: number, payload: ProductUpdate): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleProductErrors(response)
   }
   return response.json()
