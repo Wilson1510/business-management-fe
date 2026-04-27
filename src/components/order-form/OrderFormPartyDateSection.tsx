@@ -13,7 +13,7 @@ export type OrderFormPartyDateSectionProps = {
 };
 
 const fieldClass =
-  'w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60';
+  'w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-60';
 
 export function OrderFormPartyDateSection({
   isOrderLocked,

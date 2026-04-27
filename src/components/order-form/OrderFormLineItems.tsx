@@ -27,7 +27,7 @@ export type OrderFormLineItemsProps = {
 };
 
 const controlClass =
-  'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
+  'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
 
 export function OrderFormLineItems({
   isOrderLocked,
@@ -137,7 +137,7 @@ export function OrderFormLineItems({
                   </select>
 
                   <div className="w-1/4 min-w-[100px] relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-medium text-sm">Rp</span>
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-medium text-sm text-gray-500 dark:text-gray-400">Rp</span>
                     <input
                       type="text"
                       value={formatQty(Number(item.price))}
@@ -145,11 +145,11 @@ export function OrderFormLineItems({
                       onChange={e =>
                         onPriceChange(i, Number(e.target.value.replace(/[^0-9]/g, '')))
                       }
-                      className={`w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600`}
+                      className={`w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600`}
                     />
                   </div>
 
-                  <div className="w-1/4 min-w-[100px] text-right font-bold self-center tabular-nums">
+                  <div className="w-1/4 min-w-[100px] text-right font-bold self-center tabular-nums text-gray-900 dark:text-gray-100">
                     {formatMoney(lineTotal)}
                   </div>
 

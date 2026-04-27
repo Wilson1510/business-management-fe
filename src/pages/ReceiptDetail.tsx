@@ -176,7 +176,7 @@ export default function ReceiptDetail() {
   const lineControlClass =
     'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
   const destFieldClass =
-    'w-full px-4 py-3 bg-white border border-gray-200 focus:bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium disabled:opacity-60';
+    'w-full px-4 py-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-60';
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
@@ -192,7 +192,7 @@ export default function ReceiptDetail() {
                   <StatusBadge status={status} />
                 </div>
               )}
-              <span className="text-sm text-gray-500 font-medium block">
+              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium block">
                 Source PO: {readOnlyData.purchase_order.number}
               </span>
             </>
@@ -214,7 +214,7 @@ export default function ReceiptDetail() {
         />
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
         <form id="receipt-form" onSubmit={handleSaveDraft} className="p-8 space-y-8">
           {error && <ErrorAlert message={error} variant="form" />}
 
@@ -231,7 +231,7 @@ export default function ReceiptDetail() {
                   id="receipt-destination"
                   readOnly
                   value={readOnlyData.destination}
-                  className={`${destFieldClass} bg-gray-50 text-gray-900`}
+                  className={`${destFieldClass} bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-gray-100`}
                 />
               </div>
               <div className="space-y-2 min-w-0">
@@ -303,7 +303,7 @@ export default function ReceiptDetail() {
                 return (
                   <div
                     key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 last:border-0 last:pb-0 pb-4 last:mb-0"
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 pb-4 last:mb-0"
                   >
                     <div className="flex-1 min-w-[12rem]">
                       <p className="font-bold text-gray-900 leading-snug dark:text-gray-100">{line.product.name}</p>

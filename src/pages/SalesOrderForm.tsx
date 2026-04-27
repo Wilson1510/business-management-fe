@@ -300,7 +300,7 @@ export default function SalesOrderForm() {
         />
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
         <form id="so-form" onSubmit={handleSubmit} className="p-8 space-y-8">
           {error && <ErrorAlert message={error} variant="form" />}
 
