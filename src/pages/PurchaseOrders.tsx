@@ -83,10 +83,10 @@ export default function PurchaseOrders() {
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeading
-          title="Manage Purchase Orders"
-          description="Track and confirm orders from suppliers"
+          title="Daftar Pesanan Pembelian"
+          description="Mengelola dan mengkonfirmasi pesanan dari pemasok"
         />
-        <AddItemButton text="Create PO" onClick={() => navigate('/purchases/new')} />
+        <AddItemButton text="Tambah Pembelian" onClick={() => navigate('/purchases/new')} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -97,7 +97,7 @@ export default function PurchaseOrders() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by PO number or supplier..."
+              placeholder="Cari berdasarkan nomor PO atau pemasok..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
             />
           </div>
@@ -107,9 +107,9 @@ export default function PurchaseOrders() {
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold">PO Number</th>
-                <th className="px-6 py-4 font-semibold">Supplier</th>
-                <th className="px-6 py-4 font-semibold">Arrival Date</th>
+                <th className="px-6 py-4 font-semibold">Nomor PO</th>
+                <th className="px-6 py-4 font-semibold">Pemasok</th>
+                <th className="px-6 py-4 font-semibold">Tanggal Penerimaan</th>
                 <th className="px-6 py-4 font-semibold text-right">Total</th>
                 <th className="px-6 py-4 font-semibold">Status</th>
                 <th className="px-6 py-4 font-semibold w-10">Aksi</th>
@@ -118,11 +118,11 @@ export default function PurchaseOrders() {
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading orders...</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pesanan...</td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">No purchase orders found.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pesanan pembelian yang ditemukan</td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
@@ -147,7 +147,7 @@ export default function PurchaseOrders() {
                     <td className="px-6 py-4 text-right">
                       <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        aria-label="Hapus purchase order"
+                        aria-label="Hapus pesanan pembelian"
                       />
                     </td>
                   </tr>
@@ -160,12 +160,12 @@ export default function PurchaseOrders() {
 
       {isDeleteOpen && deletingOrder && (
         <ConfirmDeleteModal
-          title="Delete Purchase Order"
+          title="Hapus Pesanan Pembelian"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
           onCancel={closeDelete}
           onConfirm={handleDelete}
-          confirmLabel="Delete Purchase Order"
+          confirmLabel="Hapus Pesanan Pembelian"
         />
       )}
     </div>

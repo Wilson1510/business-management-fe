@@ -61,7 +61,7 @@ export default function Deliveries() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search deliveries..."
+              placeholder="Cari pengiriman berdasarkan nomor atau pesanan..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
           </div>
         </div>
@@ -70,21 +70,21 @@ export default function Deliveries() {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Delivery Number</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Source Order</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Delivery Date</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Ship Method</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Nomor Pengiriman</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Pesanan</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Tanggal Pengiriman</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Metode Pengiriman</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading deliveries...</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pengiriman...</td>
                 </tr>
               ) : filteredDeliveries.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">No outbound deliveries pending. Confirm a Sales Order to spawn one.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pengiriman yang tertunda</td>
                 </tr>
               ) : (
                 filteredDeliveries.map((dlv) => (
@@ -96,7 +96,7 @@ export default function Deliveries() {
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-900 dark:text-white transition-colors">{dlv.number}</div>
                       <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 transition-colors">
-                        Order: {dlv.sales_order.number}
+                        Pesanan: {dlv.sales_order.number}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-primary dark:text-blue-400 font-mono">{dlv.sales_order.number}</td>

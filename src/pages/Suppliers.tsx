@@ -44,7 +44,7 @@ export default function Suppliers() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load suppliers');
+          setError(e instanceof Error ? e.message : 'Gagal memuat pemasok');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -95,7 +95,7 @@ export default function Suppliers() {
     e.preventDefault();
     for (const [key, value] of Object.entries(formData)) {
       if (typeof value === 'string' && !value.trim()) {
-        setFormError(`${key} is required`);
+        setFormError(`${key} wajib diisi`);
         return;
       }
     }
@@ -127,7 +127,7 @@ export default function Suppliers() {
       }
       closeForm();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan');
     }
   };
 
@@ -152,7 +152,7 @@ export default function Suppliers() {
       setSuppliers((prev) => prev.filter((s) => s.id !== id));
       closeDelete();
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete supplier');
+      setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pemasok');
     }
   };
 
@@ -160,8 +160,8 @@ export default function Suppliers() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading title="Manage Suppliers" description="Track and manage inventory vendors" />
-        <AddItemButton text="Add Supplier" onClick={() => openForm()} />
+        <PageHeading title="Daftar Pemasok" description="Mengelola pemasok inventaris" />
+        <AddItemButton text="Tambah Pemasok" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -172,7 +172,7 @@ export default function Suppliers() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search suppliers..."
+              placeholder="Cari pemasok berdasarkan nama, email, atau nomor telepon..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
           </div>
         </div>
@@ -181,23 +181,23 @@ export default function Suppliers() {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold">Name & Entity</th>
-                <th className="px-6 py-4 font-semibold">Contact Info</th>
-                <th className="px-4 py-4 font-semibold text-center">Total PO</th>
-                <th className="px-4 py-4 font-semibold text-center">Last PO</th>
-                <th className="px-6 py-4 font-semibold text-right">Total Spend</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-6 py-4 font-semibold">Nama & Entitas</th>
+                <th className="px-6 py-4 font-semibold">Info Kontak</th>
+                <th className="px-4 py-4 font-semibold text-center">Jumlah Pembelian</th>
+                <th className="px-4 py-4 font-semibold text-center">Pembelian Terakhir</th>
+                <th className="px-6 py-4 font-semibold text-right">Total Pembelian</th>
+                <th className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading suppliers...</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pemasok...</td>
                 </tr>
               ) : filteredSuppliers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {suppliers.length === 0 ? 'No suppliers found. Start by creating one.' : 'No suppliers match your search.'}
+                    {suppliers.length === 0 ? 'Tidak ada pemasok yang ditemukan' : 'Tidak ada pemasok yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (
@@ -249,7 +249,7 @@ export default function Suppliers() {
             <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Truck className="text-primary" size={24} /> 
-                {editingSupplier ? 'Edit Supplier' : 'New Supplier'}
+                {editingSupplier ? 'Edit Pemasok' : 'Tambah Pemasok'}
               </h2>
             </div>
 
@@ -258,7 +258,7 @@ export default function Suppliers() {
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Company / Individual Name</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan / Nama Individu</label>
                   <input
                     type="text"
                     required
@@ -269,7 +269,7 @@ export default function Suppliers() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Business Entity Type</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
                   <select
                     value={formData.business_entity}
                     onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as SupplierDetail['business_entity'] })}
@@ -285,7 +285,7 @@ export default function Suppliers() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Address</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Email</label>
                     <input
                       type="email"
                       value={formData.email}
@@ -294,7 +294,7 @@ export default function Suppliers() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
                     <input
                       type="text"
                       value={formData.phone}
@@ -305,7 +305,7 @@ export default function Suppliers() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Physical Address</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Fisik</label>
                   <textarea
                     rows={3}
                     value={formData.address}
@@ -316,10 +316,10 @@ export default function Suppliers() {
               </div>
 
               <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-                <FormActionButton variant="cancel" text="Cancel" onClick={closeForm} />
+                <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
                 <FormActionButton
                   variant="primary"
-                  text={editingSupplier ? 'Save Changes' : 'Create Supplier'}
+                  text="Simpan"
                 />
               </div>
             </form>
@@ -329,7 +329,7 @@ export default function Suppliers() {
 
       {isDeleteOpen && deletingSupplier && (
         <ConfirmDeleteModal
-          title="Delete Supplier"
+          title="Hapus Pemasok"
           itemName={deletingSupplier.name}
           errorMessage={deleteError}
           onCancel={closeDelete}

@@ -8,6 +8,7 @@ import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getSalesOrders, deleteSalesOrder, type SalesOrderList, type SalesOrderListItem } from '../services/sales';
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate, formatMoney } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
 
 export default function SalesOrders() {
   const navigate = useNavigate();
@@ -81,11 +82,11 @@ export default function SalesOrders() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Manage Sales Orders</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Track and confirm customer orders</p>
-        </div>
-        <AddItemButton text="Create Order" onClick={() => navigate('/sales/new')} />
+        <PageHeading
+          title="Daftar Penjualan"
+          description="Mengelola dan mengkonfirmasi pesanan pelanggan"
+        />
+        <AddItemButton text="Tambah Penjualan" onClick={() => navigate('/sales/new')} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -96,7 +97,7 @@ export default function SalesOrders() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by SO number or customer..."
+              placeholder="Cari berdasarkan nomor SO atau pelanggan..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
             />
           </div>
@@ -106,9 +107,9 @@ export default function SalesOrders() {
           <table className="w-full text-sm text-left whitespace-nowrap">
             <thead className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50/80 dark:bg-gray-700/50 transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold">SO Number</th>
-                <th className="px-6 py-4 font-semibold">Customer</th>
-                <th className="px-6 py-4 font-semibold">Delivery Date</th>
+                <th className="px-6 py-4 font-semibold">Nomor SO</th>
+                <th className="px-6 py-4 font-semibold">Pelanggan</th>
+                <th className="px-6 py-4 font-semibold">Tanggal Pengiriman</th>
                 <th className="px-6 py-4 font-semibold text-right">Total</th>
                 <th className="px-6 py-4 font-semibold">Status</th>
                 <th className="px-6 py-4 font-semibold w-10">Aksi</th>
@@ -117,11 +118,11 @@ export default function SalesOrders() {
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading orders...</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pesanan...</td>
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">No sales orders found.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pesanan penjualan yang ditemukan.</td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
@@ -146,7 +147,7 @@ export default function SalesOrders() {
                     <td className="px-6 py-4 text-right">
                       <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        aria-label="Hapus sales order"
+                        aria-label="Hapus pesanan penjualan"
                       />
                     </td>
                   </tr>
@@ -159,12 +160,12 @@ export default function SalesOrders() {
 
       {isDeleteOpen && deletingOrder && (
         <ConfirmDeleteModal
-          title="Delete Sales Order"
+          title="Hapus Pesanan Penjualan"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
           onCancel={closeDelete}
           onConfirm={handleDelete}
-          confirmLabel="Delete Sales Order"
+          confirmLabel="Hapus Pesanan Penjualan"
         />
       )}
     </div>

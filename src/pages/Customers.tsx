@@ -54,7 +54,7 @@ export default function Customers() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load customers');
+          setError(e instanceof Error ? e.message : 'Gagal memuat pelanggan');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -106,7 +106,7 @@ export default function Customers() {
     e.preventDefault();
     for (const [key, value] of Object.entries(formData)) {
       if (typeof value === 'string' && !value.trim()) {
-        setFormError(`${key} is required`);
+        setFormError(`${key} wajib diisi`);
         return;
       }
     }
@@ -138,7 +138,7 @@ export default function Customers() {
       }
       closeForm();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan');
     }
   };
 
@@ -163,7 +163,7 @@ export default function Customers() {
       setCustomers((prev) => prev.filter((c) => c.id !== id));
       closeDelete();
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete customer');
+      setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pelanggan');
     }
   };
 
@@ -171,8 +171,8 @@ export default function Customers() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading title="Manage Customers" description="Track and manage client organizations" />
-        <AddItemButton text="Add Customer" onClick={() => openForm()} />
+        <PageHeading title="Daftar Pelanggan" description="Mengelola organisasi pelanggan" />
+        <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -183,7 +183,7 @@ export default function Customers() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search customers..."
+              placeholder="Cari pelanggan berdasarkan nama, email, atau nomor telepon..."
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
           </div>
         </div>
@@ -192,23 +192,23 @@ export default function Customers() {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold">Name & Entity</th>
-                <th className="px-6 py-4 font-semibold">Contact Info</th>
-                <th className="px-4 py-4 font-semibold text-center">Total SO</th>
-                <th className="px-4 py-4 font-semibold text-center">Last SO</th>
-                <th className="px-6 py-4 font-semibold text-right">Total Revenue</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-6 py-4 font-semibold">Nama & Entitas</th>
+                <th className="px-6 py-4 font-semibold">Info Kontak</th>
+                <th className="px-4 py-4 font-semibold text-center">Total Pesanan</th>
+                <th className="px-4 py-4 font-semibold text-center">Pesanan Terakhir</th>
+                <th className="px-6 py-4 font-semibold text-right">Total Pendapatan</th>
+                <th className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading customers...</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pelanggan...</td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {customers.length === 0 ? 'No customers found. Start by creating one.' : 'No customers match your search.'}
+                    {customers.length === 0 ? 'Tidak ada pelanggan yang ditemukan' : 'Tidak ada pelanggan yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (
@@ -260,7 +260,7 @@ export default function Customers() {
             <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <Users className="text-primary" size={24} /> 
-                {editingCustomer ? 'Edit Customer' : 'New Customer'}
+                {editingCustomer ? 'Edit Pelanggan' : 'Tambah Pelanggan'}
               </h2>
             </div>
 
@@ -269,7 +269,7 @@ export default function Customers() {
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Company / Individual Name</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan / Nama Individu</label>
                   <input
                     type="text"
                     required
@@ -280,7 +280,7 @@ export default function Customers() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Business Entity Type</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
                   <select
                     value={formData.business_entity}
                     onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as CustomerDetail['business_entity'] })}
@@ -296,7 +296,7 @@ export default function Customers() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Address</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Email</label>
                     <input
                       type="email"
                       value={formData.email}
@@ -305,7 +305,7 @@ export default function Customers() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
                     <input
                       type="text"
                       value={formData.phone}
@@ -316,7 +316,7 @@ export default function Customers() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Physical Address</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Fisik</label>
                   <textarea
                     rows={3}
                     value={formData.address}
@@ -327,10 +327,10 @@ export default function Customers() {
               </div>
 
               <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-                <FormActionButton variant="cancel" text="Cancel" onClick={closeForm} />
+                <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
                 <FormActionButton
                   variant="primary"
-                  text={editingCustomer ? 'Save Changes' : 'Create Customer'}
+                  text="Simpan"
                 />
               </div>
             </form>
@@ -340,7 +340,7 @@ export default function Customers() {
 
       {isDeleteOpen && deletingCustomer && (
         <ConfirmDeleteModal
-          title="Delete Customer"
+          title="Hapus Pelanggan"
           itemName={deletingCustomer.name}
           errorMessage={deleteError}
           onCancel={closeDelete}
