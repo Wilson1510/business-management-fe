@@ -104,11 +104,21 @@ export default function Customers() {
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    for (const [key, value] of Object.entries(formData)) {
-      if (typeof value === 'string' && !value.trim()) {
-        setFormError(`${key} wajib diisi`);
-        return;
-      }
+    if (!formData.name.trim()) {
+      setFormError('Nama wajib diisi');
+      return;
+    }
+    if (!formData.business_entity) {
+      setFormError('Jenis entitas bisnis wajib diisi');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setFormError('Email wajib diisi');
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setFormError('Nomor telepon wajib diisi');
+      return;
     }
     setFormError(null);
 
@@ -282,6 +292,7 @@ export default function Customers() {
                   <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
                   <select
                     value={formData.business_entity}
+                    required
                     onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as CustomerDetail['business_entity'] })}
                     className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
                   >
@@ -298,6 +309,7 @@ export default function Customers() {
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
                     <input
                       type="email"
+                      required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -307,6 +319,7 @@ export default function Customers() {
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
                     <input
                       type="tel"
+                      required
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
