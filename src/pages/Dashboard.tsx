@@ -65,7 +65,7 @@ export default function Dashboard() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load dashboard');
+          setError(e instanceof Error ? e.message : 'Gagal memuat dashboard');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -84,32 +84,32 @@ export default function Dashboard() {
 
   const cards = [
     {
-      title: 'Total Revenue',
+      title: 'Total Penjualan',
       value: metrics ? formatMoney(metrics.total_revenue) : '—',
       icon: DollarSign,
-      color: 'text-blue-600',
-      bg: 'bg-blue-100',
+      color: 'text-blue-600 dark:text-blue-400',
+      bg: 'bg-blue-100 dark:bg-blue-950/40',
     },
     {
-      title: 'Gross Margin',
+      title: 'Laba Kotor',
       value: metrics ? formatMoney(metrics.gross_margin) : '—',
       icon: Activity,
-      color: 'text-green-600',
-      bg: 'bg-green-100',
+      color: 'text-green-600 dark:text-green-400',
+      bg: 'bg-green-100 dark:bg-green-950/40',
     },
     {
-      title: 'Active Sales',
+      title: 'Penjualan Aktif',
       value: metrics ? metrics.active_sales_orders : '—',
       icon: ShoppingBag,
-      color: 'text-purple-600',
-      bg: 'bg-purple-100',
+      color: 'text-purple-600 dark:text-purple-400',
+      bg: 'bg-purple-100 dark:bg-purple-950/40',
     },
     {
-      title: 'Active Purchases',
+      title: 'Pembelian Aktif',
       value: metrics ? metrics.active_purchase_orders : '—',
       icon: Package,
-      color: 'text-orange-600',
-      bg: 'bg-orange-100',
+      color: 'text-orange-600 dark:text-orange-400',
+      bg: 'bg-orange-100 dark:bg-orange-950/40',
     },
   ];
 
@@ -126,7 +126,7 @@ export default function Dashboard() {
               className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-xl ${card.bg} dark:bg-opacity-20 ${card.color}`}>
+                <div className={`p-3 rounded-xl ${card.bg} ${card.color}`}>
                   <Icon size={24} />
                 </div>
               </div>
@@ -140,12 +140,12 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Top Selling
+            Produk Terlaris
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : topSelling.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {topSelling.map((item) => (
@@ -157,7 +157,6 @@ export default function Dashboard() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.sku_number}</p>
                   </div>
                   <div className="text-xs font-semibold px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-md">
-                  {/* <div className="text-sm font-bold text-gray-700 dark:text-gray-300 shrink-0"> */}
                     {formatQty(item.sold_qty)} {item.unit}
                   </div>
                 </div>
@@ -168,12 +167,12 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Slow Moving
+            Produk Kurang Laku
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : slowMoving.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {slowMoving.map((item) => (
@@ -195,12 +194,12 @@ export default function Dashboard() {
 
         <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-sm p-6 transition-colors duration-300">
           <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 transition-colors">
-            Top Customers
+            Pelanggan Terbaik
           </h3>
           {loading ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Loading…</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm italic">Memuat…</div>
           ) : topCustomers.length === 0 ? (
-            <div className="text-gray-500 dark:text-gray-400 text-sm">No data yet.</div>
+            <div className="text-gray-500 dark:text-gray-400 text-sm">Belum ada data</div>
           ) : (
             <div className="space-y-4">
               {topCustomers.map((item, index) => {

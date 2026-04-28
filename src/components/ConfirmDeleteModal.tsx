@@ -1,5 +1,6 @@
 import { Trash2 } from 'lucide-react';
 import { ErrorAlert } from './ErrorAlert';
+import { FormActionButton } from './FormActionButton';
 
 export type ConfirmDeleteModalProps = {
   title: string;
@@ -9,8 +10,10 @@ export type ConfirmDeleteModalProps = {
   onConfirm: () => void;
   errorMessage?: string | null;
   cancelLabel?: string;
-  /** Primary destructive action (default: "Delete Item"). */
+  /** Primary destructive action when idle (default: "Hapus"). */
   confirmLabel?: string;
+  /** Saat API hapus sedang berjalan. */
+  deleting?: boolean;
 };
 
 export function ConfirmDeleteModal({
@@ -19,9 +22,12 @@ export function ConfirmDeleteModal({
   onCancel,
   onConfirm,
   errorMessage,
-  cancelLabel = 'Cancel',
-  confirmLabel = 'Delete Item',
+  cancelLabel = 'Batal',
+  confirmLabel = 'Hapus',
+  deleting = false,
 }: ConfirmDeleteModalProps) {
+  const primaryText = deleting ? 'Menghapus...' : confirmLabel;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
@@ -38,28 +44,26 @@ export function ConfirmDeleteModal({
             {title}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            You are about to delete <span className="font-bold text-gray-900 dark:text-gray-100">{`"${itemName}"`}</span>.
-            This action is permanent and cannot be reversed.
+            Anda akan menghapus <span className="font-bold text-gray-900 dark:text-gray-100">{`${itemName}`}</span>.
+            Aksi ini tidak dapat dibatalkan.
           </p>
 
           {errorMessage && <ErrorAlert message={errorMessage} variant="dialog" />}
 
-          <div className="flex gap-3">
-            <button
-              type="button"
+          <fieldset disabled={deleting} className="flex gap-3 border-0 p-0 min-w-0 m-0">
+            <FormActionButton
+              variant="cancel"
+              text={cancelLabel}
               onClick={onCancel}
-              className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-            >
-              {cancelLabel}
-            </button>
-            <button
-              type="button"
+              className="min-w-0 flex-1"
+            />
+            <FormActionButton
+              variant="danger"
+              text={primaryText}
               onClick={onConfirm}
-              className="flex-1 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-md shadow-red-600/20 cursor-pointer"
-            >
-              {confirmLabel}
-            </button>
-          </div>
+              className="min-w-0 flex-1"
+            />
+          </fieldset>
         </div>
       </div>
     </div>

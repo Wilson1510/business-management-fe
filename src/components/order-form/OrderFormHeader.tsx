@@ -14,7 +14,7 @@ export function OrderFormHeader({ onBack, titleIcon, title, subtitle }: OrderFor
       <button
         type="button"
         onClick={onBack}
-        className="p-2 text-gray-400 hover:text-gray-600 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl transition-colors cursor-pointer"
+        className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl transition-colors cursor-pointer"
       >
         <ArrowLeft size={20} />
       </button>

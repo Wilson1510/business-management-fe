@@ -15,8 +15,16 @@ export async function handleCommonErrors(response: Response): Promise<never> {
 }
 
 export function handleUnexpectedError(error: unknown): never {
-  if (error instanceof Error && error.message.includes('Failed to fetch')) {
+  if (error instanceof TypeError) {
+    console.error(`Tidak dapat terhubung ke server: ${error}`);
     throw new Error('Tidak dapat terhubung ke server. Silahkan coba lagi nanti');
   }
-  throw error;
+  
+  if (error instanceof Error) {
+    console.error(`Terjadi kesalahan: ${error}`);
+    throw error;
+  }
+
+  console.error(`Terjadi kesalahan yang tidak terduga: ${error}`);
+  throw new Error('Terjadi kesalahan yang tidak terduga');
 }

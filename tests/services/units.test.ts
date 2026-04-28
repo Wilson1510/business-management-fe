@@ -11,15 +11,15 @@ describe('deleteUnit', () => {
     vi.mocked(apiFetch).mockReset();
   });
 
-  it('throws custom error when unit has references (409 status with unit_has_references code)', async () => {
+  it('throws custom error when unit has references (409 status with has_references code)', async () => {
     vi.mocked(apiFetch).mockResolvedValue(
-      new Response(JSON.stringify({ code: 'unit_has_references', detail: 'This unit cannot be deleted...' }), {
+      new Response(JSON.stringify({ code: 'has_references', detail: 'This unit cannot be deleted...' }), {
         status: 409,
         headers: { 'Content-Type': 'application/json' },
       }),
     );
 
-    await expect(deleteUnit(1)).rejects.toThrow('Unit ini masih digunakan oleh sales order atau purchase order');
+    await expect(deleteUnit(1)).rejects.toThrow('Satuan ini masih digunakan oleh penjualan atau pembelian');
   });
 
   it('handles regular API errors fallback through handleCommonErrors', async () => {

@@ -1,11 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, UserCog, Clock, Trash2 } from 'lucide-react';
+import { UserCog, Clock } from 'lucide-react';
+import { TableSearchInput } from '../components/TableSearchInput';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { getUsers, deleteUser, type UserList, type UserListItem } from '../services/users';
 import { RoleBadge } from '../components/RoleBadge';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { formatDate } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function Users() {
   const navigate = useNavigate();
@@ -16,7 +21,8 @@ export default function Users() {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingUser, setDeletingUser] = useState<UserListItem | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);  
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -30,7 +36,7 @@ export default function Users() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load users');
+          setError(e instanceof Error ? e.message : 'Gagal memuat pengguna');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -59,17 +65,22 @@ export default function Users() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingUser(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingUser) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteUser(deletingUser.id);
       setUsers((prev) => prev.filter((u) => u.id !== deletingUser.id));
       closeDelete();
+      toastSuccessDelete(deletingUser.name);
     } catch (e) {
-      setDeleteError(e instanceof Error ? e.message : 'Failed to delete user');
+      setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus pengguna');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -77,64 +88,55 @@ export default function Users() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <UserCog className="text-primary" size={24} />
-            User Management
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Manage system access, administrative privileges, and staff accounts
-          </p>
-        </div>
+        <PageHeading
+          title={
+            <span className="flex items-center gap-2">
+              <UserCog className="text-primary" size={24} />
+              Pengguna
+            </span>
+          }
+          description="Mengelola pengguna"
+        />
         
-        <button 
-          onClick={() => navigate('/settings/users/new')}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-medium"
-        >
-          <Plus size={20} />
-          Add User
-        </button>
+        <AddItemButton text="Tambah Pengguna" onClick={() => navigate('/settings/users/new')} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
         <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search by name, email, or role..." 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-gray-900 dark:text-white focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" 
-            />
-          </div>
+          <TableSearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari berdasarkan nama..."
+          />
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider transition-colors">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Account</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">System Role</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Akun</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Peran</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Status</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Last Active</th>
-                <th className="px-6 py-4 font-semibold text-right border-b border-gray-100 dark:border-gray-700">Actions</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Terakhir Aktif</th>
+                <th className="px-6 py-4 font-semibold text-right border-b border-gray-100 dark:border-gray-700">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading system accounts...</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pengguna...</td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">No users found.</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    {users.length === 0 ? 'Tidak ada pengguna yang ditemukan' : 'Tidak ada pengguna yang cocok dengan pencarian Anda'}
+                  </td>
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
                   <tr 
                     key={user.id} 
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group cursor-pointer"
                     onClick={() => navigate(`/settings/users/${user.id}`)}
                   >
                     <td className="px-6 py-4">
@@ -161,21 +163,19 @@ export default function Users() {
                     <td className="px-6 py-4 align-middle text-gray-500 dark:text-gray-400 transition-colors text-xs">
                       {user.last_login ? (
                         <div className="flex items-center gap-1.5">
-                          <Clock size={14} className="text-gray-400 shrink-0" />
+                          <Clock size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
                           {formatDate(user.last_login, true)}
                         </div>
                       ) : (
-                        'Never logged in'
+                        'Tidak pernah terhubung'
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => openDelete(user)}
-                          className="p-1.5 rounded-lg transition-colors text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <DeleteIconButton
+                          onClick={(e) => { e.stopPropagation(); openDelete(user); }}
+                          aria-label="Hapus pengguna"
+                        />
                       </div>
                     </td>
                   </tr>
@@ -188,9 +188,10 @@ export default function Users() {
 
       {isDeleteOpen && deletingUser && (
         <ConfirmDeleteModal
-          title="Delete User"
+          title="Hapus Pengguna"
           itemName={deletingUser.username}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

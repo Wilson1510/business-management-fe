@@ -1,11 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, Plus, PackageSearch } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
+import { TableSearchInput } from '../components/TableSearchInput';
+import { PageHeading } from '../components/PageHeading';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getProducts, deleteProduct, type ProductList, type ProductListItem } from '../services/products';
 import { formatMoney, formatQty } from '../utils/format';
 import { useAuth } from '../components/auth/AuthContext';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function Catalog() {
   const { user } = useAuth();
@@ -18,6 +22,7 @@ export default function Catalog() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState<ProductListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -62,18 +67,24 @@ export default function Catalog() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingProduct(null);
+    setIsDeleting(false);
   };
 
   async function handleDelete() {
     if (!deletingProduct) return;
     const id = deletingProduct.id;
+    const name = deletingProduct.name;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       closeDelete();
+      toastSuccessDelete(name);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus produk.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -84,39 +95,28 @@ export default function Catalog() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Product List</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage inventory items, units, and pricing</p>
-        </div>
+        <PageHeading
+          title="Daftar Produk"
+          description="Mengelola item inventaris, satuan, dan harga"
+        />
         
         {isAdmin && (
-          <button
-            onClick={() => navigate('/catalog/product/new')}
-            className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 cursor-pointer"
-          >
-            <Plus size={18} />
-            Create Product
-          </button>
+          <AddItemButton text="Tambah Produk" onClick={() => navigate('/catalog/product/new')} />
         )}
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
         <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex gap-4">
-           {/* Basic search dummy header */}
-           <div className="relative flex-1 max-w-md">
-             <PackageSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={18} />
-             <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by SKU or Name..."
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900/50 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
-           </div>
+          <TableSearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari berdasarkan SKU atau Nama..."
+          />
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50/80 dark:bg-gray-900/40">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
                 <th className="px-6 py-4 font-semibold">Nama Produk</th>
                 <th className="px-6 py-4 font-semibold">Kategori</th>
@@ -129,21 +129,21 @@ export default function Catalog() {
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading products...</td>
+                  <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat produk...</td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
-                    {products.length === 0 ? 'No products found. Start by creating one.' : 'No products match your search.'}
+                    {products.length === 0 ? 'Belum ada produk' : 'Tidak ada produk yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (
                 filteredProducts.map((product) => (
-                  <tr 
+                  <tr
                     key={product.id} 
                     onClick={isAdmin ? () => navigate(`/catalog/product/${product.id}`) : undefined}
                     className={`
-                      hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group
+                      hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors group
                       ${isAdmin ? 'cursor-pointer' : 'cursor-default'}`
                     }
                   >
@@ -162,24 +162,22 @@ export default function Catalog() {
                       {formatQty(product.quantity)} {product.unit}
                     </td>
                     {isAdmin && (
-                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                      <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white tracking-tight tabular-nums">
                         {formatMoney(product.base_price)}
                       </td>
                     )}
                     {isAdmin && (
-                      <td className="px-6 py-4 text-right font-mono text-gray-600 dark:text-gray-400 tracking-tight tabular-nums">
+                      <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white tracking-tight tabular-nums">
                         {formatMoney(product.price)}
                       </td>
                     )}
                     {isAdmin && (
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <button
+                          <DeleteIconButton
                             onClick={(e) => { e.stopPropagation(); openDelete(product); }}
-                            className="p-2 text-gray-400 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                          >
-                            <Trash2 size={18} />
-                          </button>
+                            aria-label="Hapus produk"
+                          />
                         </div>
                       </td>
                     )}
@@ -193,9 +191,10 @@ export default function Catalog() {
 
       {isDeleteOpen && deletingProduct && (
         <ConfirmDeleteModal
-          title="Delete Product"
+          title="Hapus Produk"
           itemName={deletingProduct.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

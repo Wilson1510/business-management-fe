@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search, Trash2, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
+import { TableSearchInput } from '../components/TableSearchInput';
+import { DeleteIconButton } from '../components/DeleteIconButton';
+import { AddItemButton } from '../components/AddItemButton';
 import {
   getCustomers,
   createCustomer,
@@ -13,7 +16,10 @@ import {
 } from '../services/customers';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
+import { FormActionButton } from '../components/FormActionButton';
 import { formatDate, formatMoney } from '../utils/format';
+import { PageHeading } from '../components/PageHeading';
+import { toastSuccessCreate, toastSuccessDelete, toastSuccessUpdate } from '../utils/toast';
 
 export default function Customers() {
   const emptyCustomerData: CustomerCreate = {
@@ -33,10 +39,12 @@ export default function Customers() {
   const [editingCustomer, setEditingCustomer] = useState<CustomerListItem | null>(null);
   const [formData, setFormData] = useState<CustomerCreate>(emptyCustomerData);
   const [formError, setFormError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingCustomer, setDeletingCustomer] = useState<CustomerDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -50,7 +58,7 @@ export default function Customers() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load customers');
+          setError(e instanceof Error ? e.message : 'Gagal memuat pelanggan');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -67,9 +75,7 @@ export default function Customers() {
 
     const query = searchQuery.toLowerCase();
     return customers.filter((customer) =>
-      customer.name.toLowerCase().includes(query) ||
-      customer.email.toLowerCase().includes(query) ||
-      customer.phone.toLowerCase().includes(query)
+      customer.name.toLowerCase().includes(query) || customer.phone.toLowerCase().includes(query)
     );
   }, [customers, searchQuery]);
 
@@ -100,14 +106,24 @@ export default function Customers() {
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
-    for (const [key, value] of Object.entries(formData)) {
-      if (typeof value === 'string' && !value.trim()) {
-        setFormError(`${key} is required`);
-        return;
-      }
+    if (!formData.name.trim()) {
+      setFormError('Nama wajib diisi');
+      return;
+    }
+    if (!formData.business_entity) {
+      setFormError('Jenis entitas bisnis wajib diisi');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setFormError('Email wajib diisi');
+      return;
+    }
+    if (!formData.phone.trim()) {
+      setFormError('Nomor telepon wajib diisi');
+      return;
     }
     setFormError(null);
-
+    setSaving(true);
     try {
       if (editingCustomer) {
         const payload: CustomerUpdate = {
@@ -121,6 +137,7 @@ export default function Customers() {
         setCustomers((prev) =>
           prev.map((c) => (c.id === updated.id ? { ...c, ...updated } : c))
         );
+        toastSuccessUpdate(updated.name);
       } else {
         const payload: CustomerCreate = { name: formData.name.trim(), business_entity: formData.business_entity, email: formData.email, phone: formData.phone, address: formData.address };
         const created = await createCustomer(payload);
@@ -131,10 +148,13 @@ export default function Customers() {
           total_sales_amount: 0,
         };
         setCustomers((prev) => [...prev, newRow]);
+        toastSuccessCreate(created.name);
       }
       closeForm();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -148,18 +168,23 @@ export default function Customers() {
     setIsDeleteOpen(false);
     setDeletingCustomer(null);
     setDeleteError(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingCustomer) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       const id = deletingCustomer.id;
       await deleteCustomer(id);
       setCustomers((prev) => prev.filter((c) => c.id !== id));
       closeDelete();
+      toastSuccessDelete(deletingCustomer.name);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete customer');
+      setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pelanggan');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -167,53 +192,40 @@ export default function Customers() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-bold text-gray-900">Manage Customers</h2>
-          <p className="text-sm text-gray-500">Track and manage client organizations</p>
-        </div>
-        <button
-          onClick={() => openForm()}
-          className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm shadow-primary/20 cursor-pointer"
-        >
-          <Plus size={18} />
-          Add Customer
-        </button>
+        <PageHeading title="Daftar Pelanggan" description="Mengelola pelanggan" />
+        <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
         <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search customers..."
-              className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:bg-white dark:focus:bg-gray-900 focus:ring-2 focus:ring-primary/20 outline-none transition-colors" />
-          </div>
+          <TableSearchInput
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari berdasarkan nama atau nomor telepon..."
+          />
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider transition-colors">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold">Name & Entity</th>
-                <th className="px-6 py-4 font-semibold">Contact Info</th>
-                <th className="px-4 py-4 font-semibold text-center">Total SO</th>
-                <th className="px-4 py-4 font-semibold text-center">Last SO</th>
-                <th className="px-6 py-4 font-semibold text-right">Total Revenue</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-6 py-4 font-semibold">Nama & Entitas</th>
+                <th className="px-6 py-4 font-semibold">Info Kontak</th>
+                <th className="px-4 py-4 font-semibold text-center">Jumlah Penjualan</th>
+                <th className="px-4 py-4 font-semibold text-center">Penjualan Terakhir</th>
+                <th className="px-6 py-4 font-semibold text-right">Total Pendapatan</th>
+                <th className="px-6 py-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Loading customers...</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pelanggan...</td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {customers.length === 0 ? 'No customers found. Start by creating one.' : 'No customers match your search.'}
+                    {customers.length === 0 ? 'Belum ada pelanggan' : 'Tidak ada pelanggan yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (
@@ -225,13 +237,13 @@ export default function Customers() {
                   >
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900 dark:text-white">{customer.name}</div>
-                      <div className="text-xs font-semibold text-primary/80 mt-1 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 dark:bg-primary/20">
-                        {customer.business_entity}
+                      <div className="text-xs font-semibold capitalize text-primary/80 mt-1 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 dark:bg-primary/20">
+                        {customer.business_entity.length <= 2 ? customer.business_entity.toUpperCase() : customer.business_entity}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900 dark:text-gray-200 font-medium">{customer.email || '—'}</div>
-                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{customer.phone || '—'}</div>
+                      <div className="text-gray-900 dark:text-gray-200 font-medium">{customer.phone || '—'}</div>
+                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{customer.email || '—'}</div>
                     </td>
                     <td className="px-4 py-4 text-center">
                       <div className="inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold px-2.5 py-0.5 rounded-full text-xs">
@@ -241,16 +253,14 @@ export default function Customers() {
                     <td className="px-4 py-4 text-center font-medium text-gray-600 dark:text-gray-400">
                       {customer.last_sales_order_date ? formatDate(customer.last_sales_order_date) : '—'}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono font-bold text-gray-900 dark:text-gray-200">
+                    <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
                       {formatMoney(customer.total_sales_amount)}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button
+                      <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(customer); }}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        aria-label="Hapus pelanggan"
+                      />
                     </td>
                   </tr>
                 ))
@@ -263,101 +273,99 @@ export default function Customers() {
       {/* MODAL */}
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Users className="text-primary" size={24} /> 
-                {editingCustomer ? 'Edit Customer' : 'New Customer'}
-              </h2>
-            </div>
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
+            <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <Users className="text-primary" size={24} /> 
+                  {editingCustomer ? 'Edit Pelanggan' : 'Tambah Pelanggan'}
+                </h2>
+              </div>
 
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
-              {formError && <ErrorAlert message={formError} variant="inline" />}
+              <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+                {formError && <ErrorAlert message={formError} variant="inline" />}
 
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700">Company / Individual Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium transition-all"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700">Business Entity Type</label>
-                  <select
-                    value={formData.business_entity}
-                    onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as CustomerDetail['business_entity'] })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium transition-all"
-                  >
-                    <option value="pt">PT (Perseroan Terbatas)</option>
-                    <option value="cv">CV (Commanditaire Vennootschap)</option>
-                    <option value="perorangan">Personal / Individual</option>
-                    <option value="ud">UD (Usaha Dagang)</option>
-                    <option value="lainnya">Lainnya</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700">Email Address</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium transition-all"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700">Phone</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan/Individu</label>
                     <input
                       type="text"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium transition-all"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
+                    <select
+                      value={formData.business_entity}
+                      required
+                      onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as CustomerDetail['business_entity'] })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="pt">PT (Perseroan Terbatas)</option>
+                      <option value="cv">CV (Commanditaire Vennootschap)</option>
+                      <option value="perorangan">Personal / Individual</option>
+                      <option value="ud">UD (Usaha Dagang)</option>
+                      <option value="lainnya">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat</label>
+                    <textarea
+                      rows={3}
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
+                    ></textarea>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700">Physical Address</label>
-                  <textarea
-                    rows={3}
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium transition-all resize-none"
-                  ></textarea>
+                <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+                  <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
+                <FormActionButton
+                  variant="primary"
+                  text={saving ? 'Menyimpan...' : 'Simpan'}
+                />
                 </div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeForm}
-                  className="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-md shadow-primary/20 transition-all cursor-pointer disabled:opacity-70"
-                >
-                  {editingCustomer ? 'Save Changes' : 'Create Customer'}
-                </button>
-              </div>
-            </form>
+              </form>
+            </fieldset>
           </div>
         </div>
       )}
 
       {isDeleteOpen && deletingCustomer && (
         <ConfirmDeleteModal
-          title="Delete Customer"
+          title="Hapus Pelanggan"
           itemName={deletingCustomer.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

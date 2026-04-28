@@ -18,22 +18,22 @@ function labelsAndPaths(role: string) {
 }
 
 describe('getAppNavItems', () => {
-  it('returns staff sidebar: products, deliveries, receipts only', () => {
+  it('returns staff sidebar: produk, pengiriman, penerimaan only', () => {
     expect(labelsAndPaths('staff')).toEqual([
-      { name: 'Products', path: '/catalog' },
-      { name: 'Deliveries', path: '/sales/deliveries' },
-      { name: 'Receipts', path: '/purchases/receipts' },
+      { name: 'Produk', path: '/catalog' },
+      { name: 'Pengiriman', path: '/sales/deliveries' },
+      { name: 'Penerimaan', path: '/purchases/receipts' },
     ]);
   });
 
   it('returns full admin menu for admin', () => {
     expect(labelsAndPaths('admin')).toEqual([
-      { name: 'Dashboard', path: '/dashboard' },
-      { name: 'Catalog', path: '/catalog' },
-      { name: 'Sales', path: '/sales' },
-      { name: 'Purchases', path: '/purchases' },
-      { name: 'Contacts', path: '/contacts' },
-      { name: 'System Users', path: '/settings/users' },
+      { name: 'Beranda', path: '/dashboard' },
+      { name: 'Katalog', path: '/catalog' },
+      { name: 'Penjualan', path: '/sales' },
+      { name: 'Pembelian', path: '/purchases' },
+      { name: 'Kontak', path: '/contacts' },
+      { name: 'Pengguna', path: '/settings/users' },
     ]);
   });
 
@@ -49,6 +49,7 @@ const layoutUser: CurrentUser = {
   name: 'Alice',
   role: 'admin',
   is_active: true,
+  last_login: new Date().toISOString(),
 };
 
 function renderAppLayoutWithAuth(user: CurrentUser) {
@@ -90,7 +91,7 @@ describe('AppLayout handleLogout', () => {
     expect(screen.getByText('Dashboard content')).toBeInTheDocument();
 
     const user = userEvent.setup();
-    await user.click(screen.getByRole('button', { name: 'Sign Out' }));
+    await user.click(screen.getByRole('button', { name: 'Keluar' }));
 
     expect(logout).toHaveBeenCalledTimes(1);
 

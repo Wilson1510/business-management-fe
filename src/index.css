@@ -10,3 +10,19 @@
 body {
     @apply bg-surface-dim;
 }
+
+/*
+ * Browser autofill (saran dari password manager / penyimpanan) memakai pseudo-class
+ * :-webkit-autofill dengan latar/teks bawaan yang mengalahkan utility Tailwind.
+ * Bayangan inset besar memaksa warna isian agar selaras dengan dark theme (.dark).
+ */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+    -webkit-text-fill-color: rgb(243 244 246);
+    caret-color: rgb(243 244 246);
+    -webkit-box-shadow: 0 0 0 1000px rgb(17 24 39 / 0.5) inset;
+    box-shadow: 0 0 0 1000px rgb(17 24 39 / 0.5) inset;
+    transition: background-color 99999s ease-out 0s;
+}

@@ -1,5 +1,6 @@
 import { CheckCircle2, CircleX } from 'lucide-react';
 import { ErrorAlert } from '../ErrorAlert';
+import { FormActionButton } from '../FormActionButton';
 
 export type OrderActionDialogProps = {
   action: 'confirm' | 'cancel' | null;
@@ -13,6 +14,26 @@ export type OrderActionDialogProps = {
   mode?: 'order' | 'delivery' | 'receipt';
 };
 
+const PRIMARY_WHILE_SAVING = {
+  cancel: 'Membatalkan',
+  order: 'Mengkonfirmasi',
+  delivery: 'Menyelesaikan',
+  receipt: 'Menyelesaikan',
+};
+
+const PRIMARY_BUTTON_LABEL = {
+  cancel: 'Batalkan',
+  order: 'Konfirmasi',
+  delivery: 'Selesaikan',
+  receipt: 'Selesaikan',
+};
+
+const MODE_TRANSLATION = {
+  order: 'pesanan',
+  delivery: 'pengiriman',
+  receipt: 'penerimaan',
+}
+
 export function OrderActionDialog({
   action,
   orderNumber,
@@ -25,7 +46,9 @@ export function OrderActionDialog({
 }: OrderActionDialogProps) {
 
   const isConfirm = action === 'confirm';
-  const title = `${action} this ${mode}?`;
+  const savingKey = isConfirm ? mode : 'cancel';
+  const title = `${PRIMARY_BUTTON_LABEL[savingKey]} ${MODE_TRANSLATION[mode]} ini?`;
+  const primaryLabel = saving ? PRIMARY_WHILE_SAVING[savingKey] : PRIMARY_BUTTON_LABEL[savingKey];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -49,35 +72,22 @@ export function OrderActionDialog({
             {title}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            <span className="capitalize">{action}</span> <span className="font-bold text-gray-900 dark:text-gray-100">
+            <span className="capitalize">{PRIMARY_BUTTON_LABEL[savingKey]}</span> <span className="font-bold text-gray-900 dark:text-gray-100">
               &quot;{orderNumber}&quot;
-            </span> ? {action === 'confirm' ? confirmDetail : 'This cannot be undone from this screen.'}
+            </span> ? {action === 'confirm' ? confirmDetail : ''}
           </p>
 
           {actionError && <ErrorAlert message={actionError} variant="dialog" />}
 
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={saving}
-              className="flex-1 py-3 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer disabled:opacity-60"
-            >
-              Back
-            </button>
-            <button
-              type="button"
+          <fieldset disabled={saving} className="flex gap-3 border-0 p-0 min-w-0 m-0">
+            <FormActionButton variant="cancel" text="Kembali" onClick={onClose} className="min-w-0 flex-1" />
+            <FormActionButton
+              variant={isConfirm ? 'success' : 'danger'}
+              text={primaryLabel}
               onClick={onSubmit}
-              disabled={saving}
-              className={
-                isConfirm
-                  ? 'flex-1 py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-md shadow-emerald-600/20 cursor-pointer disabled:opacity-70'
-                  : 'flex-1 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-md shadow-red-600/20 cursor-pointer disabled:opacity-70'
-              }
-            >
-              {saving ? 'Working…' : 'Yes'}
-            </button>
-          </div>
+              className="min-w-0 flex-1"
+            />
+          </fieldset>
         </div>
       </div>
     </div>

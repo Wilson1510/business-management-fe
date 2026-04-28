@@ -90,6 +90,9 @@ export async function getProducts(): Promise<ProductList> {
 export async function getProduct(id: number): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`)
   if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Produk tidak ditemukan');
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -98,6 +101,12 @@ export async function getProduct(id: number): Promise<ProductDetail> {
 export async function createProduct(payload: ProductCreate): Promise<ProductDetail> {
   const response = await apiFetch('/api/products/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleProductErrors(response)
   }
   return response.json()
@@ -106,6 +115,12 @@ export async function createProduct(payload: ProductCreate): Promise<ProductDeta
 export async function updateProduct(id: number, payload: ProductUpdate): Promise<ProductDetail> {
   const response = await apiFetch(`/api/products/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleProductErrors(response)
   }
   return response.json()
@@ -116,8 +131,8 @@ export async function deleteProduct(id: number): Promise<void> {
   if (!response.ok) {
     if (response.status === 409) {
       const errorData = await response.clone().json().catch(() => null);
-      if (errorData && errorData.code === "product_has_references") {
-        throw new Error("Produk ini masih digunakan oleh sales order atau purchase order");
+      if (errorData && errorData.code === "has_references") {
+        throw new Error("Produk ini masih digunakan oleh penjualan atau pembelian");
       }
     }
 

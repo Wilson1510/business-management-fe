@@ -62,6 +62,12 @@ export async function createUser(payload: UserCreate): Promise<UserDetail> {
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Akun dengan username '${payload.username}' sudah digunakan`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -73,6 +79,12 @@ export async function updateUser(id: number, payload: UserUpdate): Promise<UserD
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Akun dengan username '${payload.username}' sudah digunakan`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -94,23 +106,18 @@ export async function fetchCurrentUser(): Promise<CurrentUser> {
   return response.json()
 }
 
-export async function updateCurrentUser(payload: UserUpdate): Promise<CurrentUser> {
-  const response = await apiFetch('/api/users/me/', {
-    method: 'PATCH',
-    body: JSON.stringify(payload),
-  })
-  if (!response.ok) {
-    await handleCommonErrors(response)
-  }
-  return response.json()
-}
-
 export async function changePassword(payload: ChangePassword): Promise<void> {
   const response = await apiFetch('/api/users/me/change-password/', {
     method: 'PATCH',
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "invalid") {
+        throw new Error('Kata sandi saat ini salah');
+      }
+    }
     await handleCommonErrors(response)
   }
 }

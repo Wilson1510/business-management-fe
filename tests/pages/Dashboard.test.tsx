@@ -50,7 +50,7 @@ describe('Dashboard', () => {
     expect(screen.getAllByText('…')).toHaveLength(4);
     
     // Check 'Loading…' text for the 3 lists (Top Selling, Slow Moving, Top Customers)
-    expect(screen.getAllByText('Loading…')).toHaveLength(3);
+    expect(screen.getAllByText('Memuat…')).toHaveLength(3);
   });
 
   it('renders metrics and lists successfully when APIs resolve', async () => {
@@ -89,7 +89,7 @@ describe('Dashboard', () => {
 
     // Wait until 'No data yet.' appears 3 times (for 3 lists)
     await waitFor(() => {
-      expect(screen.getAllByText('No data yet.')).toHaveLength(3);
+      expect(screen.getAllByText('Belum ada data')).toHaveLength(3);
     });
   });
 
@@ -106,6 +106,6 @@ describe('Dashboard', () => {
     });
     
     // Ensure the loading state is removed from the lists
-    expect(screen.queryByText('Loading…')).not.toBeInTheDocument();
+    expect(screen.queryByText('Memuat…')).not.toBeInTheDocument();
   });
 });

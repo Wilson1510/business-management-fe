@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Pencil, Trash2, Plus } from 'lucide-react';
+import { DeleteIconButton } from '../components/DeleteIconButton';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
+import { FormActionButton } from '../components/FormActionButton';
 import {
   getUnits,
   createUnit,
@@ -13,6 +15,8 @@ import {
   type UnitCreate,
   type UnitUpdate,
 } from '../services/units';
+import { toastSuccessCreate, toastSuccessDelete, toastSuccessUpdate } from '../utils/toast';
+import { PageHeading } from '../components/PageHeading';
 
 export default function Units() {
   const [units, setUnits] = useState<UnitList>([]);
@@ -24,11 +28,13 @@ export default function Units() {
   const [editingUnit, setEditingUnit] = useState<UnitListItem | null>(null);
   const [formData, setFormData] = useState<UnitCreate>({ name: '' });
   const [formError, setFormError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   
   // Delete modal states
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingUnit, setDeletingUnit] = useState<UnitDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -42,7 +48,7 @@ export default function Units() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load units');
+          setError(e instanceof Error ? e.message : 'Gagal memuat satuan');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -76,24 +82,28 @@ export default function Units() {
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!formData.name.trim()) {
-      setFormError('Name is required');
+      setFormError('Nama wajib diisi');
       return;
     }
     setFormError(null);
-    
+    setSaving(true);
     try {
       if (editingUnit) {
         const payload: UnitUpdate = { name: formData.name.trim() };
         const updated = await updateUnit(editingUnit.id, payload);
         setUnits((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+        toastSuccessUpdate(updated.name);
       } else {
         const payload: UnitCreate = { name: formData.name.trim() };
         const created = await createUnit(payload);
         setUnits((prev) => [...prev, created]);
+        toastSuccessCreate(created.name);
       }
       closeForm();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'An error occurred');
+      setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan satuan');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -107,17 +117,22 @@ export default function Units() {
     setIsDeleteOpen(false);
     setDeletingUnit(null);
     setDeleteError(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingUnit) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteUnit(deletingUnit.id);
       setUnits((prev) => prev.filter((u) => u.id !== deletingUnit.id));
       closeDelete();
+      toastSuccessDelete(deletingUnit.name);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'An error occurred while deleting unit');
+      setDeleteError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menghapus satuan');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -125,56 +140,41 @@ export default function Units() {
     <div className="space-y-6 animate-in fade-in duration-500">
       {error && <ErrorAlert message={error} />}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Units</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage measurement units</p>
-        </div>
-        <button
-          onClick={() => openForm()}
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm shadow-primary/20"
-        >
-          <Plus size={16} />
-          Add Unit
-        </button>
+        <PageHeading title="Satuan" description="Kelola satuan pengukuran" />
+        <AddItemButton text="Tambah Satuan" onClick={() => openForm()} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50/50 dark:bg-gray-900/40">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-medium">Name</th>
-                <th className="px-6 py-4 font-medium text-right">Actions</th>
+                <th className="px-6 py-4 font-medium">Nama</th>
+                <th className="px-6 py-4 font-medium text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Loading units...</td>
+                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Memuat satuan...</td>
                 </tr>
               ) : units.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">No units found.</td>
+                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada satuan</td>
                 </tr>
               ) : (
                 units.map((unit) => (
-                  <tr key={unit.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/40 transition-colors group">
+                  <tr
+                  key={unit.id}
+                  onClick={() => openForm(unit)}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700/40 transition-colors group cursor-pointer"
+                  >
                     <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{unit.name}</td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => openForm(unit)}
-                          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-primary transition-colors cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg"
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          onClick={() => openDelete(unit)}
-                          className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                      <DeleteIconButton
+                        onClick={(e) => { e.stopPropagation(); openDelete(unit); }}
+                        aria-label="Hapus satuan"
+                      />
                     </td>
                   </tr>
                 ))
@@ -188,55 +188,51 @@ export default function Units() {
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
-            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {editingUnit ? 'Edit Unit' : 'New Unit'}
-              </h3>
-            </div>
-            <form onSubmit={handleFormSubmit} className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Unit Name
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={formData.name}
-                    required
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 bg-white dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    placeholder="e.g. Box"
-                    autoFocus
+            <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
+              <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {editingUnit ? 'Edit Satuan' : 'Tambah Satuan'}
+                </h3>
+              </div>
+              <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+                {formError && <ErrorAlert message={formError} variant="inline" />}
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Nama Satuan
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      required
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      placeholder="e.g. Pcs"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end gap-3">
+                  <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
+                  <FormActionButton
+                    variant="primary"
+                    text={saving ? 'Menyimpan...' : 'Simpan'}
+                    className="min-w-[80px]"
                   />
                 </div>
-                {formError && <ErrorAlert message={formError} variant="inline" />}
-              </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={closeForm}
-                  className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-xl transition-colors min-w-[80px] cursor-pointer shadow-sm shadow-primary/20"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+              </form>
+            </fieldset>
           </div>
         </div>
       )}
 
       {isDeleteOpen && deletingUnit && (
         <ConfirmDeleteModal
-          title="Delete Unit"
+          title="Hapus Satuan"
           itemName={deletingUnit.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

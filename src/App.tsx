@@ -9,6 +9,7 @@ import ContactsLayout from './components/layout/ContactsLayout';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { StaffRouteGuard } from './components/auth/StaffRouteGuard';
 import { AuthProvider } from './components/auth/AuthContext';
+import { AppToaster } from './components/AppToaster';
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -41,6 +42,7 @@ function RoleAwareHomeRedirect() {
 function App() {
   return (
     <AuthProvider>
+      <AppToaster />
       <Routes>
         <Route path="/login" element={<Login />} />
 

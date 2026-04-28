@@ -35,6 +35,12 @@ export async function getUnit(id: number): Promise<UnitDetail> {
 export async function createUnit(payload: UnitCreate): Promise<UnitDetail> {
   const response = await apiFetch('/api/units/', { method: 'POST', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Satuan dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -43,6 +49,12 @@ export async function createUnit(payload: UnitCreate): Promise<UnitDetail> {
 export async function updateUnit(id: number, payload: UnitUpdate): Promise<UnitDetail> {
   const response = await apiFetch(`/api/units/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) });
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        throw new Error(`Satuan dengan nama '${payload.name}' sudah ada`);
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -53,8 +65,8 @@ export async function deleteUnit(id: number): Promise<void> {
   if (!response.ok) {
     if (response.status === 409) {
       const errorData = await response.clone().json().catch(() => null);
-      if (errorData && errorData.code === "unit_has_references") {
-        throw new Error("Unit ini masih digunakan oleh sales order atau purchase order");
+      if (errorData && errorData.code === "has_references") {
+        throw new Error("Satuan ini masih digunakan oleh penjualan atau pembelian");
       }
     }
     await handleCommonErrors(response)

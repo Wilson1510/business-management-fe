@@ -75,7 +75,7 @@ describe('Catalog Page', () => {
     vi.mocked(getProducts).mockReturnValue(new Promise(() => {}));
     setupRouter('admin');
 
-    expect(screen.getByText('Loading products...')).toBeInTheDocument();
+    expect(screen.getByText('Memuat produk...')).toBeInTheDocument();
   });
 
   it('displays error message if fetching fails', async () => {
@@ -85,7 +85,7 @@ describe('Catalog Page', () => {
     await waitFor(() => {
       expect(screen.getByText('Network error')).toBeInTheDocument();
     });
-    expect(screen.queryByText('Loading products...')).not.toBeInTheDocument();
+    expect(screen.queryByText('Memuat produk...')).not.toBeInTheDocument();
   });
 
   it('displays empty state message', async () => {
@@ -93,7 +93,7 @@ describe('Catalog Page', () => {
     setupRouter('admin');
 
     await waitFor(() => {
-      expect(screen.getByText('No products found. Start by creating one.')).toBeInTheDocument();
+      expect(screen.getByText('Tidak ada produk yang ditemukan')).toBeInTheDocument();
     });
   });
 
@@ -102,14 +102,14 @@ describe('Catalog Page', () => {
     setupRouter('admin');
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading products...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Memuat produk...')).not.toBeInTheDocument();
     });
 
     // Check header
-    expect(screen.getByText('Product List')).toBeInTheDocument();
+    expect(screen.getByText('Daftar Produk')).toBeInTheDocument();
     
     // Check elements specific to admin
-    expect(screen.getByRole('button', { name: /create product/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /tambah produk/i })).toBeInTheDocument();
     expect(screen.getByText('Aksi')).toBeInTheDocument(); // Column header
 
     // Check formatter Output
@@ -131,10 +131,10 @@ describe('Catalog Page', () => {
     setupRouter('staff');
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading products...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Memuat produk...')).not.toBeInTheDocument();
     });
 
-    expect(screen.queryByRole('button', { name: /create product/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /tambah produk/i })).not.toBeInTheDocument();
     expect(screen.queryByText('Aksi')).not.toBeInTheDocument();
     expect(screen.queryByText('Harga Dasar')).not.toBeInTheDocument();
     expect(screen.queryByText('Harga Jual')).not.toBeInTheDocument();
@@ -153,7 +153,7 @@ describe('Catalog Page', () => {
     const user = userEvent.setup();
     setupRouter('admin');
 
-    const createBtn = await screen.findByRole('button', { name: /create product/i });
+    const createBtn = await screen.findByRole('button', { name: /tambah produk/i });
     await user.click(createBtn);
 
     expect(screen.getByTestId('new-product-page')).toBeInTheDocument();
@@ -199,14 +199,14 @@ describe('Catalog Page', () => {
     await user.click(deleteBtn);
 
     // Assert modal is open
-    expect(screen.getByText('Delete Product')).toBeInTheDocument();
+    expect(screen.getByText('Hapus Produk')).toBeInTheDocument();
     
     // Click cancel
-    const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+    const cancelBtn = screen.getByRole('button', { name: /batal/i });
     await user.click(cancelBtn);
 
     // Assert modal is closed
-    expect(screen.queryByText('Delete Product')).not.toBeInTheDocument();
+    expect(screen.queryByText('Hapus Produk')).not.toBeInTheDocument();
     expect(deleteProduct).not.toHaveBeenCalled();
   });
 
@@ -225,7 +225,7 @@ describe('Catalog Page', () => {
     
     await user.click(deleteBtn);
 
-    const confirmBtn = screen.getByRole('button', { name: /delete item/i });
+    const confirmBtn = screen.getByRole('button', { name: /hapus/i });
     await user.click(confirmBtn);
 
     await waitFor(() => {
@@ -233,7 +233,7 @@ describe('Catalog Page', () => {
     });
 
     // Modal should close
-    expect(screen.queryByText('Delete Product')).not.toBeInTheDocument();
+    expect(screen.queryByText('Hapus Produk')).not.toBeInTheDocument();
     
     // The "Mineral Water" item should be removed from view
     expect(screen.queryByText('Mineral Water')).not.toBeInTheDocument();
@@ -256,15 +256,15 @@ describe('Catalog Page', () => {
     
     await user.click(deleteBtn);
 
-    const confirmBtn = screen.getByRole('button', { name: /delete item/i });
+    const confirmBtn = screen.getByRole('button', { name: /hapus/i });
     await user.click(confirmBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Cannot delete item in use')).toBeInTheDocument();
+      expect(screen.getByText('Gagal menghapus produk.')).toBeInTheDocument();
     });
 
     // Modal should still remain open
-    expect(screen.getByText('Delete Product')).toBeInTheDocument();
+    expect(screen.getByText('Hapus Produk')).toBeInTheDocument();
   });
 
   it('filters products based on search input', async () => {
@@ -274,7 +274,7 @@ describe('Catalog Page', () => {
 
     await screen.findByText('Mineral Water');
     
-    const searchInput = screen.getByPlaceholderText('Search by SKU or Name...');
+    const searchInput = screen.getByPlaceholderText('Cari berdasarkan SKU atau Nama...');
     await user.type(searchInput, 'Snack');
 
     // Mineral Water should disappear, Snack Bar should remain
@@ -287,6 +287,6 @@ describe('Catalog Page', () => {
     
     expect(screen.queryByText('Mineral Water')).not.toBeInTheDocument();
     expect(screen.queryByText('Snack Bar')).not.toBeInTheDocument();
-    expect(screen.getByText('No products match your search.')).toBeInTheDocument();
+    expect(screen.getByText('Tidak ada produk yang cocok dengan pencarian Anda')).toBeInTheDocument();
   });
 });

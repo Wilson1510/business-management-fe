@@ -52,6 +52,17 @@ export async function createSupplier(payload: SupplierCreate): Promise<SupplierD
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        if (errorData.detail && errorData.detail.includes("phone")) {
+          throw new Error(`Pemasok dengan nomor telepon '${payload.phone}' sudah ada`);
+        }
+        if (errorData.detail && errorData.detail.includes("email")) {
+          throw new Error(`Pemasok dengan email '${payload.email}' sudah ada`);
+        }
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -63,6 +74,17 @@ export async function updateSupplier(id: number, payload: SupplierUpdate): Promi
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 400) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "unique") {
+        if (errorData.detail && errorData.detail.includes("phone")) {
+          throw new Error(`Pemasok dengan nomor telepon '${payload.phone}' sudah ada`);
+        }
+        if (errorData.detail && errorData.detail.includes("email")) {
+          throw new Error(`Pemasok dengan email '${payload.email}' sudah ada`);
+        }
+      }
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -73,6 +95,12 @@ export async function deleteSupplier(id: number): Promise<void> {
     method: 'DELETE',
   })
   if (!response.ok) {
+    if (response.status === 409) {
+      const errorData = await response.clone().json().catch(() => null);
+      if (errorData && errorData.code === "has_references") {
+        throw new Error("Pemasok ini memiliki pembelian");
+      }
+    }
     await handleCommonErrors(response)
   }
 }
