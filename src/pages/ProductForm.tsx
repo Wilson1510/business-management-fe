@@ -20,8 +20,24 @@ import { getCategories, type CategoryListItem } from '../services/categories';
 import { getUnits, type UnitListItem } from '../services/units';
 import { toastSuccessCreate, toastSuccessUpdate } from '../utils/toast';
 
-const productPriceRowGridClass =
-  'grid w-full min-w-0 [grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,1.05fr)_2.5rem] gap-3 sm:gap-4';
+/** Desktop: satu baris grid; mobile: stack kolom penuh per field (string lengkap agar JIT Tailwind menyertakan arb. grid). */
+/** Kolom ketiga: harga + hapus dalam satu sel. Gap dalam baris dipadatkan — antar kelompok dipisah pembungkus. */
+const productPriceStackOrGridRow =
+  'flex flex-col gap-2.5 w-full min-w-0 sm:grid sm:gap-3 sm:items-center sm:[grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,2fr)]';
+
+const productPriceHeaderRow =
+  'hidden sm:grid w-full min-w-0 gap-3 sm:gap-3 mb-1 items-end border-b border-gray-100 pb-2.5 dark:border-gray-700 sm:[grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,2fr)]';
+
+const mobileFieldLabelClass =
+  'mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 sm:hidden';
+
+/** Satu baris konversi satuan: satuan + pengali dalam satu blok visual */
+const productUnitRowGroupClass =
+  'rounded-xl border border-indigo-200/80 bg-indigo-50/40 px-3 py-3 shadow-sm dark:border-indigo-800/55 dark:bg-indigo-950/35 sm:px-4 sm:py-4';
+
+/** Satu baris harga jual: satuan / jml / harga satu kelompok */
+const productPriceRowGroupClass =
+  'rounded-xl border border-emerald-200/80 bg-emerald-50/35 px-3 py-3 shadow-sm dark:border-emerald-800/55 dark:bg-emerald-950/35 sm:px-4 sm:py-4';
 
 export default function ProductForm() {
   const navigate = useNavigate();
@@ -268,7 +284,7 @@ export default function ProductForm() {
                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Belum ada satuan yang ditambahkan. Anda harus mengkonfigurasi minimal satu satuan</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {formData.units.map((u, index) => {
                       const baseUnitObj = formData.units.find(u => u.is_base_unit);
                       const baseUnitName = baseUnitObj ? unitsList.find(ul => ul.id === baseUnitObj.unit_id)?.name : 'satuan dasar';
@@ -276,42 +292,53 @@ export default function ProductForm() {
                       const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
                       return (
-                        <div key={rowKey} className="flex w-full min-w-0 items-center gap-3 sm:gap-4">
-                          <select
-                            required
-                            value={u.unit_id || ''}
-                            onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
-                            className="min-w-0 flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                        <div
+                          key={rowKey}
+                          className={`${productUnitRowGroupClass} flex w-full min-w-0 flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-4`}
+                        >
+                          <div className="min-w-0 w-full sm:flex-1">
+                            <span className={mobileFieldLabelClass}>Satuan</span>
+                            <select
+                              required
+                              value={u.unit_id || ''}
+                              onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
+                              className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                            >
+                              <option value="" disabled hidden>Pilih satuan...</option>
+                              {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
+                            </select>
+                          </div>
+
+                          <span
+                            className="hidden shrink-0 px-1 text-gray-400 dark:text-gray-500 font-bold sm:block"
+                            aria-hidden
                           >
-                            <option value="" disabled hidden>Pilih satuan...</option>
-                            {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
-                          </select>
-                          
-                          <span className="shrink-0 text-gray-400 dark:text-gray-500 font-bold" aria-hidden>
                             =
                           </span>
-                          
-                          <div className="flex min-w-0 flex-1 items-center gap-3">
-                            <input
-                              type="number"
-                              min="1"
-                              readOnly={isBase}
-                              value={isBase ? 1 : u.multiplier}
-                              onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
-                              className={`min-w-0 flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`}
-                            />
-                            <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 min-w-0 text-right sm:min-w-[4.5rem]">
-                              {baseUnitName}
-                            </span>
-                          </div>
-                          
-                          <div className="w-10 shrink-0 flex justify-center">
-                            {!isBase && (
-                              <DeleteIconButton
-                                onClick={() => removeProductUnit(index)}
-                                aria-label="Hapus satuan"
+
+                          <div className="flex min-w-0 w-full flex-1 flex-col gap-2">
+                            <span className={mobileFieldLabelClass}>Pengali</span>
+                            <div className="flex min-w-0 flex-row items-center gap-2 sm:gap-3">
+                              <input
+                                type="number"
+                                min="1"
+                                readOnly={isBase}
+                                value={isBase ? 1 : u.multiplier}
+                                onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
+                                className={`min-w-0 flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`}
                               />
-                            )}
+                              <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 sm:min-w-[4.5rem] sm:text-right">
+                                {baseUnitName}
+                              </span>
+                              {!isBase && (
+                                <div className="flex shrink-0 justify-center">
+                                  <DeleteIconButton
+                                    onClick={() => removeProductUnit(index)}
+                                    aria-label="Hapus satuan"
+                                  />
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -344,10 +371,8 @@ export default function ProductForm() {
                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Belum ada harga jual yang dikonfigurasi</p>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div
-                      className={`${productPriceRowGridClass} mb-1 items-end border-b border-gray-100 pb-2.5 dark:border-gray-700`}
-                    >
+                  <div className="space-y-5">
+                    <div className={productPriceHeaderRow}>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Satuan Jual</span>
                       <span
                         className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400"
@@ -356,17 +381,15 @@ export default function ProductForm() {
                         Jml. min.
                       </span>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Harga</span>
-                      <span className="w-10 shrink-0" />
                     </div>
 
                     {formData.prices.map((p, i) => {
                       const rowKey = p.id != null ? `price-${p.id}` : `price-new-${i}`;
                       return (
-                      <div
-                        key={rowKey}
-                        className={`${productPriceRowGridClass} items-center`}
-                      >
-                        <div className="min-w-0">
+                      <div key={rowKey} className={productPriceRowGroupClass}>
+                      <div className={productPriceStackOrGridRow}>
+                        <div className="min-w-0 w-full">
+                          <span className={mobileFieldLabelClass}>Satuan jual</span>
                           <label htmlFor={`price-unit-${rowKey}`} className="sr-only">Satuan jual</label>
                           <select
                             id={`price-unit-${rowKey}`}
@@ -379,7 +402,8 @@ export default function ProductForm() {
                             {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
                           </select>
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 w-full">
+                          <span className={mobileFieldLabelClass}>Jml. min.</span>
                           <label htmlFor={`price-minqty-${rowKey}`} className="sr-only">Jumlah minimum</label>
                           <input
                             id={`price-minqty-${rowKey}`}
@@ -390,28 +414,34 @@ export default function ProductForm() {
                             className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
                           />
                         </div>
-                        <div className="min-w-0">
-                          <label htmlFor={`price-amount-${rowKey}`} className="sr-only">Harga</label>
-                          <div className="relative">
-                            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
-                            <input
-                              id={`price-amount-${rowKey}`}
-                              type="text"
-                              value={formatQty(Number(p.price))}
-                              onChange={e =>
-                                updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
-                              }
-                              placeholder="0.00"
-                              className="w-full min-w-0 pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                            />
+                        <div className="min-w-0 w-full sm:min-w-0">
+                          <span className={mobileFieldLabelClass}>Harga</span>
+                          <div className="flex min-w-0 flex-row items-center gap-2">
+                            <div className="relative min-w-0 flex-1">
+                              <label htmlFor={`price-amount-${rowKey}`} className="sr-only">Harga</label>
+                              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">
+                                Rp
+                              </span>
+                              <input
+                                id={`price-amount-${rowKey}`}
+                                type="text"
+                                value={formatQty(Number(p.price))}
+                                onChange={e =>
+                                  updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
+                                }
+                                placeholder="0.00"
+                                className="w-full min-w-0 pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                              />
+                            </div>
+                            <div className="flex shrink-0 justify-center">
+                              <DeleteIconButton
+                                onClick={() => removeProductPrice(i)}
+                                aria-label="Hapus baris harga"
+                              />
+                            </div>
                           </div>
                         </div>
-                        <div className="flex w-10 shrink-0 justify-center">
-                          <DeleteIconButton
-                            onClick={() => removeProductPrice(i)}
-                            aria-label="Hapus baris harga"
-                          />
-                        </div>
+                      </div>
                       </div>
                     );
                     })}
