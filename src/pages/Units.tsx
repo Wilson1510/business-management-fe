@@ -34,6 +34,7 @@ export default function Units() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingUnit, setDeletingUnit] = useState<UnitDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -116,11 +117,13 @@ export default function Units() {
     setIsDeleteOpen(false);
     setDeletingUnit(null);
     setDeleteError(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingUnit) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteUnit(deletingUnit.id);
       setUnits((prev) => prev.filter((u) => u.id !== deletingUnit.id));
@@ -128,6 +131,8 @@ export default function Units() {
       toastSuccessDelete(deletingUnit.name);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menghapus satuan');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -227,6 +232,7 @@ export default function Units() {
           title="Hapus Satuan"
           itemName={deletingUnit.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

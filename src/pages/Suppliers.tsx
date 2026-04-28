@@ -34,6 +34,7 @@ export default function Suppliers() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingSupplier, setDeletingSupplier] = useState<SupplierDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -156,11 +157,13 @@ export default function Suppliers() {
     setIsDeleteOpen(false);
     setDeletingSupplier(null);
     setDeleteError(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingSupplier) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       const id = deletingSupplier.id;
       await deleteSupplier(id);
@@ -169,6 +172,8 @@ export default function Suppliers() {
       toastSuccessDelete(deletingSupplier.name);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pemasok');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -346,6 +351,7 @@ export default function Suppliers() {
           title="Hapus Pemasok"
           itemName={deletingSupplier.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

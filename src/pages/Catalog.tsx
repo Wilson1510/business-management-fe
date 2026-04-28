@@ -22,6 +22,7 @@ export default function Catalog() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState<ProductListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -66,6 +67,7 @@ export default function Catalog() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingProduct(null);
+    setIsDeleting(false);
   };
 
   async function handleDelete() {
@@ -73,6 +75,7 @@ export default function Catalog() {
     const id = deletingProduct.id;
     const name = deletingProduct.name;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
@@ -80,6 +83,8 @@ export default function Catalog() {
       toastSuccessDelete(name);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus produk.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -189,6 +194,7 @@ export default function Catalog() {
           title="Hapus Produk"
           itemName={deletingProduct.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

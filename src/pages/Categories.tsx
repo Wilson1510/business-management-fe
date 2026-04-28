@@ -32,6 +32,7 @@ export default function Categories() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingCategory, setDeletingCategory] = useState<CategoryDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -113,11 +114,14 @@ export default function Categories() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingCategory(null);
+    setDeleteError(null);
+    setIsDeleting(false);
   };
 
   async function handleDelete() {
     if (!deletingCategory) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       const id = deletingCategory.id;
       await deleteCategory(id);
@@ -126,6 +130,8 @@ export default function Categories() {
       toastSuccessDelete(deletingCategory.name);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menghapus kategori');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -225,6 +231,7 @@ export default function Categories() {
           title="Hapus Kategori"
           itemName={deletingCategory.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

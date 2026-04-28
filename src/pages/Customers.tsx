@@ -44,6 +44,7 @@ export default function Customers() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingCustomer, setDeletingCustomer] = useState<CustomerDetail | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -167,11 +168,13 @@ export default function Customers() {
     setIsDeleteOpen(false);
     setDeletingCustomer(null);
     setDeleteError(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingCustomer) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       const id = deletingCustomer.id;
       await deleteCustomer(id);
@@ -180,6 +183,8 @@ export default function Customers() {
       toastSuccessDelete(deletingCustomer.name);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pelanggan');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -360,6 +365,7 @@ export default function Customers() {
           title="Hapus Pelanggan"
           itemName={deletingCustomer.name}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />

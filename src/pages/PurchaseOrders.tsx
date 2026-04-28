@@ -21,6 +21,7 @@ export default function PurchaseOrders() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingOrder, setDeletingOrder] = useState<PurchaseOrderListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -64,12 +65,15 @@ export default function PurchaseOrders() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingOrder(null);
+    setDeleteError(null);
+    setIsDeleting(false);
   };
 
   async function handleDelete() {
     if (!deletingOrder) return;
     const id = deletingOrder.id;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deletePurchaseOrder(id);
       setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -77,6 +81,8 @@ export default function PurchaseOrders() {
       toastSuccessDelete(deletingOrder.number);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus purchase order.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -162,6 +168,7 @@ export default function PurchaseOrders() {
           title="Hapus Pembelian"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
           confirmLabel="Hapus"

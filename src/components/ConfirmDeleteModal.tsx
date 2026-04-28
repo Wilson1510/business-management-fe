@@ -10,8 +10,10 @@ export type ConfirmDeleteModalProps = {
   onConfirm: () => void;
   errorMessage?: string | null;
   cancelLabel?: string;
-  /** Primary destructive action (default: "Delete Item"). */
+  /** Primary destructive action when idle (default: "Hapus"). */
   confirmLabel?: string;
+  /** Saat API hapus sedang berjalan. */
+  deleting?: boolean;
 };
 
 export function ConfirmDeleteModal({
@@ -22,7 +24,10 @@ export function ConfirmDeleteModal({
   errorMessage,
   cancelLabel = 'Batal',
   confirmLabel = 'Hapus',
+  deleting = false,
 }: ConfirmDeleteModalProps) {
+  const primaryText = deleting ? 'Menghapus...' : confirmLabel;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div
@@ -45,7 +50,7 @@ export function ConfirmDeleteModal({
 
           {errorMessage && <ErrorAlert message={errorMessage} variant="dialog" />}
 
-          <div className="flex gap-3">
+          <fieldset disabled={deleting} className="flex gap-3 border-0 p-0 min-w-0 m-0">
             <FormActionButton
               variant="cancel"
               text={cancelLabel}
@@ -54,11 +59,11 @@ export function ConfirmDeleteModal({
             />
             <FormActionButton
               variant="danger"
-              text={confirmLabel}
+              text={primaryText}
               onClick={onConfirm}
               className="min-w-0 flex-1"
             />
-          </div>
+          </fieldset>
         </div>
       </div>
     </div>

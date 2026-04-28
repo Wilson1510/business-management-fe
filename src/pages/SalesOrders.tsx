@@ -21,6 +21,7 @@ export default function SalesOrders() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingOrder, setDeletingOrder] = useState<SalesOrderListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -64,12 +65,15 @@ export default function SalesOrders() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingOrder(null);
+    setDeleteError(null);
+    setIsDeleting(false);
   };
 
   async function handleDelete() {
     if (!deletingOrder) return;
     const id = deletingOrder.id;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteSalesOrder(id);
       setOrders((prev) => prev.filter((o) => o.id !== id));
@@ -77,6 +81,8 @@ export default function SalesOrders() {
       toastSuccessDelete(deletingOrder.number);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus sales order.');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -162,6 +168,7 @@ export default function SalesOrders() {
           title="Hapus Penjualan"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
           confirmLabel="Hapus"
