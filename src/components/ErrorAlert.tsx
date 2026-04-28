@@ -13,7 +13,7 @@ const FORM_CLASS =
   'flex items-center gap-3 p-4 text-sm text-red-600 dark:text-red-400 bg-red-50/80 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-2xl';
 
 const LOGIN_CLASS =
-  'mb-6 flex items-center gap-2 p-4 bg-red-50 text-red-700 rounded-lg border border-red-100 animate-in fade-in slide-in-from-top-2';
+  'mb-6 flex items-center gap-2 p-4 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 rounded-lg border border-red-100 dark:border-red-900/50 animate-in fade-in slide-in-from-top-2';
 
 export type ErrorAlertProps = {
   /** Render only when this string is set, e.g. `{error && <ErrorAlert message={error} />}` */
