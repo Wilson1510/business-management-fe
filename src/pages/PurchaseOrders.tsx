@@ -9,6 +9,7 @@ import { deletePurchaseOrder, getPurchaseOrders, type PurchaseOrderList, type Pu
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate, formatMoney } from '../utils/format';
 import { PageHeading } from '../components/PageHeading';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function PurchaseOrders() {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ export default function PurchaseOrders() {
       await deletePurchaseOrder(id);
       setOrders((prev) => prev.filter((o) => o.id !== id));
       closeDelete();
+      toastSuccessDelete(deletingOrder.number);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus purchase order.');
     }
@@ -117,7 +119,9 @@ export default function PurchaseOrders() {
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pesanan pembelian yang ditemukan</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    {orders.length === 0 ? 'Belum ada pembelian' : 'Tidak ada pembelian yang cocok dengan pencarian Anda'}
+                  </td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
@@ -142,7 +146,7 @@ export default function PurchaseOrders() {
                     <td className="px-6 py-4 text-right">
                       <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        aria-label="Hapus pesanan pembelian"
+                        aria-label="Hapus pembelian"
                       />
                     </td>
                   </tr>
@@ -155,12 +159,12 @@ export default function PurchaseOrders() {
 
       {isDeleteOpen && deletingOrder && (
         <ConfirmDeleteModal
-          title="Hapus Pesanan Pembelian"
+          title="Hapus Pembelian"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
           onCancel={closeDelete}
           onConfirm={handleDelete}
-          confirmLabel="Hapus Pesanan Pembelian"
+          confirmLabel="Hapus"
         />
       )}
     </div>

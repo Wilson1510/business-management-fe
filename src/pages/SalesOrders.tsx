@@ -9,6 +9,7 @@ import { getSalesOrders, deleteSalesOrder, type SalesOrderList, type SalesOrderL
 import { StatusBadge } from '../components/StatusBadge';
 import { formatDate, formatMoney } from '../utils/format';
 import { PageHeading } from '../components/PageHeading';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function SalesOrders() {
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ export default function SalesOrders() {
       await deleteSalesOrder(id);
       setOrders((prev) => prev.filter((o) => o.id !== id));
       closeDelete();
+      toastSuccessDelete(deletingOrder.number);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus sales order.');
     }
@@ -117,7 +119,9 @@ export default function SalesOrders() {
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pesanan penjualan yang ditemukan.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    {orders.length === 0 ? 'Belum ada penjualan' : 'Tidak ada penjualan yang cocok dengan pencarian Anda'}
+                  </td>
                 </tr>
               ) : (
                 filteredOrders.map((order) => (
@@ -142,7 +146,7 @@ export default function SalesOrders() {
                     <td className="px-6 py-4 text-right">
                       <DeleteIconButton
                         onClick={(e) => { e.stopPropagation(); openDelete(order); }}
-                        aria-label="Hapus pesanan penjualan"
+                        aria-label="Hapus penjualan"
                       />
                     </td>
                   </tr>
@@ -155,12 +159,12 @@ export default function SalesOrders() {
 
       {isDeleteOpen && deletingOrder && (
         <ConfirmDeleteModal
-          title="Hapus Pesanan Penjualan"
+          title="Hapus Penjualan"
           itemName={deletingOrder.number}
           errorMessage={deleteError}
           onCancel={closeDelete}
           onConfirm={handleDelete}
-          confirmLabel="Hapus Pesanan Penjualan"
+          confirmLabel="Hapus"
         />
       )}
     </div>

@@ -129,7 +129,7 @@ export default function Catalog() {
               ) : filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={tableColSpan} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
-                    {products.length === 0 ? 'Tidak ada produk yang ditemukan' : 'Tidak ada produk yang cocok dengan pencarian Anda'}
+                    {products.length === 0 ? 'Belum ada produk' : 'Tidak ada produk yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (

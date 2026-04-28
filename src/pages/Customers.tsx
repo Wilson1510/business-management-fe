@@ -217,7 +217,7 @@ export default function Customers() {
               ) : filteredCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {customers.length === 0 ? 'Tidak ada pelanggan yang ditemukan' : 'Tidak ada pelanggan yang cocok dengan pencarian Anda'}
+                    {customers.length === 0 ? 'Belum ada pelanggan' : 'Tidak ada pelanggan yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (

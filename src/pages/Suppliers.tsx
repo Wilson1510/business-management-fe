@@ -206,7 +206,7 @@ export default function Suppliers() {
               ) : filteredSuppliers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                    {suppliers.length === 0 ? 'Tidak ada pemasok yang ditemukan' : 'Tidak ada pemasok yang cocok dengan pencarian Anda'}
+                    {suppliers.length === 0 ? 'Belum ada pemasok' : 'Tidak ada pemasok yang cocok dengan pencarian Anda'}
                   </td>
                 </tr>
               ) : (

@@ -150,7 +150,7 @@ export default function Categories() {
                 </tr>
               ) : categories.length === 0 ? (
                 <tr>
-                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Tidak ada kategori yang ditemukan.</td>
+                  <td colSpan={2} className="px-6 py-8 text-center text-gray-400 dark:text-gray-500">Belum ada kategori</td>
                 </tr>
               ) : (
                 categories.map((category) => (

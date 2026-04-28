@@ -5,6 +5,7 @@ import { TableSearchInput } from '../components/TableSearchInput';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { StatusBadge } from '../components/StatusBadge';
 import { PageHeading } from '../components/PageHeading';
+import { formatDate } from '../utils/format';
 
 export default function Receipts() {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ export default function Receipts() {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Nomor Penerimaan</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Nomor RI</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Pesanan</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Tanggal Penerimaan</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Metode Penerimaan</th>
@@ -83,7 +84,9 @@ export default function Receipts() {
                 </tr>
               ) : filteredReceipts.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada penerimaan yang tertunda</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    {receipts.length === 0 ? 'Belum ada penerimaan' : 'Tidak ada penerimaan yang cocok dengan pencarian Anda'}
+                  </td>
                 </tr>
               ) : (
                 filteredReceipts.map((rec) => (
@@ -92,14 +95,11 @@ export default function Receipts() {
                     onClick={() => navigate(`/purchases/receipts/${rec.id}`)}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors group"
                   >
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-900 dark:text-white transition-colors">{rec.number}</div>
-                      <div className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 transition-colors">
-                        Pesanan: {rec.purchase_order.number}
-                      </div>
+                    <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white transition-colors">
+                      {rec.number}
                     </td>
-                    <td className="px-6 py-4 text-primary dark:text-blue-400 font-mono">{rec.purchase_order.number}</td>
-                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300 transition-colors">{new Date(rec.arrival_date).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-primary dark:text-blue-400 font-medium">{rec.purchase_order.number}</td>
+                    <td className="px-6 py-4 text-gray-600 dark:text-gray-300 transition-colors">{formatDate(rec.arrival_date)}</td>
                     <td className="px-6 py-4 text-gray-600 dark:text-gray-300 font-medium transition-colors">{rec.method}</td>
                     <td className="px-6 py-4"><StatusBadge status={rec.status} /></td>
                   </tr>

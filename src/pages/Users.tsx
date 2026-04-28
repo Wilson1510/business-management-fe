@@ -131,7 +131,7 @@ export default function Users() {
                 filteredUsers.map((user) => (
                   <tr 
                     key={user.id} 
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors group cursor-pointer"
                     onClick={() => navigate(`/settings/users/${user.id}`)}
                   >
                     <td className="px-6 py-4">

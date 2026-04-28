@@ -81,6 +81,12 @@ export async function updateSalesOrder(id: number, payload: SalesOrderUpdate): P
 export async function deleteSalesOrder(id: number): Promise<void> {
     const response = await apiFetch(`/api/sales-orders/${id}/`, { method: 'DELETE' })
     if (!response.ok) {
+        if (response.status === 409) {
+            const errorData = await response.clone().json().catch(() => null);
+            if (errorData && errorData.code === "confirmed_order") {
+                throw new Error("Tidak dapat menghapus penjualan yang sudah dikonfirmasi");
+            }
+        }
         await handleCommonErrors(response)
     }
 }
