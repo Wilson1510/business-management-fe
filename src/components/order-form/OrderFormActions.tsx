@@ -18,8 +18,14 @@ export function OrderFormActions({
 }: OrderFormActionsProps) {
   if (!showCancel && !showConfirm) return null;
 
+  const bothActions = showCancel && showConfirm;
+
   return (
-    <div className="flex gap-2.5">
+    <div
+      className={`flex gap-2.5 md:shrink-0 ${
+        bothActions ? 'w-full justify-between md:w-auto md:justify-start' : 'w-full justify-start md:w-auto'
+      }`}
+    >
       {showCancel && (
         <FormActionButton variant="cancel" text="Batal" onClick={onRequestCancel} />
       )}
