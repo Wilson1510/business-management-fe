@@ -100,7 +100,7 @@ export default function SalesOrders() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-[11px] text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50/80 dark:bg-gray-700/50 transition-colors">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
                 <th className="px-6 py-4 font-semibold">Nomor SO</th>
                 <th className="px-6 py-4 font-semibold">Pelanggan</th>
