@@ -191,9 +191,13 @@ export default function Customers() {
   return (
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading title="Daftar Pelanggan" description="Mengelola pelanggan" />
-        <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="w-full min-w-0 sm:flex-1 sm:pr-1">
+          <PageHeading title="Daftar Pelanggan" description="Mengelola pelanggan" />
+        </div>
+        <div className="shrink-0 self-end sm:self-auto">
+          <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
+        </div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">

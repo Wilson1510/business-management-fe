@@ -250,12 +250,16 @@ export default function ProductForm() {
 
             {/* SECTION: UNITS CONFIGURATION */}
             <section className="space-y-4">
-              <div className="flex justify-between items-end">
-                <div className="border-l-4 border-indigo-500 pl-3">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Konversi Satuan ke Satuan Dasar</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan bagaimana satuan lebih kecil/lebih besar berkorelasi dengan satuan dasar</p>
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                <div className="w-full min-w-0 sm:flex-1 sm:pr-1">
+                  <div className="border-l-4 border-indigo-500 pl-3">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Konversi Satuan ke Satuan Dasar</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan bagaimana satuan lebih kecil/lebih besar berkorelasi dengan satuan dasar</p>
+                  </div>
                 </div>
-                <InlineAddItemButton tone="indigo" text="Tambah Satuan" onClick={addProductUnit} />
+                <div className="shrink-0 self-end sm:self-auto">
+                  <InlineAddItemButton tone="indigo" text="Tambah Satuan" onClick={addProductUnit} />
+                </div>
               </div>
               
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
@@ -322,12 +326,16 @@ export default function ProductForm() {
 
             {/* SECTION: PRICING CONFIGURATION */}
             <section className="space-y-4">
-              <div className="flex justify-between items-end">
-                <div className="border-l-4 border-emerald-500 pl-3">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Harga Jual</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan daftar harga dasar di seluruh satuan yang dikonfigurasi</p>
+              <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                <div className="w-full min-w-0 sm:flex-1 sm:pr-1">
+                  <div className="border-l-4 border-emerald-500 pl-3">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Harga Jual</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan daftar harga dasar di seluruh satuan yang dikonfigurasi</p>
+                  </div>
                 </div>
-                <InlineAddItemButton tone="emerald" text="Tambah Harga Jual" onClick={addProductPrice} />
+                <div className="shrink-0 self-end sm:self-auto">
+                  <InlineAddItemButton tone="emerald" text="Tambah Harga Jual" onClick={addProductPrice} />
+                </div>
               </div>
 
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
