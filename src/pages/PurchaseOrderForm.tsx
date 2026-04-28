@@ -213,7 +213,7 @@ export default function PurchaseOrderForm() {
   return (
     <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
       <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0 space-y-6">
-        <div className="flex items-center justify-between gap-4 mb-4">
+        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
           <OrderFormHeader
             onBack={() => navigate('/purchases')}
             titleIcon={<ShoppingBag size={24} className="text-primary" />}
