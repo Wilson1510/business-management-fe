@@ -91,7 +91,7 @@ export default function PurchaseOrders() {
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <PageHeading
-          title="Daftar Pesanan Pembelian"
+          title="Daftar Pembelian"
           description="Mengelola dan mengkonfirmasi pesanan dari pemasok"
         />
         <AddItemButton text="Tambah Pembelian" onClick={() => navigate('/purchases/new')} />

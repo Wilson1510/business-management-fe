@@ -18,6 +18,7 @@ import {
   type DeliveryUpdate,
   type DeliveryProduct
 } from '../services/deliveries';
+import { toastSuccessCancel, toastSuccessDone, toastSuccessUpdate } from '../utils/toast';
 type ReadOnlyData = {
   number: string;
   sales_order: {
@@ -101,7 +102,7 @@ export default function DeliveryDetail() {
           }))
         });
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Error loading delivery details');
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat detail pengiriman');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -125,9 +126,10 @@ export default function DeliveryDetail() {
     setSaving(true);
     try {
       await updateDelivery(Number(id), formData);
+      toastSuccessUpdate(readOnlyData.number);
       navigate(`/sales/deliveries`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error updating delivery');
+      setError(err instanceof Error ? err.message : 'Gagal memperbarui pengiriman');
     } finally {
       setSaving(false);
     }
@@ -140,7 +142,7 @@ export default function DeliveryDetail() {
 
   async function handleDeliveryAction() {
     if (!id || !deliveryActionDialog) {
-      setActionError('Delivery not found');
+      setActionError('Pengiriman tidak ditemukan');
       return;
     }
     setActionError(null);
@@ -148,8 +150,10 @@ export default function DeliveryDetail() {
     try {
       if (deliveryActionDialog === 'done') {
         await doneDelivery(Number(id));
+        toastSuccessDone(readOnlyData.number);
       } else {
         await cancelDelivery(Number(id));
+        toastSuccessCancel(readOnlyData.number);
       }
       const delivery = await getDelivery(Number(id));
       setStatus(delivery.status);
@@ -157,8 +161,8 @@ export default function DeliveryDetail() {
     } catch (err) {
       setActionError(
         err instanceof Error ? err.message : deliveryActionDialog === 'done'
-          ? 'Error completing delivery'
-          : 'Error cancelling delivery'
+          ? 'Gagal menyelesaikan pengiriman'
+          : 'Gagal membatalkan pengiriman'
       );
     } finally {
       setSaving(false);
@@ -167,7 +171,7 @@ export default function DeliveryDetail() {
   if (loading) {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
-        Loading form...
+        Memuat pengiriman...
       </div>
     );
   }
@@ -195,16 +199,16 @@ export default function DeliveryDetail() {
                   </div>
                 )}
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-medium block">
-                  Source order:{' '}
+                  Penjualan:{' '}
                   {readOnlyData.sales_order.number}
                 </span>
               </>
             }
           />
           <OrderFormActions
-            showCancel={Boolean(status && status !== 'cancelled')}
+            showCancel={Boolean(status && status === 'draft')}
             showConfirm={Boolean(status && status === 'draft')}
-            confirmLabel="Done"
+            confirmLabel="Selesaikan"
             onRequestCancel={function () {
               setActionError(null);
               setDeliveryActionDialog('cancel');
@@ -227,7 +231,7 @@ export default function DeliveryDetail() {
                     htmlFor="delivery-destination"
                     className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >
-                    Destination Address
+                    Alamat
                   </label>
                   <input
                     id="delivery-destination"
@@ -241,7 +245,7 @@ export default function DeliveryDetail() {
                     htmlFor="delivery-method"
                     className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >
-                    Shipment Method
+                    Metode pengiriman
                   </label>
                   <select
                     id="delivery-method"
@@ -250,8 +254,8 @@ export default function DeliveryDetail() {
                     onChange={e => setFormData({ ...formData, method: e.target.value })}
                     className={destFieldClass}
                   >
-                    <option value="delivery">Delivery</option>
-                    <option value="pickup">Customer Pickup</option>
+                    <option value="delivery">Diantar</option>
+                    <option value="pickup">Ambil sendiri</option>
                   </select>
                 </div>
               </div>
@@ -260,7 +264,7 @@ export default function DeliveryDetail() {
                   htmlFor="delivery-shipment-notes"
                   className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  Shipment Notes
+                  Catatan
                 </label>
                 <textarea
                   id="delivery-shipment-notes"
@@ -268,33 +272,33 @@ export default function DeliveryDetail() {
                   value={formData.notes ?? ''}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
-                  placeholder="Logistics instructions for this shipment…"
+                  placeholder="Instruksi logistik untuk pengiriman ini…"
                   className={`${destFieldClass} resize-y min-h-[5.5rem] disabled:cursor-not-allowed`}
                 />
               </div>
             </section>
 
-            <OrderFormItemSection title="Physical Check">
+            <OrderFormItemSection title="Pemeriksaan fisik">
               <div className="space-y-4">
                 <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
                   <div className="flex-1 min-w-[12rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Product
+                      Produk
                     </p>
                   </div>
                   <div className="w-20 sm:w-24 shrink-0 text-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Scheduled
+                      Jumlah
                     </p>
                   </div>
                   <div className="w-24 shrink-0 text-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Shipped
+                      Dikirim
                     </p>
                   </div>
                   <div className="min-w-0 flex-1 sm:min-w-[8rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Item note
+                      Catatan
                     </p>
                   </div>
                 </div>
@@ -329,7 +333,7 @@ export default function DeliveryDetail() {
                         <input
                           type="text"
                           disabled={isDeliveryLocked}
-                          placeholder="Item-level logistics note…"
+                          placeholder="Catatan logistik per barang…"
                           value={item.notes}
                           onChange={e => updateItem(idx, 'notes', e.target.value)}
                           className={`w-full ${lineControlClass}`}
@@ -353,7 +357,7 @@ export default function DeliveryDetail() {
           orderNumber={readOnlyData.number}
           saving={saving}
           actionError={actionError}
-          confirmDetail="This will mark the delivery as completed."
+          confirmDetail="Ini akan menandai pengiriman sebagai selesai."
           onClose={closeDeliveryActionDialog}
           onSubmit={handleDeliveryAction}
         />

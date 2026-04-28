@@ -50,7 +50,7 @@ export function OrderFormLineItems({
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{sectionTitle}</h3>
         </div>
         {!isOrderLocked && (
-          <InlineAddItemButton tone="primary" text="Add Product" onClick={onAddItem} />
+          <InlineAddItemButton tone="primary" text="Tambah Produk" onClick={onAddItem} />
         )}
       </div>
 
@@ -64,27 +64,27 @@ export function OrderFormLineItems({
             <div className="flex items-center gap-4 px-2">
               <div className="flex-1 min-w-[200px]">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Product
+                  Produk
                 </label>
               </div>
               <div className="w-1/4 min-w-[80px]">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Quantity
+                  Jumlah
                 </label>
               </div>
               <div className="w-1/4 min-w-[100px]">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Unit
+                  Satuan
                 </label>
               </div>
               <div className="w-1/4 min-w-[100px]">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Unit Price
+                  Harga Satuan
                 </label>
               </div>
               <div className="w-1/4 min-w-[100px] text-right">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                  Line Total
+                  Total Harga Produk
                 </label>
               </div>
               {!isOrderLocked && <div className="w-10" aria-hidden />}
@@ -102,7 +102,7 @@ export function OrderFormLineItems({
                     className={`flex-1 min-w-[200px] ${controlClass}`}
                   >
                     <option value={0} disabled>
-                      Select Product...
+                      Pilih Produk...
                     </option>
                     {products.map(p => (
                       <option key={p.id} value={p.id}>
@@ -127,7 +127,7 @@ export function OrderFormLineItems({
                     className={`w-1/4 min-w-[100px] ${controlClass}`}
                   >
                     <option value={0} disabled>
-                      Unit
+                      Satuan
                     </option>
                     {units.map(u => (
                       <option key={u.id} value={u.id}>

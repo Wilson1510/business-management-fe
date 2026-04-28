@@ -11,3 +11,15 @@ export function toastSuccessUpdate(item_name: string) {
 export function toastSuccessDelete(item_name: string) {
   toast.success(`${item_name} berhasil dihapus`);
 }
+
+export function toastSuccessConfirm(item_name: string) {
+  toast.success(`${item_name} berhasil dikonfirmasi`);
+}
+
+export function toastSuccessDone(item_name: string) {
+  toast.success(`${item_name} berhasil diselesaikan`);
+}
+
+export function toastSuccessCancel(item_name: string) {
+  toast.success(`${item_name} berhasil dibatalkan`);
+}

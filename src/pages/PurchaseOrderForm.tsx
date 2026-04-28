@@ -25,6 +25,12 @@ import {
   OrderFormTotal
 } from '../components/order-form';
 import { formatMoney } from '../utils/format';
+import {
+  toastSuccessCancel,
+  toastSuccessConfirm,
+  toastSuccessCreate,
+  toastSuccessUpdate
+} from '../utils/toast';
 
 export default function PurchaseOrderForm() {
   const navigate = useNavigate();
@@ -121,19 +127,24 @@ export default function PurchaseOrderForm() {
     e.preventDefault();
     if (isOrderLocked) return;
     setError(null);
-    if (!formData.supplier_id || !formData.arrival_date) {
-      setError('Supplier and Arrival Date are required.');
+    if (!formData.supplier_id) {
+      setError('Pemasok wajib dipilih.');
+      return;
+    }
+    if (!formData.arrival_date) {
+      setError('Tanggal perkiraan tiba wajib diisi.');
       return;
     }
     if (formData.items.length === 0) {
-      setError('Add at least one item to the order.');
+      setError('Minimal satu item wajib ditambahkan');
       return;
     }
     if (formData.items.some(i => !i.product_id || !i.unit_id || !i.price || i.quantity <= 0)) {
-      setError('Complete all item rows correctly.');
+      setError('Isi semua baris item dengan benar');
       return;
     }
     setSaving(true);
+    let created_order = null;
     try {
       const payload: PurchaseOrderCreate = {
         supplier_id: formData.supplier_id,
@@ -142,12 +153,14 @@ export default function PurchaseOrderForm() {
       };
       if (isEditing && id) {
         await updatePurchaseOrder(Number(id), payload);
+        toastSuccessUpdate(orderNumber);
       } else {
-        await createPurchaseOrder(payload);
+        created_order = await createPurchaseOrder(payload);
+        toastSuccessCreate(created_order.number);
       }
       navigate('/purchases');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creating PO');
+      setError(err instanceof Error ? err.message : 'Gagal menyimpan pembelian');
     } finally {
       setSaving(false);
     }
@@ -160,7 +173,7 @@ export default function PurchaseOrderForm() {
 
   async function handleOrderAction() {
     if (!id || !orderActionDialog) {
-      setActionError('Order not found');
+      setActionError('Pembelian tidak ditemukan');
       return;
     }
     setActionError(null);
@@ -168,9 +181,11 @@ export default function PurchaseOrderForm() {
     try {
       if (orderActionDialog === 'confirm') {
         await confirmPurchaseOrder(Number(id));
+        toastSuccessConfirm(orderNumber);
       } else {
         await cancelPurchaseOrder(Number(id));
-      }
+        toastSuccessCancel(orderNumber);
+      } 
       const order = await getPurchaseOrder(Number(id));
       setStatus(order.status);
       closeOrderActionDialog();
@@ -179,8 +194,8 @@ export default function PurchaseOrderForm() {
         err instanceof Error
           ? err.message
           : orderActionDialog === 'confirm'
-            ? 'Error confirming order'
-            : 'Error cancelling order'
+            ? 'Gagal mengonfirmasi pembelian'
+            : 'Gagal membatalkan pembelian'
       );
     } finally {
       setSaving(false);
@@ -190,7 +205,7 @@ export default function PurchaseOrderForm() {
   if (loading) {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
-        Loading form...
+        Memuat pembelian...
       </div>
     );
   }
@@ -202,11 +217,11 @@ export default function PurchaseOrderForm() {
           <OrderFormHeader
             onBack={() => navigate('/purchases')}
             titleIcon={<ShoppingBag size={24} className="text-primary" />}
-            title={isEditing ? orderNumber : 'Create Purchase Order'}
+            title={isEditing ? orderNumber : 'Buat pembelian'}
             subtitle={
               isEditing
                 ? (status ? <StatusBadge status={status} /> : null)
-                : 'Draft new inbound PO request'
+                : 'Draft pembelian baru'
             }
           />
           <OrderFormActions
@@ -229,14 +244,14 @@ export default function PurchaseOrderForm() {
 
             <OrderFormPartyDateSection
               isOrderLocked={isOrderLocked}
-              partyLabel="Supplier"
-              partyPlaceholder="Select Supplier"
+              partyLabel="Pemasok"
+              partyPlaceholder="Pilih pemasok"
               partyValue={formData.supplier_id}
               partyOptions={suppliers}
               onPartyChange={supplierId =>
                 setFormData({ ...formData, supplier_id: supplierId })
               }
-              dateLabel="Estimated Arrival Date"
+              dateLabel="Tanggal Penerimaan"
               dateValue={formData.arrival_date}
               onDateChange={arrivalDate =>
                 setFormData({ ...formData, arrival_date: arrivalDate })
@@ -245,8 +260,8 @@ export default function PurchaseOrderForm() {
 
             <OrderFormLineItems
               isOrderLocked={isOrderLocked}
-              sectionTitle="Purchase Items"
-              emptyMessage="List is empty. Add products to request."
+              sectionTitle="Item Pembelian"
+              emptyMessage="Keranjang kosong. Tambahkan produk untuk mengkonfigurasi pembelian."
               items={formData.items}
               products={products}
               units={units}
@@ -259,7 +274,7 @@ export default function PurchaseOrderForm() {
             />
 
             <OrderFormTotal
-              label="Purchase Total"
+              label="Total Pembelian"
               amountDisplay={formatMoney(Number(calculateTotal()))}
             />
 
@@ -274,7 +289,7 @@ export default function PurchaseOrderForm() {
           orderNumber={orderNumber}
           saving={saving}
           actionError={actionError}
-          confirmDetail="This will finalize the request and spawn receipt workflow."
+          confirmDetail="Ini akan menyelesaikan pembelian dan memulai alur penerimaan."
           onClose={closeOrderActionDialog}
           onSubmit={handleOrderAction}
         />

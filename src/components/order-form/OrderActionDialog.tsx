@@ -21,6 +21,19 @@ const PRIMARY_WHILE_SAVING = {
   receipt: 'Menyelesaikan',
 };
 
+const PRIMARY_BUTTON_LABEL = {
+  cancel: 'Batalkan',
+  order: 'Konfirmasi',
+  delivery: 'Selesaikan',
+  receipt: 'Selesaikan',
+};
+
+const MODE_TRANSLATION = {
+  order: 'pesanan',
+  delivery: 'pengiriman',
+  receipt: 'penerimaan',
+}
+
 export function OrderActionDialog({
   action,
   orderNumber,
@@ -33,9 +46,9 @@ export function OrderActionDialog({
 }: OrderActionDialogProps) {
 
   const isConfirm = action === 'confirm';
-  const title = `${action} this ${mode}?`;
   const savingKey = isConfirm ? mode : 'cancel';
-  const primaryLabel = saving ? PRIMARY_WHILE_SAVING[savingKey] : 'Yes';
+  const title = `${PRIMARY_BUTTON_LABEL[savingKey]} ${MODE_TRANSLATION[mode]} ini?`;
+  const primaryLabel = saving ? PRIMARY_WHILE_SAVING[savingKey] : PRIMARY_BUTTON_LABEL[savingKey];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -59,15 +72,15 @@ export function OrderActionDialog({
             {title}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-            <span className="capitalize">{action}</span> <span className="font-bold text-gray-900 dark:text-gray-100">
+            <span className="capitalize">{PRIMARY_BUTTON_LABEL[savingKey]}</span> <span className="font-bold text-gray-900 dark:text-gray-100">
               &quot;{orderNumber}&quot;
-            </span> ? {action === 'confirm' ? confirmDetail : 'This cannot be undone from this screen.'}
+            </span> ? {action === 'confirm' ? confirmDetail : ''}
           </p>
 
           {actionError && <ErrorAlert message={actionError} variant="dialog" />}
 
           <fieldset disabled={saving} className="flex gap-3 border-0 p-0 min-w-0 m-0">
-            <FormActionButton variant="cancel" text="Back" onClick={onClose} className="min-w-0 flex-1" />
+            <FormActionButton variant="cancel" text="Kembali" onClick={onClose} className="min-w-0 flex-1" />
             <FormActionButton
               variant={isConfirm ? 'success' : 'danger'}
               text={primaryLabel}

@@ -18,6 +18,7 @@ import {
   type ReceiptUpdate,
   type ReceiptProduct
 } from '../services/receipts';
+import { toastSuccessCancel, toastSuccessDone, toastSuccessUpdate } from '../utils/toast';
 
 type ReadOnlyData = {
   number: string;
@@ -101,7 +102,7 @@ export default function ReceiptDetail() {
           }))
         });
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Error loading receipt details');
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat detail penerimaan');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -125,9 +126,10 @@ export default function ReceiptDetail() {
     setSaving(true);
     try {
       await updateReceipt(Number(id), formData);
+      toastSuccessUpdate(readOnlyData.number);
       navigate('/purchases/receipts');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error updating receipt');
+      setError(err instanceof Error ? err.message : 'Gagal memperbarui penerimaan');
     } finally {
       setSaving(false);
     }
@@ -140,7 +142,7 @@ export default function ReceiptDetail() {
 
   async function handleReceiptAction() {
     if (!id || !receiptActionDialog) {
-      setActionError('Receipt not found');
+      setActionError('Penerimaan tidak ditemukan');
       return;
     }
     setActionError(null);
@@ -148,8 +150,10 @@ export default function ReceiptDetail() {
     try {
       if (receiptActionDialog === 'done') {
         await doneReceipt(Number(id));
+        toastSuccessDone(readOnlyData.number);
       } else {
         await cancelReceipt(Number(id));
+        toastSuccessCancel(readOnlyData.number);
       }
       const receipt = await getReceipt(Number(id));
       setStatus(receipt.status);
@@ -157,8 +161,8 @@ export default function ReceiptDetail() {
     } catch (err) {
       setActionError(
         err instanceof Error ? err.message : receiptActionDialog === 'done'
-          ? 'Error completing receipt'
-          : 'Error cancelling receipt'
+          ? 'Gagal menyelesaikan penerimaan'
+          : 'Gagal membatalkan penerimaan'
       );
     } finally {
       setSaving(false);
@@ -168,7 +172,7 @@ export default function ReceiptDetail() {
   if (loading) {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
-        Loading form...
+        Memuat penerimaan...
       </div>
     );
   }
@@ -196,15 +200,15 @@ export default function ReceiptDetail() {
                   </div>
                 )}
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-medium block">
-                  Source PO: {readOnlyData.purchase_order.number}
+                  Pembelian: {readOnlyData.purchase_order.number}
                 </span>
               </>
             }
           />
           <OrderFormActions
-            showCancel={Boolean(status && status !== 'cancelled')}
+            showCancel={Boolean(status && status === 'draft')}
             showConfirm={Boolean(status && status === 'draft')}
-            confirmLabel="Done"
+            confirmLabel="Selesaikan"
             onRequestCancel={function () {
               setActionError(null);
               setReceiptActionDialog('cancel');
@@ -227,7 +231,7 @@ export default function ReceiptDetail() {
                     htmlFor="receipt-destination"
                     className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >
-                    Destination Address
+                    Alamat
                   </label>
                   <input
                     id="receipt-destination"
@@ -241,7 +245,7 @@ export default function ReceiptDetail() {
                     htmlFor="receipt-method"
                     className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                   >
-                    Shipment Method
+                    Metode pengiriman
                   </label>
                   <select
                     id="receipt-method"
@@ -250,8 +254,8 @@ export default function ReceiptDetail() {
                     onChange={e => setFormData({ ...formData, method: e.target.value })}
                     className={destFieldClass}
                   >
-                    <option value="delivery">Delivery</option>
-                    <option value="pickup">Pickup</option>
+                    <option value="delivery">Diantar</option>
+                    <option value="pickup">Ambil sendiri</option>
                   </select>
                 </div>
               </div>
@@ -260,7 +264,7 @@ export default function ReceiptDetail() {
                   htmlFor="receipt-notes"
                   className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  Shipment Notes
+                  Catatan
                 </label>
                 <textarea
                   id="receipt-notes"
@@ -268,33 +272,33 @@ export default function ReceiptDetail() {
                   value={formData.notes ?? ''}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   rows={3}
-                  placeholder="Damage reports, dock notes, receiving instructions…"
+                  placeholder="Instruksi logistik untuk penerimaan ini…"
                   className={`${destFieldClass} resize-y min-h-[5.5rem] disabled:cursor-not-allowed`}
                 />
               </div>
             </section>
 
-            <OrderFormItemSection title="Physical Check">
+            <OrderFormItemSection title="Pemeriksaan fisik">
               <div className="space-y-4">
                 <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
                   <div className="flex-1 min-w-[12rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Product
+                      Produk
                     </p>
                   </div>
                   <div className="w-20 sm:w-24 shrink-0 text-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Expected
+                      Jumlah
                     </p>
                   </div>
                   <div className="w-24 shrink-0 text-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Received
+                      Diterima
                     </p>
                   </div>
                   <div className="min-w-0 flex-1 sm:min-w-[8rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                      Item note
+                      Catatan
                     </p>
                   </div>
                 </div>
@@ -329,7 +333,7 @@ export default function ReceiptDetail() {
                         <input
                           type="text"
                           disabled={isReceiptLocked}
-                          placeholder="Item condition, batch note…"
+                          placeholder="Catatan logistik per barang…"
                           value={item.notes}
                           onChange={e => updateItem(idx, 'notes', e.target.value)}
                           className={`w-full ${lineControlClass}`}
@@ -353,7 +357,7 @@ export default function ReceiptDetail() {
           orderNumber={readOnlyData.number}
           saving={saving}
           actionError={actionError}
-          confirmDetail="This will mark the receipt as completed."
+          confirmDetail="Ini akan menandai penerimaan sebagai selesai."
           onClose={closeReceiptActionDialog}
           onSubmit={handleReceiptAction}
         />

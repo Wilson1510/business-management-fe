@@ -14,14 +14,14 @@ export function OrderFormActions({
   showConfirm,
   onRequestCancel,
   onRequestConfirm,
-  confirmLabel = 'Confirm',
+  confirmLabel = 'Konfirmasi',
 }: OrderFormActionsProps) {
   if (!showCancel && !showConfirm) return null;
 
   return (
     <div className="flex gap-2.5">
       {showCancel && (
-        <FormActionButton variant="cancel" text="Cancel" onClick={onRequestCancel} />
+        <FormActionButton variant="cancel" text="Batal" onClick={onRequestCancel} />
       )}
       {showConfirm && (
         <FormActionButton variant="success" text={confirmLabel} onClick={onRequestConfirm} />

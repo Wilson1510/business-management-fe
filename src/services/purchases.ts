@@ -94,6 +94,12 @@ export async function deletePurchaseOrder(id: number): Promise<void> {
 export async function confirmPurchaseOrder(id: number): Promise<void> {
     const response = await apiFetch(`/api/purchase-orders/${id}/confirm/`, { method: 'POST' })
     if (!response.ok) {
+        if (response.status === 400) {
+            const errorData = await response.clone().json().catch(() => null);
+            if (errorData && errorData.code === "arrival_date_in_the_future") {
+                throw new Error("Tanggal penerimaan harus lebih dari hari ini");
+            }
+        }
         await handleCommonErrors(response)
     }
 }
@@ -101,6 +107,12 @@ export async function confirmPurchaseOrder(id: number): Promise<void> {
 export async function cancelPurchaseOrder(id: number): Promise<void> {
     const response = await apiFetch(`/api/purchase-orders/${id}/cancel/`, { method: 'POST' })
     if (!response.ok) {
+        if (response.status === 409) {
+            const errorData = await response.clone().json().catch(() => null);
+            if (errorData && errorData.code === "purchase_order_has_done_receipts") {
+                throw new Error("Pembelian memiliki penerimaan yang sudah selesai");
+            }
+        }
         await handleCommonErrors(response)
     }
 }

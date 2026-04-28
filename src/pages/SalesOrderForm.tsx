@@ -25,6 +25,12 @@ import {
 } from '../services/sales';
 import { formatMoney } from '../utils/format';
 import { StatusBadge } from '../components/StatusBadge';
+import {
+  toastSuccessCancel,
+  toastSuccessConfirm,
+  toastSuccessCreate,
+  toastSuccessUpdate
+} from '../utils/toast';
 
 export default function SalesOrderForm() {
   const navigate = useNavigate();
@@ -80,7 +86,7 @@ export default function SalesOrderForm() {
           setStatus(order.status);
         }
       } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat data sales order.');
+        if (!cancelled) setError(e instanceof Error ? e.message : 'Gagal memuat data penjualan.');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -198,19 +204,17 @@ export default function SalesOrderForm() {
     e.preventDefault();
     if (isOrderLocked) return;
     setError(null);
-    if (!formData.customer_id || !formData.delivery_date) {
-      setError('Customer and Delivery Date are required.');
-      return;
-    }
+
     if (formData.items.length === 0) {
-      setError('Add at least one item to the order.');
+      setError('Minimal satu item wajib ditambahkan.');
       return;
     }
     if (formData.items.some(i => !i.product_id || !i.unit_id || !i.price || i.quantity <= 0)) {
-      setError('Complete all item rows correctly.');
+      setError('Isi semua baris item dengan benar.');
       return;
     }
     setSaving(true);
+    let created_order = null;
     try {
       const payload: SalesOrderCreate = {
         customer_id: formData.customer_id,
@@ -219,12 +223,14 @@ export default function SalesOrderForm() {
       };
       if (isEditing && id) {
         await updateSalesOrder(Number(id), payload);
+        toastSuccessUpdate(orderNumber);
       } else {
-        await createSalesOrder(payload);
+        created_order = await createSalesOrder(payload);
+        toastSuccessCreate(created_order.number);
       }
       navigate('/sales');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error creating order');
+      setError(err instanceof Error ? err.message : 'Gagal menyimpan penjualan');
     } finally {
       setSaving(false);
     }
@@ -237,7 +243,7 @@ export default function SalesOrderForm() {
 
   async function handleOrderAction() {
     if (!id || !orderActionDialog) {
-      setActionError('Order not found');
+      setActionError('Penjualan tidak ditemukan');
       return;
     }
     setActionError(null);
@@ -245,8 +251,10 @@ export default function SalesOrderForm() {
     try {
       if (orderActionDialog === 'confirm') {
         await confirmSalesOrder(Number(id));
+        toastSuccessConfirm(orderNumber);
       } else {
         await cancelSalesOrder(Number(id));
+        toastSuccessCancel(orderNumber);
       }
       const order = await getSalesOrder(Number(id));
       setStatus(order.status);
@@ -256,8 +264,8 @@ export default function SalesOrderForm() {
         err instanceof Error
           ? err.message
           : orderActionDialog === 'confirm'
-            ? 'Error confirming order'
-            : 'Error cancelling order'
+            ? 'Gagal mengkonfirmasi penjualan'
+            : 'Gagal membatalkan penjualan'
       );
     } finally {
       setSaving(false);
@@ -267,7 +275,7 @@ export default function SalesOrderForm() {
   if (loading) {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
-        Loading form...
+        Memuat penjualan...
       </div>
     );
   }
@@ -279,11 +287,11 @@ export default function SalesOrderForm() {
           <OrderFormHeader
             onBack={() => navigate('/sales')}
             titleIcon={<ShoppingCart size={24} className="text-primary" />}
-            title={isEditing ? orderNumber : 'Create Sales Order'}
+            title={isEditing ? orderNumber : 'Buat Penjualan'}
             subtitle={
               isEditing
                 ? (status ? <StatusBadge status={status} /> : null)
-                : 'Draft new outbound SO request'
+                : 'Draft penjualan baru'
             }
           />
           <OrderFormActions
@@ -306,14 +314,14 @@ export default function SalesOrderForm() {
 
             <OrderFormPartyDateSection
               isOrderLocked={isOrderLocked}
-              partyLabel="Customer"
-              partyPlaceholder="Select Customer"
+              partyLabel="Pelanggan"
+              partyPlaceholder="Pilih Pelanggan"
               partyValue={formData.customer_id}
               partyOptions={customers}
               onPartyChange={customerId =>
                 setFormData({ ...formData, customer_id: customerId })
               }
-              dateLabel="Estimated Delivery Date"
+              dateLabel="Tanggal Pengiriman"
               dateValue={formData.delivery_date}
               onDateChange={deliveryDate =>
                 setFormData({ ...formData, delivery_date: deliveryDate })
@@ -322,8 +330,8 @@ export default function SalesOrderForm() {
 
             <OrderFormLineItems
               isOrderLocked={isOrderLocked}
-              sectionTitle="Order Items"
-              emptyMessage="Cart is empty. Add a product to configure the order."
+              sectionTitle="Item Penjualan"
+              emptyMessage="Keranjang kosong. Tambahkan produk untuk mengkonfigurasi penjualan."
               items={formData.items}
               products={products}
               units={units}
@@ -336,7 +344,7 @@ export default function SalesOrderForm() {
             />
 
             <OrderFormTotal
-              label="Order Total"
+              label="Total Penjualan"
               amountDisplay={formatMoney(Number(calculateTotal()))}
             />
 
@@ -351,7 +359,7 @@ export default function SalesOrderForm() {
           orderNumber={orderNumber}
           saving={saving}
           actionError={actionError}
-          confirmDetail="This will finalize the order and spawn delivery workflow."
+          confirmDetail="Ini akan menyelesaikan penjualan dan memulai alur pengiriman."
           onClose={closeOrderActionDialog}
           onSubmit={handleOrderAction}
         />
