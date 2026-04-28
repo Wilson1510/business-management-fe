@@ -21,7 +21,8 @@ export default function Users() {
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingUser, setDeletingUser] = useState<UserListItem | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);  
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(function () {
     let cancelled = false;
@@ -64,11 +65,13 @@ export default function Users() {
   function closeDelete() {
     setIsDeleteOpen(false);
     setDeletingUser(null);
+    setIsDeleting(false);
   }
 
   async function handleDelete() {
     if (!deletingUser) return;
     setDeleteError(null);
+    setIsDeleting(true);
     try {
       await deleteUser(deletingUser.id);
       setUsers((prev) => prev.filter((u) => u.id !== deletingUser.id));
@@ -76,6 +79,8 @@ export default function Users() {
       toastSuccessDelete(deletingUser.name);
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus pengguna');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -186,6 +191,7 @@ export default function Users() {
           title="Hapus Pengguna"
           itemName={deletingUser.username}
           errorMessage={deleteError}
+          deleting={isDeleting}
           onCancel={closeDelete}
           onConfirm={handleDelete}
         />
