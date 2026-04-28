@@ -9,6 +9,7 @@ import { formatDate, formatMoney } from '../utils/format';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { FormActionButton } from '../components/FormActionButton';
 import { PageHeading } from '../components/PageHeading';
+import { toastSuccessCreate, toastSuccessDelete, toastSuccessUpdate } from '../utils/toast';
 
 export default function Suppliers() {
   const emptySupplierData: SupplierCreate = {
@@ -61,9 +62,7 @@ export default function Suppliers() {
     if (!searchQuery.trim()) return suppliers;
     const query = searchQuery.toLowerCase();
     return suppliers.filter((supplier) =>
-      supplier.name.toLowerCase().includes(query) ||
-      supplier.email.toLowerCase().includes(query) ||
-      supplier.phone.toLowerCase().includes(query)
+      supplier.name.toLowerCase().includes(query) || supplier.phone.toLowerCase().includes(query)
     );
   }, [suppliers, searchQuery]);
 
@@ -115,6 +114,7 @@ export default function Suppliers() {
         setSuppliers((prev) =>
           prev.map((s) => (s.id === updated.id ? { ...s, ...updated } : s))
         );
+        toastSuccessUpdate(updated.name);
       } else {
         const payload: SupplierCreate = { name: formData.name.trim(), business_entity: formData.business_entity, email: formData.email, phone: formData.phone, address: formData.address };
         const created = await createSupplier(payload);
@@ -125,6 +125,7 @@ export default function Suppliers() {
           total_purchase_amount: 0,
         };
         setSuppliers((prev) => [...prev, newRow]);
+        toastSuccessCreate(created.name);
       }
       closeForm();
     } catch (err) {
@@ -152,6 +153,7 @@ export default function Suppliers() {
       await deleteSupplier(id);
       setSuppliers((prev) => prev.filter((s) => s.id !== id));
       closeDelete();
+      toastSuccessDelete(deletingSupplier.name);
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Gagal menghapus pemasok');
     }
@@ -161,7 +163,7 @@ export default function Suppliers() {
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading title="Daftar Pemasok" description="Mengelola pemasok inventaris" />
+        <PageHeading title="Daftar Pemasok" description="Mengelola pemasok" />
         <AddItemButton text="Tambah Pemasok" onClick={() => openForm()} />
       </div>
 
@@ -170,7 +172,7 @@ export default function Suppliers() {
           <TableSearchInput
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari pemasok berdasarkan nama, email, atau nomor telepon..."
+            placeholder="Cari berdasarkan nama atau nomor telepon..."
           />
         </div>
 
@@ -206,13 +208,13 @@ export default function Suppliers() {
                   >
                     <td className="px-6 py-4">
                       <div className="font-bold text-gray-900 dark:text-white">{supplier.name}</div>
-                      <div className="text-xs font-semibold text-primary/80 mt-1 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 dark:bg-primary/20">
-                        {supplier.business_entity}
+                      <div className="text-xs font-semibold capitalize text-primary/80 mt-1 inline-flex items-center px-2 py-0.5 rounded bg-primary/10 dark:bg-primary/20">
+                        {supplier.business_entity.length <= 2 ? supplier.business_entity.toUpperCase() : supplier.business_entity}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900 dark:text-gray-200 font-medium">{supplier.email || '—'}</div>
-                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{supplier.phone || '—'}</div>
+                      <div className="text-gray-900 dark:text-gray-200 font-medium">{supplier.phone || '—'}</div>
+                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{supplier.email || '—'}</div>
                     </td>
                     <td className="px-4 py-4 text-center">
                       <div className="inline-flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold px-2.5 py-0.5 rounded-full text-xs">
@@ -222,7 +224,7 @@ export default function Suppliers() {
                     <td className="px-4 py-4 text-center font-medium text-gray-600 dark:text-gray-400">
                       {supplier.last_purchase_order_date ? formatDate(supplier.last_purchase_order_date) : '—'}
                     </td>
-                    <td className="px-6 py-4 text-right font-mono font-bold text-gray-900 dark:text-gray-100">
+                    <td className="px-6 py-4 text-right font-medium text-gray-900 dark:text-white">
                       {formatMoney(supplier.total_purchase_amount)}
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -255,7 +257,7 @@ export default function Suppliers() {
 
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan / Nama Individu</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan/Individu</label>
                   <input
                     type="text"
                     required
@@ -282,7 +284,7 @@ export default function Suppliers() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Email</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
                     <input
                       type="email"
                       value={formData.email}
@@ -293,7 +295,7 @@ export default function Suppliers() {
                   <div className="space-y-1.5">
                     <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
                     <input
-                      type="text"
+                      type="tel"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
@@ -302,7 +304,7 @@ export default function Suppliers() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat Fisik</label>
+                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat</label>
                   <textarea
                     rows={3}
                     value={formData.address}

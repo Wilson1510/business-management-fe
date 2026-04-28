@@ -10,6 +10,7 @@ import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { formatDate } from '../utils/format';
 import { PageHeading } from '../components/PageHeading';
+import { toastSuccessDelete } from '../utils/toast';
 
 export default function Users() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function Users() {
         }
       } catch (e) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Failed to load users');
+          setError(e instanceof Error ? e.message : 'Gagal memuat pengguna');
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -72,8 +73,9 @@ export default function Users() {
       await deleteUser(deletingUser.id);
       setUsers((prev) => prev.filter((u) => u.id !== deletingUser.id));
       closeDelete();
+      toastSuccessDelete(deletingUser.name);
     } catch (e) {
-      setDeleteError(e instanceof Error ? e.message : 'Failed to delete user');
+      setDeleteError(e instanceof Error ? e.message : 'Gagal menghapus pengguna');
     }
   }
 
@@ -85,10 +87,10 @@ export default function Users() {
           title={
             <span className="flex items-center gap-2">
               <UserCog className="text-primary" size={24} />
-              Manajemen Pengguna
+              Pengguna
             </span>
           }
-          description="Mengelola akses sistem, hak administratif, dan akun staf"
+          description="Mengelola pengguna"
         />
         
         <AddItemButton text="Tambah Pengguna" onClick={() => navigate('/settings/users/new')} />
@@ -99,16 +101,16 @@ export default function Users() {
           <TableSearchInput
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari pengguna berdasarkan nama, email, atau peran..."
+            placeholder="Cari berdasarkan nama..."
           />
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider transition-colors">
+            <thead className="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 text-xs uppercase transition-colors">
               <tr>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Akun</th>
-                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Peran Sistem</th>
+                <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Peran</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Status</th>
                 <th className="px-6 py-4 font-semibold border-b border-gray-100 dark:border-gray-700">Terakhir Aktif</th>
                 <th className="px-6 py-4 font-semibold text-right border-b border-gray-100 dark:border-gray-700">Aksi</th>
@@ -117,11 +119,13 @@ export default function Users() {
             <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat akun sistem...</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-400 dark:text-gray-500">Memuat pengguna...</td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Tidak ada pengguna yang ditemukan</td>
+                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                    {users.length === 0 ? 'Tidak ada pengguna yang ditemukan' : 'Tidak ada pengguna yang cocok dengan pencarian Anda'}
+                  </td>
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
