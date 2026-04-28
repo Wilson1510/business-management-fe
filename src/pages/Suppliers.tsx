@@ -29,6 +29,7 @@ export default function Suppliers() {
   const [editingSupplier, setEditingSupplier] = useState<SupplierListItem | null>(null);
   const [formData, setFormData] = useState<SupplierCreate>(emptySupplierData);
   const [formError, setFormError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [deletingSupplier, setDeletingSupplier] = useState<SupplierDetail | null>(null);
@@ -110,7 +111,7 @@ export default function Suppliers() {
       return;
     }
     setFormError(null);
-
+    setSaving(true);
     try {
       if (editingSupplier) {
         const payload: SupplierUpdate = {
@@ -140,6 +141,8 @@ export default function Suppliers() {
       closeForm();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -255,86 +258,85 @@ export default function Suppliers() {
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Truck className="text-primary" size={24} /> 
-                {editingSupplier ? 'Edit Pemasok' : 'Tambah Pemasok'}
-              </h2>
-            </div>
+            <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                  <Truck className="text-primary" size={24} /> 
+                  {editingSupplier ? 'Edit Pemasok' : 'Tambah Pemasok'}
+                </h2>
+              </div>
 
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
-              {formError && <ErrorAlert message={formError} variant="inline" />}
+              <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+                {formError && <ErrorAlert message={formError} variant="inline" />}
 
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan/Individu</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
-                  <select
-                    value={formData.business_entity}
-                    required
-                    onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as SupplierDetail['business_entity'] })}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    <option value="pt">PT (Perseroan Terbatas)</option>
-                    <option value="cv">CV (Commanditaire Vennootschap)</option>
-                    <option value="perorangan">Personal / Individual</option>
-                    <option value="ud">UD (Usaha Dagang)</option>
-                    <option value="lainnya">Lainnya</option>
-                  </select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nama Perusahaan/Individu</label>
                     <input
-                      type="email"
+                      type="text"
                       required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     />
                   </div>
+
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
-                    <input
-                      type="tel"
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Jenis Entitas Bisnis</label>
+                    <select
+                      value={formData.business_entity}
                       required
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    />
+                      onChange={(e) => setFormData({ ...formData, business_entity: e.target.value as SupplierDetail['business_entity'] })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >
+                      <option value="pt">PT (Perseroan Terbatas)</option>
+                      <option value="cv">CV (Commanditaire Vennootschap)</option>
+                      <option value="perorangan">Personal / Individual</option>
+                      <option value="ud">UD (Usaha Dagang)</option>
+                      <option value="lainnya">Lainnya</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat</label>
+                    <textarea
+                      rows={3}
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
+                    ></textarea>
                   </div>
                 </div>
 
-                <div className="space-y-1.5">
-                  <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Alamat</label>
-                  <textarea
-                    rows={3}
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 resize-none"
-                  ></textarea>
+                <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
+                  <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
+                <FormActionButton variant="primary" text={saving ? 'Menyimpan...' : 'Simpan'}/>
                 </div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3">
-                <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
-                <FormActionButton
-                  variant="primary"
-                  text="Simpan"
-                />
-              </div>
-            </form>
+              </form>
+            </fieldset>
           </div>
         </div>
       )}

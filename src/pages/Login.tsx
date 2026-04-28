@@ -54,51 +54,52 @@ export default function Login() {
             {error && <ErrorAlert message={error} variant="login" />}
 
             <form onSubmit={handleLogin} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">Username</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                    <UserRound size={18} />
+              <fieldset disabled={isLoading} className="min-w-0 border-0 p-0 m-0 space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">Username</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                      <UserRound size={18} />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all duration-200"
+                      placeholder="Enter username"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all duration-200"
-                    placeholder="Enter username"
-                  />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">Password</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
-                    <KeyRound size={18} />
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                      <KeyRound size={18} />
+                    </div>
+                    <input
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all duration-200"
+                      placeholder="••••••••"
+                    />
                   </div>
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-all duration-200"
-                    placeholder="••••••••"
-                  />
                 </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full pt-1 pb-1.5 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 flex items-center justify-center min-h-[44px] cursor-pointer"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  'Sign In'
-                )}
-              </button>
+                <button
+                  type="submit"
+                  className="w-full pt-1 pb-1.5 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all duration-200 ease-in-out disabled:opacity-70 flex items-center justify-center min-h-[44px] cursor-pointer"
+                >
+                  {isLoading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    'Sign In'
+                  )}
+                </button>
+              </fieldset>
             </form>
 
           </div>

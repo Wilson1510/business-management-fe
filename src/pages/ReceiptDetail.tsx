@@ -181,169 +181,170 @@ export default function ReceiptDetail() {
     'w-full px-4 py-3 bg-gray-100/50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600 rounded-xl outline-none text-sm font-medium text-gray-900 dark:text-gray-100 cursor-default';
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <OrderFormHeader
-          onBack={() => navigate('/purchases/receipts')}
-          titleIcon={<Package size={24} className="text-primary" />}
-          title={readOnlyData.number}
-          subtitle={
-            <>
-              {status && (
-                <div className="mb-1">
-                  <StatusBadge status={status} />
+    <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
+      <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0 space-y-6">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <OrderFormHeader
+            onBack={() => navigate('/purchases/receipts')}
+            titleIcon={<Package size={24} className="text-primary" />}
+            title={readOnlyData.number}
+            subtitle={
+              <>
+                {status && (
+                  <div className="mb-1">
+                    <StatusBadge status={status} />
+                  </div>
+                )}
+                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium block">
+                  Source PO: {readOnlyData.purchase_order.number}
+                </span>
+              </>
+            }
+          />
+          <OrderFormActions
+            showCancel={Boolean(status && status !== 'cancelled')}
+            showConfirm={Boolean(status && status === 'draft')}
+            confirmLabel="Done"
+            onRequestCancel={function () {
+              setActionError(null);
+              setReceiptActionDialog('cancel');
+            }}
+            onRequestConfirm={function () {
+              setActionError(null);
+              setReceiptActionDialog('done');
+            }}
+          />
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+          <form id="receipt-form" onSubmit={handleSaveDraft} className="p-8 space-y-8">
+            {error && <ErrorAlert message={error} variant="form" />}
+
+            <section className="space-y-5 p-6 bg-gray-50/50 rounded-2xl border border-gray-100 dark:border-gray-700 dark:bg-gray-900/20">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2 min-w-0">
+                  <label
+                    htmlFor="receipt-destination"
+                    className="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  >
+                    Destination Address
+                  </label>
+                  <input
+                    id="receipt-destination"
+                    readOnly
+                    value={readOnlyData.destination}
+                    className={destReadOnlyClass}
+                  />
                 </div>
-              )}
-              <span className="text-sm text-gray-500 dark:text-gray-400 font-medium block">
-                Source PO: {readOnlyData.purchase_order.number}
-              </span>
-            </>
-          }
-        />
-        <OrderFormActions
-          saving={saving}
-          showCancel={Boolean(status && status !== 'cancelled')}
-          showConfirm={Boolean(status && status === 'draft')}
-          confirmLabel="Done"
-          onRequestCancel={function () {
-            setActionError(null);
-            setReceiptActionDialog('cancel');
-          }}
-          onRequestConfirm={function () {
-            setActionError(null);
-            setReceiptActionDialog('done');
-          }}
-        />
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
-        <form id="receipt-form" onSubmit={handleSaveDraft} className="p-8 space-y-8">
-          {error && <ErrorAlert message={error} variant="form" />}
-
-          <section className="space-y-5 p-6 bg-gray-50/50 rounded-2xl border border-gray-100 dark:border-gray-700 dark:bg-gray-900/20">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2 min-w-0">
+                <div className="space-y-2 min-w-0">
+                  <label
+                    htmlFor="receipt-method"
+                    className="text-sm font-semibold text-gray-700 dark:text-gray-300"
+                  >
+                    Shipment Method
+                  </label>
+                  <select
+                    id="receipt-method"
+                    disabled={isReceiptLocked}
+                    value={formData.method ?? 'delivery'}
+                    onChange={e => setFormData({ ...formData, method: e.target.value })}
+                    className={destFieldClass}
+                  >
+                    <option value="delivery">Delivery</option>
+                    <option value="pickup">Pickup</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-2">
                 <label
-                  htmlFor="receipt-destination"
+                  htmlFor="receipt-notes"
                   className="text-sm font-semibold text-gray-700 dark:text-gray-300"
                 >
-                  Destination Address
+                  Shipment Notes
                 </label>
-                <input
-                  id="receipt-destination"
-                  readOnly
-                  value={readOnlyData.destination}
-                  className={destReadOnlyClass}
+                <textarea
+                  id="receipt-notes"
+                  disabled={isReceiptLocked}
+                  value={formData.notes ?? ''}
+                  onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                  rows={3}
+                  placeholder="Damage reports, dock notes, receiving instructions…"
+                  className={`${destFieldClass} resize-y min-h-[5.5rem] disabled:cursor-not-allowed`}
                 />
               </div>
-              <div className="space-y-2 min-w-0">
-                <label
-                  htmlFor="receipt-method"
-                  className="text-sm font-semibold text-gray-700 dark:text-gray-300"
-                >
-                  Shipment Method
-                </label>
-                <select
-                  id="receipt-method"
-                  disabled={isReceiptLocked}
-                  value={formData.method ?? 'delivery'}
-                  onChange={e => setFormData({ ...formData, method: e.target.value })}
-                  className={destFieldClass}
-                >
-                  <option value="delivery">Delivery</option>
-                  <option value="pickup">Pickup</option>
-                </select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label
-                htmlFor="receipt-notes"
-                className="text-sm font-semibold text-gray-700 dark:text-gray-300"
-              >
-                Shipment Notes
-              </label>
-              <textarea
-                id="receipt-notes"
-                disabled={isReceiptLocked}
-                value={formData.notes ?? ''}
-                onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                rows={3}
-                placeholder="Damage reports, dock notes, receiving instructions…"
-                className={`${destFieldClass} resize-y min-h-[5.5rem] disabled:cursor-not-allowed`}
-              />
-            </div>
-          </section>
+            </section>
 
-          <OrderFormItemSection title="Physical Check">
-            <div className="space-y-4">
-              <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
-                <div className="flex-1 min-w-[12rem]">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                    Product
-                  </p>
-                </div>
-                <div className="w-20 sm:w-24 shrink-0 text-center">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                    Expected
-                  </p>
-                </div>
-                <div className="w-24 shrink-0 text-center">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                    Received
-                  </p>
-                </div>
-                <div className="min-w-0 flex-1 sm:min-w-[8rem]">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
-                    Item note
-                  </p>
-                </div>
-              </div>
-
-              {formData.items?.map((item, idx) => {
-                const line = readOnlyData.items.find(row => row.id === item.id);
-                if (!line) return null;
-                return (
-                  <div
-                    key={item.id}
-                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 pb-4 last:mb-0"
-                  >
-                    <div className="flex-1 min-w-[12rem]">
-                      <p className="font-bold text-gray-900 leading-snug dark:text-gray-100">{line.product.name}</p>
-                      <p className="text-xs text-gray-500 font-medium mt-1 dark:text-gray-400">{line.unit.name}</p>
-                    </div>
-                    <div className="w-20 sm:w-24 shrink-0 text-center text-sm font-mono font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 py-2 rounded-lg tabular-nums self-center">
-                      {line.quantity}
-                    </div>
-                    <div className="w-full sm:w-24 shrink-0 self-center">
-                      <input
-                        type="number"
-                        min={0}
-                        max={line.quantity}
-                        disabled={isReceiptLocked}
-                        value={item.quantity_received}
-                        onChange={e => updateItem(idx, 'quantity_received', Number(e.target.value))}
-                        className={`w-full text-center text-sm font-bold ${lineControlClass}`}
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1 w-full self-center">
-                      <input
-                        type="text"
-                        disabled={isReceiptLocked}
-                        placeholder="Item condition, batch note…"
-                        value={item.notes}
-                        onChange={e => updateItem(idx, 'notes', e.target.value)}
-                        className={`w-full ${lineControlClass}`}
-                      />
-                    </div>
+            <OrderFormItemSection title="Physical Check">
+              <div className="space-y-4">
+                <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
+                  <div className="flex-1 min-w-[12rem]">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                      Product
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </OrderFormItemSection>
+                  <div className="w-20 sm:w-24 shrink-0 text-center">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                      Expected
+                    </p>
+                  </div>
+                  <div className="w-24 shrink-0 text-center">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                      Received
+                    </p>
+                  </div>
+                  <div className="min-w-0 flex-1 sm:min-w-[8rem]">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
+                      Item note
+                    </p>
+                  </div>
+                </div>
 
-          {!isReceiptLocked && <OrderFormSaveFooter saving={saving} mode="shipment"/>}
-        </form>
-      </div>
+                {formData.items?.map((item, idx) => {
+                  const line = readOnlyData.items.find(row => row.id === item.id);
+                  if (!line) return null;
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 pb-4 last:mb-0"
+                    >
+                      <div className="flex-1 min-w-[12rem]">
+                        <p className="font-bold text-gray-900 leading-snug dark:text-gray-100">{line.product.name}</p>
+                        <p className="text-xs text-gray-500 font-medium mt-1 dark:text-gray-400">{line.unit.name}</p>
+                      </div>
+                      <div className="w-20 sm:w-24 shrink-0 text-center text-sm font-mono font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 py-2 rounded-lg tabular-nums self-center">
+                        {line.quantity}
+                      </div>
+                      <div className="w-full sm:w-24 shrink-0 self-center">
+                        <input
+                          type="number"
+                          min={0}
+                          max={line.quantity}
+                          disabled={isReceiptLocked}
+                          value={item.quantity_received}
+                          onChange={e => updateItem(idx, 'quantity_received', Number(e.target.value))}
+                          className={`w-full text-center text-sm font-bold ${lineControlClass}`}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1 w-full self-center">
+                        <input
+                          type="text"
+                          disabled={isReceiptLocked}
+                          placeholder="Item condition, batch note…"
+                          value={item.notes}
+                          onChange={e => updateItem(idx, 'notes', e.target.value)}
+                          className={`w-full ${lineControlClass}`}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </OrderFormItemSection>
+
+            {!isReceiptLocked && <OrderFormSaveFooter saving={saving} mode="shipment"/>}
+          </form>
+        </div>
+      </fieldset>
 
       {receiptActionDialog && (
         <OrderActionDialog

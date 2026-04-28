@@ -10,7 +10,7 @@ export function OrderFormSaveFooter({ saving, mode = 'order' }: OrderFormSaveFoo
     <div
       className={`flex justify-end pt-4 ${mode === 'order' ? 'border-t border-gray-100 dark:border-gray-700' : ''}`}
     >
-      <FormActionButton variant="primary" text="Save" disabled={saving} />
+      <FormActionButton variant="primary" text={saving ? 'Menyimpan...' : 'Save'} />
     </div>
   );
 }

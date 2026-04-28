@@ -14,6 +14,13 @@ export type OrderActionDialogProps = {
   mode?: 'order' | 'delivery' | 'receipt';
 };
 
+const PRIMARY_WHILE_SAVING = {
+  cancel: 'Membatalkan',
+  order: 'Mengkonfirmasi',
+  delivery: 'Menyelesaikan',
+  receipt: 'Menyelesaikan',
+};
+
 export function OrderActionDialog({
   action,
   orderNumber,
@@ -27,6 +34,8 @@ export function OrderActionDialog({
 
   const isConfirm = action === 'confirm';
   const title = `${action} this ${mode}?`;
+  const savingKey = isConfirm ? mode : 'cancel';
+  const primaryLabel = saving ? PRIMARY_WHILE_SAVING[savingKey] : 'Yes';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -57,22 +66,15 @@ export function OrderActionDialog({
 
           {actionError && <ErrorAlert message={actionError} variant="dialog" />}
 
-          <div className="flex gap-3">
-            <FormActionButton
-              variant="cancel"
-              text="Back"
-              onClick={onClose}
-              disabled={saving}
-              className="min-w-0 flex-1"
-            />
+          <fieldset disabled={saving} className="flex gap-3 border-0 p-0 min-w-0 m-0">
+            <FormActionButton variant="cancel" text="Back" onClick={onClose} className="min-w-0 flex-1" />
             <FormActionButton
               variant={isConfirm ? 'success' : 'danger'}
-              text={saving ? 'Working…' : 'Yes'}
+              text={primaryLabel}
               onClick={onSubmit}
-              disabled={saving}
               className="min-w-0 flex-1"
             />
-          </div>
+          </fieldset>
         </div>
       </div>
     </div>

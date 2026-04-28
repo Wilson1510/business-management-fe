@@ -1,7 +1,6 @@
 import { FormActionButton } from '../FormActionButton';
 
 export type OrderFormActionsProps = {
-  saving: boolean;
   showCancel: boolean;
   showConfirm: boolean;
   onRequestCancel: () => void;
@@ -11,7 +10,6 @@ export type OrderFormActionsProps = {
 };
 
 export function OrderFormActions({
-  saving,
   showCancel,
   showConfirm,
   onRequestCancel,
@@ -23,20 +21,10 @@ export function OrderFormActions({
   return (
     <div className="flex gap-2.5">
       {showCancel && (
-        <FormActionButton
-          variant="cancel"
-          text="Cancel"
-          disabled={saving}
-          onClick={onRequestCancel}
-        />
+        <FormActionButton variant="cancel" text="Cancel" onClick={onRequestCancel} />
       )}
       {showConfirm && (
-        <FormActionButton
-          variant="success"
-          text={confirmLabel}
-          disabled={saving}
-          onClick={onRequestConfirm}
-        />
+        <FormActionButton variant="success" text={confirmLabel} onClick={onRequestConfirm} />
       )}
     </div>
   );

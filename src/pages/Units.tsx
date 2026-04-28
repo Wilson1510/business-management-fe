@@ -28,6 +28,7 @@ export default function Units() {
   const [editingUnit, setEditingUnit] = useState<UnitListItem | null>(null);
   const [formData, setFormData] = useState<UnitCreate>({ name: '' });
   const [formError, setFormError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   
   // Delete modal states
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -84,7 +85,7 @@ export default function Units() {
       return;
     }
     setFormError(null);
-    
+    setSaving(true);
     try {
       if (editingUnit) {
         const payload: UnitUpdate = { name: formData.name.trim() };
@@ -100,6 +101,8 @@ export default function Units() {
       closeForm();
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Terjadi kesalahan saat menyimpan satuan');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -180,35 +183,41 @@ export default function Units() {
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100 dark:border-gray-700">
-            <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {editingUnit ? 'Edit Satuan' : 'Tambah Satuan'}
-              </h3>
-            </div>
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
-              {formError && <ErrorAlert message={formError} variant="inline" />}
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Nama Satuan
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    value={formData.name}
-                    required
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    placeholder="e.g. Pcs"
-                    autoFocus
+            <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
+              <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {editingUnit ? 'Edit Satuan' : 'Tambah Satuan'}
+                </h3>
+              </div>
+              <form onSubmit={handleFormSubmit} className="p-6 space-y-5">
+                {formError && <ErrorAlert message={formError} variant="inline" />}
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      Nama Satuan
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={formData.name}
+                      required
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                      placeholder="e.g. Pcs"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end gap-3">
+                  <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
+                  <FormActionButton
+                    variant="primary"
+                    text={saving ? 'Menyimpan...' : 'Simpan'}
+                    className="min-w-[80px]"
                   />
                 </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-3">
-                <FormActionButton variant="cancel" text="Batal" onClick={closeForm} />
-                <FormActionButton variant="primary" text="Simpan" className="min-w-[80px]" />
-              </div>
-            </form>
+              </form>
+            </fieldset>
           </div>
         </div>
       )}

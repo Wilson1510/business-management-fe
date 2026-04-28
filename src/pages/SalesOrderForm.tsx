@@ -273,76 +273,77 @@ export default function SalesOrderForm() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <OrderFormHeader
-          onBack={() => navigate('/sales')}
-          titleIcon={<ShoppingCart size={24} className="text-primary" />}
-          title={isEditing ? orderNumber : 'Create Sales Order'}
-          subtitle={
-            isEditing
-              ? (status ? <StatusBadge status={status} /> : null)
-              : 'Draft new outbound SO request'
-          }
-        />
-        <OrderFormActions
-          saving={saving}
-          showCancel={Boolean(isEditing && status && status !== 'cancelled')}
-          showConfirm={Boolean(isEditing && status === 'draft')}
-          onRequestCancel={() => {
-            setActionError(null);
-            setOrderActionDialog('cancel');
-          }}
-          onRequestConfirm={() => {
-            setActionError(null);
-            setOrderActionDialog('confirm');
-          }}
-        />
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
-        <form id="so-form" onSubmit={handleSubmit} className="p-8 space-y-8">
-          {error && <ErrorAlert message={error} variant="form" />}
-
-          <OrderFormPartyDateSection
-            isOrderLocked={isOrderLocked}
-            partyLabel="Customer"
-            partyPlaceholder="Select Customer"
-            partyValue={formData.customer_id}
-            partyOptions={customers}
-            onPartyChange={customerId =>
-              setFormData({ ...formData, customer_id: customerId })
-            }
-            dateLabel="Estimated Delivery Date"
-            dateValue={formData.delivery_date}
-            onDateChange={deliveryDate =>
-              setFormData({ ...formData, delivery_date: deliveryDate })
+    <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
+      <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0 space-y-6">
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <OrderFormHeader
+            onBack={() => navigate('/sales')}
+            titleIcon={<ShoppingCart size={24} className="text-primary" />}
+            title={isEditing ? orderNumber : 'Create Sales Order'}
+            subtitle={
+              isEditing
+                ? (status ? <StatusBadge status={status} /> : null)
+                : 'Draft new outbound SO request'
             }
           />
-
-          <OrderFormLineItems
-            isOrderLocked={isOrderLocked}
-            sectionTitle="Order Items"
-            emptyMessage="Cart is empty. Add a product to configure the order."
-            items={formData.items}
-            products={products}
-            units={units}
-            onAddItem={addItem}
-            onRemoveItem={removeItem}
-            onProductChange={handleLineProductChange}
-            onQuantityChange={handleLineQuantityChange}
-            onUnitChange={handleLineUnitChange}
-            onPriceChange={handleLinePriceChange}
+          <OrderFormActions
+            showCancel={Boolean(isEditing && status && status !== 'cancelled')}
+            showConfirm={Boolean(isEditing && status === 'draft')}
+            onRequestCancel={() => {
+              setActionError(null);
+              setOrderActionDialog('cancel');
+            }}
+            onRequestConfirm={() => {
+              setActionError(null);
+              setOrderActionDialog('confirm');
+            }}
           />
+        </div>
 
-          <OrderFormTotal
-            label="Order Total"
-            amountDisplay={formatMoney(Number(calculateTotal()))}
-          />
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+          <form id="so-form" onSubmit={handleSubmit} className="p-8 space-y-8">
+            {error && <ErrorAlert message={error} variant="form" />}
 
-          {!isOrderLocked && <OrderFormSaveFooter saving={saving} />}
-        </form>
-      </div>
+            <OrderFormPartyDateSection
+              isOrderLocked={isOrderLocked}
+              partyLabel="Customer"
+              partyPlaceholder="Select Customer"
+              partyValue={formData.customer_id}
+              partyOptions={customers}
+              onPartyChange={customerId =>
+                setFormData({ ...formData, customer_id: customerId })
+              }
+              dateLabel="Estimated Delivery Date"
+              dateValue={formData.delivery_date}
+              onDateChange={deliveryDate =>
+                setFormData({ ...formData, delivery_date: deliveryDate })
+              }
+            />
+
+            <OrderFormLineItems
+              isOrderLocked={isOrderLocked}
+              sectionTitle="Order Items"
+              emptyMessage="Cart is empty. Add a product to configure the order."
+              items={formData.items}
+              products={products}
+              units={units}
+              onAddItem={addItem}
+              onRemoveItem={removeItem}
+              onProductChange={handleLineProductChange}
+              onQuantityChange={handleLineQuantityChange}
+              onUnitChange={handleLineUnitChange}
+              onPriceChange={handleLinePriceChange}
+            />
+
+            <OrderFormTotal
+              label="Order Total"
+              amountDisplay={formatMoney(Number(calculateTotal()))}
+            />
+
+            {!isOrderLocked && <OrderFormSaveFooter saving={saving} />}
+          </form>
+        </div>
+      </fieldset>
 
       {orderActionDialog && 
         <OrderActionDialog

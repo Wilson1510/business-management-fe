@@ -197,9 +197,10 @@ export default function ProductForm() {
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
-      <fieldset disabled={saving}>
+      <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
         <div className="flex items-center gap-4 mb-4">
-          <button 
+          <button
+            type="button"
             onClick={() => navigate('/catalog')}
             className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl transition-colors cursor-pointer"
           >
@@ -421,7 +422,6 @@ export default function ProductForm() {
               <FormActionButton
                 variant="primary"
                 text={saving ? 'Menyimpan...' : 'Simpan'}
-                disabled={saving}
               />
             </div>
           </form>
