@@ -19,7 +19,7 @@ describe('deleteCategory', () => {
       }),
     );
 
-    await expect(deleteCategory(1)).rejects.toThrow('Kategori ini masih digunakan oleh penjualan atau pembelian');
+    await expect(deleteCategory(1)).rejects.toThrow('Kategori ini masih digunakan oleh produk');
   });
 
   it('handles regular API errors fallback through handleCommonErrors', async () => {

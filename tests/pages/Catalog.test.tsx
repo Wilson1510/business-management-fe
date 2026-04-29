@@ -93,7 +93,7 @@ describe('Catalog Page', () => {
     setupRouter('admin');
 
     await waitFor(() => {
-      expect(screen.getByText('Tidak ada produk yang ditemukan')).toBeInTheDocument();
+      expect(screen.getByText('Belum ada produk')).toBeInTheDocument();
     });
   });
 
@@ -225,7 +225,8 @@ describe('Catalog Page', () => {
     
     await user.click(deleteBtn);
 
-    const confirmBtn = screen.getByRole('button', { name: /hapus/i });
+    const dialog = screen.getByRole('dialog');
+    const confirmBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
     await user.click(confirmBtn);
 
     await waitFor(() => {
@@ -256,11 +257,12 @@ describe('Catalog Page', () => {
     
     await user.click(deleteBtn);
 
-    const confirmBtn = screen.getByRole('button', { name: /hapus/i });
+    const dialog = screen.getByRole('dialog');
+    const confirmBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
     await user.click(confirmBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Gagal menghapus produk.')).toBeInTheDocument();
+      expect(screen.getByText('Cannot delete item in use')).toBeInTheDocument();
     });
 
     // Modal should still remain open

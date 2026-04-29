@@ -60,8 +60,8 @@ describe('Units Page', () => {
     it('displays loading state initially', async () => {
       vi.mocked(getUnits).mockReturnValue(new Promise(() => {}));
       setupRouter();
-      
-      expect(screen.getByText('Loading units...')).toBeInTheDocument();
+
+      expect(screen.getByText('Memuat satuan...')).toBeInTheDocument();
     });
 
     it('displays error message if fetching fails', async () => {
@@ -71,7 +71,7 @@ describe('Units Page', () => {
       await waitFor(() => {
         expect(screen.getByText('Failed to load units error')).toBeInTheDocument();
       });
-      expect(screen.queryByText('Loading units...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Memuat satuan...')).not.toBeInTheDocument();
     });
 
     it('displays empty state message when no data', async () => {
@@ -79,7 +79,7 @@ describe('Units Page', () => {
       setupRouter();
 
       await waitFor(() => {
-        expect(screen.getByText('No units found.')).toBeInTheDocument();
+        expect(screen.getByText('Belum ada satuan')).toBeInTheDocument();
       });
     });
 
@@ -90,18 +90,16 @@ describe('Units Page', () => {
       await waitFor(() => {
         expect(screen.getByText('Pcs')).toBeInTheDocument();
       });
-      
+
       expect(screen.getByText('Box')).toBeInTheDocument();
 
-      // Check actions: Add Unit button on top
-      expect(screen.getByRole('button', { name: /add unit/i })).toBeInTheDocument();
-      
-      // Each row should have edit and delete buttons
+      expect(screen.getByRole('button', { name: /tambah satuan/i })).toBeInTheDocument();
+
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; // Index 0 is table header
-      
+      const firstRow = rows[1];
+
       const buttonsInFirstRow = within(firstRow).getAllByRole('button');
-      expect(buttonsInFirstRow).toHaveLength(2); // Pencil and Trash icons
+      expect(buttonsInFirstRow).toHaveLength(1);
     });
   });
 
@@ -111,23 +109,19 @@ describe('Units Page', () => {
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add unit/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah satuan/i });
       await user.click(addBtn);
 
-      // Verify modal is opened
-      expect(screen.getByText('New Unit')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /tambah satuan/i })).toBeInTheDocument();
 
-      const input = screen.getByLabelText('Unit Name');
+      const input = screen.getByLabelText('Nama Satuan');
       expect(input).toBeRequired();
 
-      // Click save with empty input
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
-      
-      // Because required validation blocks submit in real browsers AND JSDOM + userEvent,
-      // our React onSubmit handler won't even fire. Thus 'createUnit' is not called.
+
       expect(input).toBeInvalid();
-      
+
       expect(createUnit).not.toHaveBeenCalled();
     });
 
@@ -136,68 +130,67 @@ describe('Units Page', () => {
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add unit/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah satuan/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Unit Name');
+      const input = screen.getByLabelText('Nama Satuan');
       await user.type(input, '   ');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
-      expect(screen.getByText('Name is required')).toBeInTheDocument();
+      expect(input).toBeValid();
+      expect(screen.getByText('Nama wajib diisi')).toBeInTheDocument();
       expect(createUnit).not.toHaveBeenCalled();
     });
 
     it('successfully adds a new unit', async () => {
       vi.mocked(getUnits).mockResolvedValue(MOCK_UNITS as unknown as UnitList);
       vi.mocked(createUnit).mockResolvedValue(
-        { id: 3, name: 'Kg', created_at: '', updated_at: '' } as unknown as UnitDetail
+        { id: 3, name: 'Kg', created_at: '', updated_at: '' } as unknown as UnitDetail,
       );
-      
+
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add unit/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah satuan/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Unit Name');
+      const input = screen.getByLabelText('Nama Satuan');
       await user.type(input, 'Kg');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(createUnit).toHaveBeenCalledWith({ name: 'Kg' });
       });
 
-      // Modal should be closed and list updated
-      expect(screen.queryByText('New Unit')).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: /tambah satuan/i })).not.toBeInTheDocument();
       expect(screen.getByText('Kg')).toBeInTheDocument();
     });
 
     it('shows API error inside modal when adding fails', async () => {
       vi.mocked(getUnits).mockResolvedValue(MOCK_UNITS as unknown as UnitList);
       vi.mocked(createUnit).mockRejectedValue(new Error('Name must be unique'));
-      
+
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add unit/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah satuan/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Unit Name');
+      const input = screen.getByLabelText('Nama Satuan');
       await user.type(input, 'Duplicate Name');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(screen.getByText('Name must be unique')).toBeInTheDocument();
       });
 
-      // Modal remains open
-      expect(screen.getByText('New Unit')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /tambah satuan/i })).toBeInTheDocument();
     });
   });
 
@@ -205,43 +198,35 @@ describe('Units Page', () => {
     it('opens modal with pre-filled value, updates correctly, and cancels edits', async () => {
       vi.mocked(getUnits).mockResolvedValue(MOCK_UNITS as unknown as UnitList);
       vi.mocked(updateUnit).mockResolvedValue(
-        { id: 1, name: 'Pieces', created_at: '', updated_at: '' } as unknown as UnitDetail
+        { id: 1, name: 'Pieces', created_at: '', updated_at: '' } as unknown as UnitDetail,
       );
       const user = userEvent.setup();
       setupRouter();
 
       await screen.findByText('Pcs');
-      const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      // Pencil button is the first button inside the row
-      const editBtn = within(firstRow).getAllByRole('button')[0];
-      await user.click(editBtn);
+      await user.click(screen.getByText('Pcs'));
 
-      // Verify Modal configuration
-      expect(screen.getByText('Edit Unit')).toBeInTheDocument();
-      const input = screen.getByLabelText('Unit Name');
+      expect(screen.getByText('Edit Satuan')).toBeInTheDocument();
+      const input = screen.getByLabelText('Nama Satuan');
       expect(input).toHaveValue('Pcs');
 
-      // Test Cancel function
-      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      const cancelBtn = screen.getByRole('button', { name: /batal/i });
       await user.click(cancelBtn);
-      expect(screen.queryByText('Edit Unit')).not.toBeInTheDocument();
-      
-      // Re-open and process to save
-      await user.click(editBtn);
-      const inputAgain = screen.getByLabelText('Unit Name');
+      expect(screen.queryByText('Edit Satuan')).not.toBeInTheDocument();
+
+      await user.click(screen.getByText('Pcs'));
+      const inputAgain = screen.getByLabelText('Nama Satuan');
       await user.clear(inputAgain);
       await user.type(inputAgain, 'Pieces');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(updateUnit).toHaveBeenCalledWith(1, { name: 'Pieces' });
       });
 
-      expect(screen.queryByText('Edit Unit')).not.toBeInTheDocument();
+      expect(screen.queryByText('Edit Satuan')).not.toBeInTheDocument();
       expect(screen.getByText('Pieces')).toBeInTheDocument();
       expect(screen.queryByText('Pcs')).not.toBeInTheDocument();
     });
@@ -255,20 +240,19 @@ describe('Units Page', () => {
 
       await screen.findByText('Pcs');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      // Trash button is the second button inside the row
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      expect(screen.getByText('Delete Unit')).toBeInTheDocument();
-      // Test dynamic deletion prompt text
-      expect(screen.getByText(/"Pcs"/)).toBeInTheDocument();
+      expect(screen.getByText('Hapus Satuan')).toBeInTheDocument();
+      const dialog = screen.getByRole('dialog');
+      expect(within(dialog).getByText('Pcs')).toBeInTheDocument();
 
-      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      const cancelBtn = screen.getByRole('button', { name: /batal/i });
       await user.click(cancelBtn);
 
-      expect(screen.queryByText('Delete Unit')).not.toBeInTheDocument();
+      expect(screen.queryByText('Hapus Satuan')).not.toBeInTheDocument();
       expect(deleteUnit).not.toHaveBeenCalled();
     });
 
@@ -280,45 +264,50 @@ describe('Units Page', () => {
 
       await screen.findByText('Pcs');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
+      const dialog = screen.getByRole('dialog');
+      const confirmDeleteBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
         expect(deleteUnit).toHaveBeenCalledWith(1);
       });
 
-      expect(screen.queryByText('Delete Unit')).not.toBeInTheDocument();
+      expect(screen.queryByText('Hapus Satuan')).not.toBeInTheDocument();
       expect(screen.queryByText('Pcs')).not.toBeInTheDocument();
       expect(screen.getByText('Box')).toBeInTheDocument();
     });
 
     it('handles deletion error (e.g., 409 Unit in use)', async () => {
       vi.mocked(getUnits).mockResolvedValue(MOCK_UNITS as unknown as UnitList);
-      vi.mocked(deleteUnit).mockRejectedValue(new Error('Unit ini masih digunakan oleh sales order atau purchase order'));
+      vi.mocked(deleteUnit).mockRejectedValue(
+        new Error('Unit ini masih digunakan oleh sales order atau purchase order'),
+      );
       const user = userEvent.setup();
       setupRouter();
 
       await screen.findByText('Pcs');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
+      const dialog = screen.getByRole('dialog');
+      const confirmDeleteBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
-        expect(screen.getByText('Unit ini masih digunakan oleh sales order atau purchase order')).toBeInTheDocument();
+        expect(
+          screen.getByText('Unit ini masih digunakan oleh sales order atau purchase order'),
+        ).toBeInTheDocument();
       });
 
-      // Modal should remain open
-      expect(screen.getByText('Delete Unit')).toBeInTheDocument();
+      expect(screen.getByText('Hapus Satuan')).toBeInTheDocument();
     });
   });
 });

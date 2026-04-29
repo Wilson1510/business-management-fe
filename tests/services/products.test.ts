@@ -133,9 +133,9 @@ describe('handleProductErrors', () => {
 
   describe('deleteProduct', () => {
     it('throws when product has references', async () => {
-      vi.mocked(apiFetch).mockResolvedValue(mockErrorResponse('product_has_references', 409));
+      vi.mocked(apiFetch).mockResolvedValue(mockErrorResponse('has_references', 409));
 
-      await expect(deleteProduct(1)).rejects.toThrow('Produk ini masih digunakan oleh sales order atau purchase order');
+      await expect(deleteProduct(1)).rejects.toThrow('Produk ini masih digunakan oleh penjualan atau pembelian');
     });
 
     it('falls back to handleCommonErrors for unknown error codes', async () => {

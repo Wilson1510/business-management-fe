@@ -129,8 +129,8 @@ describe('apiFetch', () => {
     );
   });
 
-  it('throws "Tidak dapat terhubung ke server..." when fetch fails with network error', async () => {
-    vi.mocked(fetch).mockRejectedValue(new Error('Failed to fetch'));
+  it('throws "Tidak dapat terhubung ke server..." when fetch fails with type error', async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError('Failed to fetch'));
     const { apiFetch } = await loadApi();
 
     await expect(apiFetch('/v1/items')).rejects.toThrow('Tidak dapat terhubung ke server. Silahkan coba lagi nanti');
