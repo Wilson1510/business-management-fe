@@ -183,6 +183,9 @@ export default function DeliveryDetail() {
   const destReadOnlyClass =
     'w-full px-4 py-3 bg-gray-100/50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-600 rounded-xl outline-none text-sm font-medium text-gray-900 dark:text-gray-100 cursor-default';
 
+  const pemeriksaanStackLabelClass =
+    'block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 dark:text-gray-400';
+
   return (
     <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12">
       <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0 space-y-6">
@@ -280,13 +283,13 @@ export default function DeliveryDetail() {
 
             <OrderFormItemSection title="Pemeriksaan fisik">
               <div className="space-y-4">
-                <div className="flex items-end gap-4 px-0 sm:px-1 flex-wrap sm:flex-nowrap">
+                <div className="hidden md:flex items-end gap-4 px-0 md:px-1 flex-nowrap">
                   <div className="flex-1 min-w-[12rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
                       Produk
                     </p>
                   </div>
-                  <div className="w-20 sm:w-24 shrink-0 text-center">
+                  <div className="w-24 shrink-0 text-center">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
                       Jumlah
                     </p>
@@ -296,7 +299,7 @@ export default function DeliveryDetail() {
                       Dikirim
                     </p>
                   </div>
-                  <div className="min-w-0 flex-1 sm:min-w-[8rem]">
+                  <div className="min-w-0 flex-1 md:min-w-[8rem]">
                     <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 mb-1">
                       Catatan
                     </p>
@@ -306,38 +309,84 @@ export default function DeliveryDetail() {
                 {formData.items?.map((item, idx) => {
                   const line = readOnlyData.items.find(row => row.id === item.id);
                   if (!line) return null;
+                  const isLastPemeriksaanRow = !formData.items?.some((laterItem, j) => {
+                    if (j <= idx) return false;
+                    return readOnlyData.items.some(row => row.id === laterItem.id);
+                  });
                   return (
-                    <div
-                      key={item.id}
-                      className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b border-gray-100 dark:border-gray-700 last:border-0 last:pb-0 pb-4 last:mb-0"
-                    >
-                      <div className="flex-1 min-w-[12rem]">
-                        <p className="font-bold text-gray-900 leading-snug dark:text-gray-100">{line.product.name}</p>
-                        <p className="text-xs text-gray-500 font-medium mt-1 dark:text-gray-400">{line.unit.name}</p>
+                    <div key={item.id} className="min-w-0">
+                      <div className="md:hidden rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3 dark:border-primary/30 dark:bg-primary/10">
+                        <div>
+                          <p className={pemeriksaanStackLabelClass}>Produk</p>
+                          <p className="font-bold leading-snug text-gray-900 dark:text-gray-100">{line.product.name}</p>
+                          <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">{line.unit.name}</p>
+                        </div>
+                        <div>
+                          <p className={pemeriksaanStackLabelClass}>Jumlah</p>
+                          <div className="w-full rounded-lg bg-gray-100 py-2 text-center text-sm font-mono font-medium tabular-nums text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                            {line.quantity}
+                          </div>
+                        </div>
+                        <div>
+                          <p className={pemeriksaanStackLabelClass}>Dikirim</p>
+                          <input
+                            type="number"
+                            min={0}
+                            max={line.quantity}
+                            disabled={isDeliveryLocked}
+                            value={item.quantity_delivered}
+                            onChange={e => updateItem(idx, 'quantity_delivered', Number(e.target.value))}
+                            className={`w-full text-center text-sm font-bold ${lineControlClass}`}
+                          />
+                        </div>
+                        <div>
+                          <p className={pemeriksaanStackLabelClass}>Catatan</p>
+                          <input
+                            type="text"
+                            disabled={isDeliveryLocked}
+                            placeholder="Catatan logistik per barang…"
+                            value={item.notes}
+                            onChange={e => updateItem(idx, 'notes', e.target.value)}
+                            className={`w-full ${lineControlClass}`}
+                          />
+                        </div>
                       </div>
-                      <div className="w-20 sm:w-24 shrink-0 text-center text-sm font-mono font-medium text-gray-500 bg-gray-100 dark:bg-gray-800 py-2 rounded-lg tabular-nums self-center">
-                        {line.quantity}
-                      </div>
-                      <div className="w-full sm:w-24 shrink-0 self-center">
-                        <input
-                          type="number"
-                          min={0}
-                          max={line.quantity}
-                          disabled={isDeliveryLocked}
-                          value={item.quantity_delivered}
-                          onChange={e => updateItem(idx, 'quantity_delivered', Number(e.target.value))}
-                          className={`w-full text-center text-sm font-bold ${lineControlClass}`}
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1 w-full self-center">
-                        <input
-                          type="text"
-                          disabled={isDeliveryLocked}
-                          placeholder="Catatan logistik per barang…"
-                          value={item.notes}
-                          onChange={e => updateItem(idx, 'notes', e.target.value)}
-                          className={`w-full ${lineControlClass}`}
-                        />
+
+                      <div
+                        className={`hidden md:flex md:items-center md:gap-4 md:px-1 md:pb-4 ${
+                          isLastPemeriksaanRow
+                            ? ''
+                            : 'md:border-b md:border-gray-100 dark:md:border-gray-700'
+                        }`}
+                      >
+                        <div className="min-w-[12rem] flex-1">
+                          <p className="font-bold leading-snug text-gray-900 dark:text-gray-100">{line.product.name}</p>
+                          <p className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">{line.unit.name}</p>
+                        </div>
+                        <div className="w-24 shrink-0 self-center text-center text-sm font-mono font-medium tabular-nums text-gray-500 bg-gray-100 dark:bg-gray-800 py-2 rounded-lg">
+                          {line.quantity}
+                        </div>
+                        <div className="w-24 shrink-0 self-center">
+                          <input
+                            type="number"
+                            min={0}
+                            max={line.quantity}
+                            disabled={isDeliveryLocked}
+                            value={item.quantity_delivered}
+                            onChange={e => updateItem(idx, 'quantity_delivered', Number(e.target.value))}
+                            className={`w-full text-center text-sm font-bold ${lineControlClass}`}
+                          />
+                        </div>
+                        <div className="min-w-0 w-full flex-1 self-center md:min-w-[8rem]">
+                          <input
+                            type="text"
+                            disabled={isDeliveryLocked}
+                            placeholder="Catatan logistik per barang…"
+                            value={item.notes}
+                            onChange={e => updateItem(idx, 'notes', e.target.value)}
+                            className={`w-full ${lineControlClass}`}
+                          />
+                        </div>
                       </div>
                     </div>
                   );
