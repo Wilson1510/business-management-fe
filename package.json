@@ -1,5 +1,5 @@
 {
-  "name": "inventory-management-fe",
+  "name": "business-management-fe",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -39,5 +39,10 @@
     "typescript-eslint": "^8.58.0",
     "vite": "^8.0.4",
     "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "vitest": {
+      "vite": "^8.0.4"
+    }
   }
 }

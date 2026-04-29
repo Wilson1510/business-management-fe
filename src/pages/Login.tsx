@@ -48,7 +48,7 @@ export default function Login() {
                 <LogIn size={32} />
               </div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Invensys ERP</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Sign in to manage your inventory</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Sign in to manage your business</p>
             </div>
 
             {error && <ErrorAlert message={error} variant="login" />}

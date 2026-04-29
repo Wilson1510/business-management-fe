@@ -19,6 +19,7 @@ const mockUser: CurrentUser = {
   name: 'Alice',
   role: 'admin',
   is_active: true,
+  last_login: new Date().toISOString(),
 };
 
 function renderProtectedRoutes(initialPath = '/app') {

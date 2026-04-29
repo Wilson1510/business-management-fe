@@ -6,11 +6,12 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import AppLayout, { getNavItems } from '../../../src/components/layout/AppLayout';
-import { useAuth } from '../../../src/components/auth/AuthContext';
+import { useAuth, useAuthenticatedUser } from '../../../src/components/auth/AuthContext';
 import type { CurrentUser } from '../../../src/services/users';
 
 vi.mock('../../../src/components/auth/AuthContext', () => ({
   useAuth: vi.fn(),
+  useAuthenticatedUser: vi.fn(),
 }));
 
 function labelsAndPaths(role: string) {
@@ -60,6 +61,7 @@ function renderAppLayoutWithAuth(user: CurrentUser) {
     loadUser: vi.fn(),
     logout,
   });
+  vi.mocked(useAuthenticatedUser).mockReturnValue(user);
 
   render(
     <MemoryRouter initialEntries={['/dashboard']}>
@@ -79,6 +81,7 @@ describe('AppLayout handleLogout', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.mocked(useAuth).mockReset();
+    vi.mocked(useAuthenticatedUser).mockReset();
   });
 
   afterEach(() => {

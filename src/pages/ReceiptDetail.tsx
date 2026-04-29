@@ -114,14 +114,15 @@ export default function ReceiptDetail() {
   }, [id]);
 
   function updateItem(index: number, field: keyof ReceiptProduct, value: number | string) {
-    const newItems = [...formData.items];
+    const items = formData.items ?? [];
+    const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
     setFormData({ ...formData, items: newItems });
   }
 
   async function handleSaveDraft(e: React.FormEvent) {
     e.preventDefault();
-    if (isReceiptLocked) return;
+    if (isReceiptLocked || !readOnlyData || !id) return;
     setError(null);
     setSaving(true);
     try {
@@ -145,15 +146,20 @@ export default function ReceiptDetail() {
       setActionError('Penerimaan tidak ditemukan');
       return;
     }
+    if (!readOnlyData) {
+      setActionError('Data penerimaan belum dimuat');
+      return;
+    }
+    const orderNumber = readOnlyData.number;
     setActionError(null);
     setSaving(true);
     try {
       if (receiptActionDialog === 'done') {
         await doneReceipt(Number(id));
-        toastSuccessDone(readOnlyData.number);
+        toastSuccessDone(orderNumber);
       } else {
         await cancelReceipt(Number(id));
-        toastSuccessCancel(readOnlyData.number);
+        toastSuccessCancel(orderNumber);
       }
       const receipt = await getReceipt(Number(id));
       setStatus(receipt.status);
@@ -173,6 +179,26 @@ export default function ReceiptDetail() {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
         Memuat penerimaan...
+      </div>
+    );
+  }
+
+  if (!readOnlyData) {
+    return (
+      <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12 space-y-4">
+        <ErrorAlert
+          message={error ?? 'Penerimaan tidak ditemukan atau ID tidak valid.'}
+          variant="form"
+        />
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => navigate('/purchases/receipts')}
+            className="rounded-xl px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 dark:hover:bg-primary/20"
+          >
+            Kembali ke daftar penerimaan
+          </button>
+        </div>
       </div>
     );
   }

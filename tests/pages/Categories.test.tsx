@@ -12,7 +12,7 @@ import {
   updateCategory,
   deleteCategory,
   type CategoryList,
-  type CategoryDetail
+  type CategoryDetail,
 } from '../../src/services/categories';
 
 vi.mock('../../src/services/categories', () => ({
@@ -60,8 +60,8 @@ describe('Categories Page', () => {
     it('displays loading state initially', async () => {
       vi.mocked(getCategories).mockReturnValue(new Promise(() => {}));
       setupRouter();
-      
-      expect(screen.getByText('Loading categories...')).toBeInTheDocument();
+
+      expect(screen.getByText('Memuat kategori...')).toBeInTheDocument();
     });
 
     it('displays error message if fetching fails', async () => {
@@ -71,7 +71,7 @@ describe('Categories Page', () => {
       await waitFor(() => {
         expect(screen.getByText('Failed to load categories error')).toBeInTheDocument();
       });
-      expect(screen.queryByText('Loading categories...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Memuat kategori...')).not.toBeInTheDocument();
     });
 
     it('displays empty state message when no data', async () => {
@@ -79,7 +79,7 @@ describe('Categories Page', () => {
       setupRouter();
 
       await waitFor(() => {
-        expect(screen.getByText('No categories found.')).toBeInTheDocument();
+        expect(screen.getByText('Belum ada kategori')).toBeInTheDocument();
       });
     });
 
@@ -90,18 +90,16 @@ describe('Categories Page', () => {
       await waitFor(() => {
         expect(screen.getByText('Electronics')).toBeInTheDocument();
       });
-      
+
       expect(screen.getByText('Furniture')).toBeInTheDocument();
 
-      // Check actions: Add Category button on top
-      expect(screen.getByRole('button', { name: /add category/i })).toBeInTheDocument();
-      
-      // Each row should have edit and delete buttons (2 rows x 2 buttons = 4, + 1 for Add Category = 5 total buttons)
+      expect(screen.getByRole('button', { name: /tambah kategori/i })).toBeInTheDocument();
+
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; // Index 0 is table header
-      
+      const firstRow = rows[1];
+
       const buttonsInFirstRow = within(firstRow).getAllByRole('button');
-      expect(buttonsInFirstRow).toHaveLength(2); // Pencil and Trash icons
+      expect(buttonsInFirstRow).toHaveLength(1);
     });
   });
 
@@ -111,24 +109,19 @@ describe('Categories Page', () => {
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add category/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah kategori/i });
       await user.click(addBtn);
 
-      // Verify modal is opened
-      expect(screen.getByText('New Category')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /tambah kategori/i })).toBeInTheDocument();
 
-      // Ensure input is required
-      const input = screen.getByLabelText('Category Name');
+      const input = screen.getByLabelText('Nama Kategori');
       expect(input).toBeRequired();
 
-      // Test frontend manual JS validation guard if form submission triggers natively
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
-      
-      // Because required validation blocks submit in real browsers AND JSDOM + userEvent,
-      // our React onSubmit handler won't even fire. Thus 'createCategory' is not called.
+
       expect(input).toBeInvalid();
-      
+
       expect(createCategory).not.toHaveBeenCalled();
     });
 
@@ -137,70 +130,67 @@ describe('Categories Page', () => {
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add category/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah kategori/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Category Name');
+      const input = screen.getByLabelText('Nama Kategori');
       await user.type(input, '   ');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
-      // Whitespace is valid at html level but it is prevented by our React onSubmit handler
       expect(input).toBeValid();
-      expect(screen.getByText('Name is required')).toBeInTheDocument();
+      expect(screen.getByText('Nama wajib diisi')).toBeInTheDocument();
       expect(createCategory).not.toHaveBeenCalled();
     });
 
     it('successfully adds a new category', async () => {
       vi.mocked(getCategories).mockResolvedValue(MOCK_CATEGORIES as CategoryList);
       vi.mocked(createCategory).mockResolvedValue(
-        { id: 3, name: 'Toys', created_at: '', updated_at: '' } as CategoryDetail
-    );
-      
+        { id: 3, name: 'Toys', created_at: '', updated_at: '' } as CategoryDetail,
+      );
+
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add category/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah kategori/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Category Name');
+      const input = screen.getByLabelText('Nama Kategori');
       await user.type(input, 'Toys');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(createCategory).toHaveBeenCalledWith({ name: 'Toys' });
       });
 
-      // Modal should be closed and list updated
-      expect(screen.queryByText('New Category')).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading', { name: /tambah kategori/i })).not.toBeInTheDocument();
       expect(screen.getByText('Toys')).toBeInTheDocument();
     });
 
     it('shows API error inside modal when adding fails', async () => {
       vi.mocked(getCategories).mockResolvedValue(MOCK_CATEGORIES as CategoryList);
       vi.mocked(createCategory).mockRejectedValue(new Error('Name must be unique'));
-      
+
       const user = userEvent.setup();
       setupRouter();
 
-      const addBtn = await screen.findByRole('button', { name: /add category/i });
+      const addBtn = await screen.findByRole('button', { name: /tambah kategori/i });
       await user.click(addBtn);
 
-      const input = screen.getByLabelText('Category Name');
+      const input = screen.getByLabelText('Nama Kategori');
       await user.type(input, 'Duplicate Name');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(screen.getByText('Name must be unique')).toBeInTheDocument();
       });
 
-      // Modal remains open
-      expect(screen.getByText('New Category')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /tambah kategori/i })).toBeInTheDocument();
     });
   });
 
@@ -208,43 +198,35 @@ describe('Categories Page', () => {
     it('opens modal with pre-filled value, updates correctly, and cancels edits', async () => {
       vi.mocked(getCategories).mockResolvedValue(MOCK_CATEGORIES as CategoryList);
       vi.mocked(updateCategory).mockResolvedValue(
-        { id: 1, name: 'Smart Electronics', created_at: '', updated_at: '' } as CategoryDetail
+        { id: 1, name: 'Smart Electronics', created_at: '', updated_at: '' } as CategoryDetail,
       );
       const user = userEvent.setup();
       setupRouter();
 
       await screen.findByText('Electronics');
-      const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      // Pencil button is the first button inside the row
-      const editBtn = within(firstRow).getAllByRole('button')[0];
-      await user.click(editBtn);
+      await user.click(screen.getByText('Electronics'));
 
-      // Verify Modal configuration
-      expect(screen.getByText('Edit Category')).toBeInTheDocument();
-      const input = screen.getByLabelText('Category Name');
+      expect(screen.getByText('Edit Kategori')).toBeInTheDocument();
+      const input = screen.getByLabelText('Nama Kategori');
       expect(input).toHaveValue('Electronics');
 
-      // Test Cancel function
-      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      const cancelBtn = screen.getByRole('button', { name: /batal/i });
       await user.click(cancelBtn);
-      expect(screen.queryByText('Edit Category')).not.toBeInTheDocument();
-      
-      // Re-open and process to save
-      await user.click(editBtn);
-      const inputAgain = screen.getByLabelText('Category Name');
+      expect(screen.queryByText('Edit Kategori')).not.toBeInTheDocument();
+
+      await user.click(screen.getByText('Electronics'));
+      const inputAgain = screen.getByLabelText('Nama Kategori');
       await user.clear(inputAgain);
       await user.type(inputAgain, 'Smart Electronics');
 
-      const saveBtn = screen.getByRole('button', { name: /save/i });
+      const saveBtn = screen.getByRole('button', { name: /simpan/i });
       await user.click(saveBtn);
 
       await waitFor(() => {
         expect(updateCategory).toHaveBeenCalledWith(1, { name: 'Smart Electronics' });
       });
 
-      expect(screen.queryByText('Edit Category')).not.toBeInTheDocument();
+      expect(screen.queryByText('Edit Kategori')).not.toBeInTheDocument();
       expect(screen.getByText('Smart Electronics')).toBeInTheDocument();
       expect(screen.queryByText('Electronics')).not.toBeInTheDocument();
     });
@@ -258,20 +240,19 @@ describe('Categories Page', () => {
 
       await screen.findByText('Electronics');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      // Trash button is the second button inside the row
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      expect(screen.getByText('Delete Category')).toBeInTheDocument();
-      // Test dynamic deletion prompt text
-      expect(screen.getByText(/"Electronics"/)).toBeInTheDocument();
+      expect(screen.getByText('Hapus Kategori')).toBeInTheDocument();
+      const dialog = screen.getByRole('dialog');
+      expect(within(dialog).getByText('Electronics')).toBeInTheDocument();
 
-      const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+      const cancelBtn = screen.getByRole('button', { name: /batal/i });
       await user.click(cancelBtn);
 
-      expect(screen.queryByText('Delete Category')).not.toBeInTheDocument();
+      expect(screen.queryByText('Hapus Kategori')).not.toBeInTheDocument();
       expect(deleteCategory).not.toHaveBeenCalled();
     });
 
@@ -283,19 +264,20 @@ describe('Categories Page', () => {
 
       await screen.findByText('Electronics');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
+      const dialog = screen.getByRole('dialog');
+      const confirmDeleteBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
         expect(deleteCategory).toHaveBeenCalledWith(1);
       });
 
-      expect(screen.queryByText('Delete Category')).not.toBeInTheDocument();
+      expect(screen.queryByText('Hapus Kategori')).not.toBeInTheDocument();
       expect(screen.queryByText('Electronics')).not.toBeInTheDocument();
       expect(screen.getByText('Furniture')).toBeInTheDocument();
     });
@@ -308,20 +290,20 @@ describe('Categories Page', () => {
 
       await screen.findByText('Electronics');
       const rows = screen.getAllByRole('row');
-      const firstRow = rows[1]; 
-      
-      const deleteBtn = within(firstRow).getAllByRole('button')[1];
+      const firstRow = rows[1];
+
+      const deleteBtn = within(firstRow).getByRole('button');
       await user.click(deleteBtn);
 
-      const confirmDeleteBtn = screen.getByRole('button', { name: /delete item/i });
+      const dialog = screen.getByRole('dialog');
+      const confirmDeleteBtn = within(dialog).getByRole('button', { name: /^hapus$/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
         expect(screen.getByText('Kategori ini masih digunakan oleh produk')).toBeInTheDocument();
       });
 
-      // Modal should remain open
-      expect(screen.getByText('Delete Category')).toBeInTheDocument();
+      expect(screen.getByText('Hapus Kategori')).toBeInTheDocument();
     });
   });
 });

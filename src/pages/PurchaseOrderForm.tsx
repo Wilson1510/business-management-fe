@@ -49,7 +49,7 @@ export default function PurchaseOrderForm() {
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [orderActionDialog, setOrderActionDialog] = useState<'confirm' | 'cancel' | null>(null);
@@ -126,6 +126,7 @@ export default function PurchaseOrderForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (isOrderLocked) return;
+    if (!orderNumber) return;
     setError(null);
     if (!formData.supplier_id) {
       setError('Pemasok wajib dipilih.');
@@ -172,7 +173,7 @@ export default function PurchaseOrderForm() {
   }
 
   async function handleOrderAction() {
-    if (!id || !orderActionDialog) {
+    if (!id || !orderActionDialog || !orderNumber) {
       setActionError('Pembelian tidak ditemukan');
       return;
     }
