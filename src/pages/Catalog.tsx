@@ -8,11 +8,11 @@ import { AddItemButton } from '../components/AddItemButton';
 import { ConfirmDeleteModal } from '../components/ConfirmDeleteModal';
 import { getProducts, deleteProduct, type ProductList, type ProductListItem } from '../services/products';
 import { formatMoney, formatQty } from '../utils/format';
-import { useAuth } from '../components/auth/AuthContext';
+import { useAuthenticatedUser } from '../components/auth/AuthContext';
 import { toastSuccessDelete } from '../utils/toast';
 
 export default function Catalog() {
-  const { user } = useAuth();
+  const user = useAuthenticatedUser();
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductList>([]);
   const [loading, setLoading] = useState(true);

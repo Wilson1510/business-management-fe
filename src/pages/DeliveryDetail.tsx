@@ -114,14 +114,15 @@ export default function DeliveryDetail() {
   }, [id]);
 
   function updateItem(index: number, field: keyof DeliveryProduct, value: number | string) {
-    const newItems = [...formData.items];
+    const items = formData.items ?? [];
+    const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
     setFormData({ ...formData, items: newItems });
   }
 
   async function handleSaveDraft(e: React.FormEvent) {
     e.preventDefault();
-    if (isDeliveryLocked) return;
+    if (isDeliveryLocked || !readOnlyData || !id) return;
     setError(null);
     setSaving(true);
     try {
@@ -145,15 +146,20 @@ export default function DeliveryDetail() {
       setActionError('Pengiriman tidak ditemukan');
       return;
     }
+    if (!readOnlyData) {
+      setActionError('Data pengiriman belum dimuat');
+      return;
+    }
+    const orderNumber = readOnlyData.number;
     setActionError(null);
     setSaving(true);
     try {
       if (deliveryActionDialog === 'done') {
         await doneDelivery(Number(id));
-        toastSuccessDone(readOnlyData.number);
+        toastSuccessDone(orderNumber);
       } else {
         await cancelDelivery(Number(id));
-        toastSuccessCancel(readOnlyData.number);
+        toastSuccessCancel(orderNumber);
       }
       const delivery = await getDelivery(Number(id));
       setStatus(delivery.status);
@@ -172,6 +178,26 @@ export default function DeliveryDetail() {
     return (
       <div className="w-full max-w-5xl mx-auto p-12 text-center text-gray-500 dark:text-gray-400">
         Memuat pengiriman...
+      </div>
+    );
+  }
+
+  if (!readOnlyData) {
+    return (
+      <div className="w-full max-w-5xl mx-auto animate-in fade-in duration-500 pb-12 space-y-4">
+        <ErrorAlert
+          message={error ?? 'Pengiriman tidak ditemukan atau ID tidak valid.'}
+          variant="form"
+        />
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => navigate('/sales/deliveries')}
+            className="rounded-xl px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 dark:hover:bg-primary/20"
+          >
+            Kembali ke daftar pengiriman
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,9 +1,9 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { Package, Tags, Scale } from 'lucide-react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuthenticatedUser } from '../auth/AuthContext';
 
 export default function CatalogLayout() {
-  const { user } = useAuth();
+  const user = useAuthenticatedUser();
 
   const tabs = [
     { name: 'Produk', path: '/catalog', end: true, icon: Package },

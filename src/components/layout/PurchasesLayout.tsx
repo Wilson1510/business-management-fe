@@ -1,9 +1,9 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { ShoppingBag, Box } from 'lucide-react';
-import { useAuth } from '../auth/AuthContext';
+import { useAuthenticatedUser } from '../auth/AuthContext';
 
 export default function PurchasesLayout() {
-  const { user } = useAuth();
+  const user = useAuthenticatedUser();
 
   const tabs = [
     ...(user.role === 'admin' ? [

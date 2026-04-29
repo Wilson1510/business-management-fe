@@ -87,3 +87,15 @@ export function useAuth(): AuthContextValue {
   }
   return ctx
 }
+
+/**
+ * Untuk subtree di bawah ProtectedRoute: user selalu terdefinisi.
+ * Jangan dipakai di halaman login atau sebelum route guard selesai.
+ */
+export function useAuthenticatedUser(): CurrentUser {
+  const { user } = useAuth()
+  if (!user) {
+    throw new Error('useAuthenticatedUser requires an authenticated user')
+  }
+  return user
+}

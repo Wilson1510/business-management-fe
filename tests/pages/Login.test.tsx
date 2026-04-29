@@ -24,6 +24,7 @@ const baseProfile: Omit<CurrentUser, 'role'> = {
   email: 'u@example.com',
   name: 'User One',
   is_active: true,
+  last_login: new Date().toISOString(),
 };
 
 /**

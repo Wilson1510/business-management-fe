@@ -7,7 +7,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import Catalog from '../../src/pages/Catalog';
 import { getProducts, deleteProduct, type ProductList } from '../../src/services/products';
-import { useAuth } from '../../src/components/auth/AuthContext';
+import { useAuthenticatedUser } from '../../src/components/auth/AuthContext';
+import type { CurrentUser } from '../../src/services/users';
 
 vi.mock('../../src/services/products', () => ({
   getProducts: vi.fn(),
@@ -15,8 +16,20 @@ vi.mock('../../src/services/products', () => ({
 }));
 
 vi.mock('../../src/components/auth/AuthContext', () => ({
-  useAuth: vi.fn(),
+  useAuthenticatedUser: vi.fn(),
 }));
+
+function catalogTestUser(role: 'admin' | 'staff'): CurrentUser {
+  return {
+    id: 1,
+    username: 'test',
+    email: 'test@example.com',
+    name: 'Test User',
+    role,
+    is_active: true,
+    last_login: new Date().toISOString(),
+  };
+}
 
 const MOCK_PRODUCTS = [
   {
@@ -45,10 +58,8 @@ const MOCK_PRODUCTS = [
   }
 ];
 
-function setupRouter(role: string = 'admin') {
-  vi.mocked(useAuth).mockReturnValue({
-    user: { role },
-  } as ReturnType<typeof useAuth>);
+function setupRouter(role: 'admin' | 'staff' = 'admin') {
+  vi.mocked(useAuthenticatedUser).mockReturnValue(catalogTestUser(role));
 
   return render(
     <MemoryRouter initialEntries={['/catalog']}>

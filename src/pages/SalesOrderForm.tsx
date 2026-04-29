@@ -203,6 +203,7 @@ export default function SalesOrderForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (isOrderLocked) return;
+    if (!orderNumber) return;
     setError(null);
 
     if (formData.items.length === 0) {
@@ -242,7 +243,7 @@ export default function SalesOrderForm() {
   }
 
   async function handleOrderAction() {
-    if (!id || !orderActionDialog) {
+    if (!id || !orderActionDialog || !orderNumber) {
       setActionError('Penjualan tidak ditemukan');
       return;
     }

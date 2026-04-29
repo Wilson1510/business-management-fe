@@ -5,12 +5,12 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import CatalogLayout from '../../../src/components/layout/CatalogLayout';
-import { useAuth } from '../../../src/components/auth/AuthContext';
+import { useAuth, useAuthenticatedUser } from '../../../src/components/auth/AuthContext';
 import type { CurrentUser } from '../../../src/services/users';
 
-// Mock the useAuth hook
 vi.mock('../../../src/components/auth/AuthContext', () => ({
   useAuth: vi.fn(),
+  useAuthenticatedUser: vi.fn(),
 }));
 
 const mockAdmin: CurrentUser = {
@@ -40,6 +40,7 @@ function renderLayout(user: CurrentUser) {
     loadUser: vi.fn(),
     logout: vi.fn(),
   });
+  vi.mocked(useAuthenticatedUser).mockReturnValue(user);
 
   return render(
     <MemoryRouter initialEntries={['/catalog']}>
@@ -55,6 +56,7 @@ function renderLayout(user: CurrentUser) {
 describe('CatalogLayout', () => {
   beforeEach(() => {
     vi.mocked(useAuth).mockReset();
+    vi.mocked(useAuthenticatedUser).mockReset();
   });
 
   afterEach(() => {

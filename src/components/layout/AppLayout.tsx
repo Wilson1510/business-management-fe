@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Package, X, Menu, Sun, Moon, KeyRound, LogOut, Users, ShoppingCart, Settings, ShoppingBag,
   LayoutDashboard, Box, Truck } from "lucide-react";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth, useAuthenticatedUser } from "../auth/AuthContext";
 import { readStoredThemeIsDark } from "../../theme";
 
 export function getNavItems(role: string) {
@@ -29,7 +29,8 @@ export function getNavItems(role: string) {
 export default function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, logout } = useAuth()
+  const user = useAuthenticatedUser()
+  const { logout } = useAuth()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(readStoredThemeIsDark)
 
@@ -44,7 +45,6 @@ export default function AppLayout() {
   }, [isDarkMode])
 
   const visibleNavs = useMemo(function() {
-    if (!user) return []
     return getNavItems(user.role)
   }, [user])
 
