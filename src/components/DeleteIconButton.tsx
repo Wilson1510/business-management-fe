@@ -7,7 +7,7 @@ export type DeleteIconButtonProps = Omit<
 >;
 
 const buttonClass =
-  'p-2 rounded-lg transition-colors cursor-pointer text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20';
+  'p-1.5 rounded-lg transition-colors cursor-pointer text-gray-400 dark:text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20';
 
 export function DeleteIconButton(props: DeleteIconButtonProps) {
   return (

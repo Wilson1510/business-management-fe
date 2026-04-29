@@ -23,6 +23,9 @@ import { toastSuccessCreate, toastSuccessUpdate } from '../utils/toast';
 const productPriceRowGridClass =
   'grid w-full min-w-0 [grid-template-columns:minmax(0,1.5fr)_minmax(5.5rem,0.38fr)_minmax(0,1.05fr)_2.5rem] gap-3 sm:gap-4';
 
+const stackedFieldLabelClass =
+  'block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 dark:text-gray-400';
+
 export default function ProductForm() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -250,12 +253,14 @@ export default function ProductForm() {
 
             {/* SECTION: UNITS CONFIGURATION */}
             <section className="space-y-4">
-              <div className="flex justify-between items-end">
-                <div className="border-l-4 border-indigo-500 pl-3">
+              <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
+                <div className="min-w-0 w-full border-l-4 border-indigo-500 pl-3">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Konversi Satuan ke Satuan Dasar</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan bagaimana satuan lebih kecil/lebih besar berkorelasi dengan satuan dasar</p>
                 </div>
-                <InlineAddItemButton tone="indigo" text="Tambah Satuan" onClick={addProductUnit} />
+                <div className="flex w-full shrink-0 justify-end md:w-auto md:justify-start">
+                  <InlineAddItemButton tone="indigo" text="Tambah Satuan" onClick={addProductUnit} />
+                </div>
               </div>
               
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
@@ -271,43 +276,103 @@ export default function ProductForm() {
                       const isBase = u.is_base_unit;
                       const rowKey = u.id != null ? `unit-${u.id}` : `unit-new-${index}`;
 
+                      const unitSelectClass =
+                        'w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100';
+
+                      const multiplierInputClass = `min-w-0 flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`;
+
                       return (
-                        <div key={rowKey} className="flex w-full min-w-0 items-center gap-3 sm:gap-4">
-                          <select
-                            required
-                            value={u.unit_id || ''}
-                            onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
-                            className="min-w-0 flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
-                          >
-                            <option value="" disabled hidden>Pilih satuan...</option>
-                            {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
-                          </select>
-                          
-                          <span className="shrink-0 text-gray-400 dark:text-gray-500 font-bold" aria-hidden>
-                            =
-                          </span>
-                          
-                          <div className="flex min-w-0 flex-1 items-center gap-3">
-                            <input
-                              type="number"
-                              min="1"
-                              readOnly={isBase}
-                              value={isBase ? 1 : u.multiplier}
-                              onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
-                              className={`min-w-0 flex-1 px-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 ${isBase ? 'bg-gray-100/50 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 cursor-not-allowed' : 'bg-gray-50 dark:bg-gray-900/50'}`}
-                            />
-                            <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 min-w-0 text-right sm:min-w-[4.5rem]">
-                              {baseUnitName}
-                            </span>
+                        <div key={rowKey} className="min-w-0">
+                          <div className="md:hidden rounded-xl border border-indigo-500/20 bg-indigo-500/5 dark:bg-indigo-500/10 dark:border-indigo-500/30 p-4 space-y-3">
+                            <div>
+                              <label className={stackedFieldLabelClass}>Satuan</label>
+                              <select
+                                required
+                                value={u.unit_id || ''}
+                                onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
+                                className={unitSelectClass}
+                              >
+                                <option value="" disabled hidden>
+                                  Pilih satuan...
+                                </option>
+                                {unitsList.map(ul => (
+                                  <option key={ul.id} value={ul.id}>
+                                    {ul.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className={stackedFieldLabelClass}>Pengali ke satuan dasar</label>
+                              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                                <span className="shrink-0 text-gray-400 dark:text-gray-500 font-bold" aria-hidden>
+                                  =
+                                </span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  readOnly={isBase}
+                                  value={isBase ? 1 : u.multiplier}
+                                  onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
+                                  className={multiplierInputClass}
+                                />
+                                <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 min-w-0 text-right sm:min-w-[4.5rem]">
+                                  {baseUnitName}
+                                </span>
+                                {!isBase && (
+                                  <DeleteIconButton
+                                    onClick={() => removeProductUnit(index)}
+                                    aria-label="Hapus satuan"
+                                  />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          
-                          <div className="w-10 shrink-0 flex justify-center">
-                            {!isBase && (
-                              <DeleteIconButton
-                                onClick={() => removeProductUnit(index)}
-                                aria-label="Hapus satuan"
+
+                          <div className="hidden md:flex w-full min-w-0 items-center gap-3 sm:gap-4">
+                            <select
+                              required
+                              value={u.unit_id || ''}
+                              onChange={e => updateProductUnit(index, 'unit_id', Number(e.target.value))}
+                              className="min-w-0 flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100"
+                            >
+                              <option value="" disabled hidden>
+                                Pilih satuan...
+                              </option>
+                              {unitsList.map(ul => (
+                                <option key={ul.id} value={ul.id}>
+                                  {ul.name}
+                                </option>
+                              ))}
+                            </select>
+
+                            <span className="shrink-0 text-gray-400 dark:text-gray-500 font-bold" aria-hidden>
+                              =
+                            </span>
+
+                            <div className="flex min-w-0 flex-1 items-center gap-3">
+                              <input
+                                type="number"
+                                min="1"
+                                readOnly={isBase}
+                                value={isBase ? 1 : u.multiplier}
+                                onChange={e => updateProductUnit(index, 'multiplier', Number(e.target.value))}
+                                className={multiplierInputClass}
                               />
-                            )}
+                              <span className="shrink-0 text-sm font-semibold text-gray-500 dark:text-gray-400 min-w-0 text-right sm:min-w-[4.5rem]">
+                                {baseUnitName}
+                              </span>
+                            </div>
+
+                            <div className="w-10 shrink-0 flex justify-center">
+                              {!isBase && (
+                                <DeleteIconButton
+                                  onClick={() => removeProductUnit(index)}
+                                  aria-label="Hapus satuan"
+                                />
+                              )}
+                            </div>
                           </div>
                         </div>
                       );
@@ -322,12 +387,14 @@ export default function ProductForm() {
 
             {/* SECTION: PRICING CONFIGURATION */}
             <section className="space-y-4">
-              <div className="flex justify-between items-end">
-                <div className="border-l-4 border-emerald-500 pl-3">
+              <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
+                <div className="min-w-0 w-full border-l-4 border-emerald-500 pl-3">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Harga Jual</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Konfigurasikan daftar harga dasar di seluruh satuan yang dikonfigurasi</p>
                 </div>
-                <InlineAddItemButton tone="emerald" text="Tambah Harga Jual" onClick={addProductPrice} />
+                <div className="flex w-full shrink-0 justify-end md:w-auto md:justify-start">
+                  <InlineAddItemButton tone="emerald" text="Tambah Harga Jual" onClick={addProductPrice} />
+                </div>
               </div>
 
               <div className="border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-900/30 p-6 shadow-sm">
@@ -338,7 +405,7 @@ export default function ProductForm() {
                 ) : (
                   <div className="space-y-3">
                     <div
-                      className={`${productPriceRowGridClass} mb-1 items-end border-b border-gray-100 pb-2.5 dark:border-gray-700`}
+                      className={`hidden md:grid ${productPriceRowGridClass} mb-1 items-end border-b border-gray-100 pb-2.5 dark:border-gray-700`}
                     >
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Satuan Jual</span>
                       <span
@@ -353,59 +420,142 @@ export default function ProductForm() {
 
                     {formData.prices.map((p, i) => {
                       const rowKey = p.id != null ? `price-${p.id}` : `price-new-${i}`;
+                      const priceSelectClass =
+                        'w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100';
+                      const priceInputClass =
+                        'w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100';
+                      const priceAmountClass =
+                        'w-full min-w-0 pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500';
+
                       return (
-                      <div
-                        key={rowKey}
-                        className={`${productPriceRowGridClass} items-center`}
-                      >
-                        <div className="min-w-0">
-                          <label htmlFor={`price-unit-${rowKey}`} className="sr-only">Satuan jual</label>
-                          <select
-                            id={`price-unit-${rowKey}`}
-                            required
-                            value={p.unit_id || ''}
-                            onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
-                            className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
-                          >
-                            <option value="" disabled hidden>Pilih satuan jual...</option>
-                            {unitsList.map(ul => <option key={ul.id} value={ul.id}>{ul.name}</option>)}
-                          </select>
-                        </div>
-                        <div className="min-w-0">
-                          <label htmlFor={`price-minqty-${rowKey}`} className="sr-only">Jumlah minimum</label>
-                          <input
-                            id={`price-minqty-${rowKey}`}
-                            type="number"
-                            min="1"
-                            value={p.minimum_quantity}
-                            onChange={e => updateProductPrice(i, 'minimum_quantity', Number(e.target.value))}
-                            className="w-full min-w-0 px-4 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100"
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <label htmlFor={`price-amount-${rowKey}`} className="sr-only">Harga</label>
-                          <div className="relative">
-                            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">Rp</span>
-                            <input
-                              id={`price-amount-${rowKey}`}
-                              type="text"
-                              value={formatQty(Number(p.price))}
-                              onChange={e =>
-                                updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
-                              }
-                              placeholder="0.00"
-                              className="w-full min-w-0 pl-9 pr-3 py-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                            />
+                        <div key={rowKey} className="min-w-0">
+                          <div className="md:hidden rounded-xl border border-emerald-500/20 bg-emerald-500/5 dark:bg-emerald-500/10 dark:border-emerald-500/30 p-4 space-y-3">
+                            <div>
+                              <label htmlFor={`price-unit-m-${rowKey}`} className={stackedFieldLabelClass}>
+                                Satuan jual
+                              </label>
+                              <select
+                                id={`price-unit-m-${rowKey}`}
+                                required
+                                value={p.unit_id || ''}
+                                onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
+                                className={priceSelectClass}
+                              >
+                                <option value="" disabled hidden>
+                                  Pilih satuan jual...
+                                </option>
+                                {unitsList.map(ul => (
+                                  <option key={ul.id} value={ul.id}>
+                                    {ul.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <label htmlFor={`price-minqty-m-${rowKey}`} className={stackedFieldLabelClass}>
+                                Jumlah minimum
+                              </label>
+                              <input
+                                id={`price-minqty-m-${rowKey}`}
+                                type="number"
+                                min="1"
+                                value={p.minimum_quantity}
+                                onChange={e => updateProductPrice(i, 'minimum_quantity', Number(e.target.value))}
+                                className={priceInputClass}
+                              />
+                            </div>
+                            <div>
+                              <label htmlFor={`price-amount-m-${rowKey}`} className={stackedFieldLabelClass}>
+                                Harga
+                              </label>
+                              <div className="flex min-w-0 items-center gap-2">
+                                <div className="relative min-w-0 flex-1">
+                                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">
+                                    Rp
+                                  </span>
+                                  <input
+                                    id={`price-amount-m-${rowKey}`}
+                                    type="text"
+                                    value={formatQty(Number(p.price))}
+                                    onChange={e =>
+                                      updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
+                                    }
+                                    placeholder="0.00"
+                                    className={priceAmountClass}
+                                  />
+                                </div>
+                                <DeleteIconButton
+                                  onClick={() => removeProductPrice(i)}
+                                  aria-label="Hapus baris harga"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className={`hidden md:grid ${productPriceRowGridClass} items-center`}>
+                            <div className="min-w-0">
+                              <label htmlFor={`price-unit-${rowKey}`} className="sr-only">
+                                Satuan jual
+                              </label>
+                              <select
+                                id={`price-unit-${rowKey}`}
+                                required
+                                value={p.unit_id || ''}
+                                onChange={e => updateProductPrice(i, 'unit_id', Number(e.target.value))}
+                                className={priceSelectClass}
+                              >
+                                <option value="" disabled hidden>
+                                  Pilih satuan jual...
+                                </option>
+                                {unitsList.map(ul => (
+                                  <option key={ul.id} value={ul.id}>
+                                    {ul.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="min-w-0">
+                              <label htmlFor={`price-minqty-${rowKey}`} className="sr-only">
+                                Jumlah minimum
+                              </label>
+                              <input
+                                id={`price-minqty-${rowKey}`}
+                                type="number"
+                                min="1"
+                                value={p.minimum_quantity}
+                                onChange={e => updateProductPrice(i, 'minimum_quantity', Number(e.target.value))}
+                                className={priceInputClass}
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <label htmlFor={`price-amount-${rowKey}`} className="sr-only">
+                                Harga
+                              </label>
+                              <div className="relative">
+                                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 font-medium">
+                                  Rp
+                                </span>
+                                <input
+                                  id={`price-amount-${rowKey}`}
+                                  type="text"
+                                  value={formatQty(Number(p.price))}
+                                  onChange={e =>
+                                    updateProductPrice(i, 'price', Number(e.target.value.replace(/[^0-9]/g, '')))
+                                  }
+                                  placeholder="0.00"
+                                  className={priceAmountClass}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex w-10 shrink-0 justify-center">
+                              <DeleteIconButton
+                                onClick={() => removeProductPrice(i)}
+                                aria-label="Hapus baris harga"
+                              />
+                            </div>
                           </div>
                         </div>
-                        <div className="flex w-10 shrink-0 justify-center">
-                          <DeleteIconButton
-                            onClick={() => removeProductPrice(i)}
-                            aria-label="Hapus baris harga"
-                          />
-                        </div>
-                      </div>
-                    );
+                      );
                     })}
                   </div>
                 )}

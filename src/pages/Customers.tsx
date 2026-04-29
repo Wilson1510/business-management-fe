@@ -191,9 +191,13 @@ export default function Customers() {
   return (
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading title="Daftar Pelanggan" description="Mengelola pelanggan" />
-        <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="w-full min-w-0 sm:flex-1 sm:pr-1">
+          <PageHeading title="Daftar Pelanggan" description="Mengelola pelanggan" />
+        </div>
+        <div className="shrink-0 self-end sm:self-auto">
+          <AddItemButton text="Tambah Pelanggan" onClick={() => openForm()} />
+        </div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors duration-300">
@@ -313,27 +317,26 @@ export default function Customers() {
                     </select>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                      />
-                    </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Nomor Telepon</label>
+                    <input
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-900 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm font-medium text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    />
                   </div>
 
                   <div className="space-y-1.5">

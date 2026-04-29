@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { DeleteIconButton } from '../DeleteIconButton';
 import { InlineAddItemButton } from '../InlineAddItemButton';
 import type { ProductListItem } from '../../services/products';
@@ -29,6 +30,9 @@ export type OrderFormLineItemsProps = {
 const controlClass =
   'px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600';
 
+const fieldLabelClass =
+  'block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5 dark:text-gray-400';
+
 export function OrderFormLineItems({
   isOrderLocked,
   sectionTitle,
@@ -45,12 +49,14 @@ export function OrderFormLineItems({
 }: OrderFormLineItemsProps) {
   return (
     <section className="space-y-4 mb-2">
-      <div className="flex justify-between items-end border-b border-gray-100 dark:border-gray-700 pb-3">
-        <div className="border-l-4 border-primary pl-3">
+      <div className="flex flex-col gap-3 border-b border-gray-100 pb-3 dark:border-gray-700 md:flex-row md:items-end md:justify-between md:gap-4">
+        <div className="min-w-0 w-full border-l-4 border-primary pl-3">
           <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{sectionTitle}</h3>
         </div>
         {!isOrderLocked && (
-          <InlineAddItemButton tone="primary" text="Tambah Produk" onClick={onAddItem} />
+          <div className="flex w-full shrink-0 justify-end md:w-auto md:justify-start">
+            <InlineAddItemButton tone="primary" text="Tambah Produk" onClick={onAddItem} />
+          </div>
         )}
       </div>
 
@@ -61,7 +67,7 @@ export function OrderFormLineItems({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="flex items-center gap-4 px-2">
+            <div className="hidden md:flex items-center gap-4 px-2">
               <div className="flex-1 min-w-[200px]">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400">
                   Produk
@@ -94,74 +100,165 @@ export function OrderFormLineItems({
               const lineTotal = Number(item.quantity) * Number(item.price);
 
               return (
-                <div key={i} className="flex items-center gap-4">
-                  <select
-                    value={item.product_id}
-                    disabled={isOrderLocked}
-                    onChange={e => onProductChange(i, Number(e.target.value))}
-                    className={`flex-1 min-w-[200px] ${controlClass}`}
-                  >
-                    <option value={0} disabled>
-                      Pilih Produk...
-                    </option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
+                <Fragment key={i}>
+                  {/* Mobile: stacked card */}
+                  <div className="md:hidden rounded-xl border border-primary/20 bg-primary/5 dark:bg-primary/10 dark:border-primary/30 p-4 space-y-3">
+                    <div>
+                      <label className={fieldLabelClass}>Produk</label>
+                      <select
+                        value={item.product_id}
+                        disabled={isOrderLocked}
+                        onChange={e => onProductChange(i, Number(e.target.value))}
+                        className={`w-full ${controlClass}`}
+                      >
+                        <option value={0} disabled>
+                          Pilih Produk...
+                        </option>
+                        {products.map(p => (
+                          <option key={p.id} value={p.id}>
+                            {p.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <input
-                    type="number"
-                    min={1}
-                    value={item.quantity}
-                    disabled={isOrderLocked}
-                    onChange={e => onQuantityChange(i, Number(e.target.value))}
-                    className={`w-1/4 min-w-[80px] ${controlClass}`}
-                  />
-
-                  <select
-                    value={item.unit_id}
-                    disabled={isOrderLocked}
-                    onChange={e => onUnitChange(i, Number(e.target.value))}
-                    className={`w-1/4 min-w-[100px] ${controlClass}`}
-                  >
-                    <option value={0} disabled>
-                      Satuan
-                    </option>
-                    {units.map(u => (
-                      <option key={u.id} value={u.id}>
-                        {u.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  <div className="w-1/4 min-w-[100px] relative">
-                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-medium text-sm text-gray-500 dark:text-gray-400">Rp</span>
-                    <input
-                      type="text"
-                      value={formatQty(Number(item.price))}
-                      disabled={isOrderLocked}
-                      onChange={e =>
-                        onPriceChange(i, Number(e.target.value.replace(/[^0-9]/g, '')))
-                      }
-                      className={`w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600`}
-                    />
-                  </div>
-
-                  <div className="w-1/4 min-w-[100px] text-right font-bold self-center tabular-nums text-gray-900 dark:text-gray-100">
-                    {formatMoney(lineTotal)}
-                  </div>
-
-                  {!isOrderLocked && (
-                    <div className="w-10 flex justify-center">
-                      <DeleteIconButton
-                        onClick={() => onRemoveItem(i)}
-                        aria-label="Hapus baris"
+                    <div>
+                      <label className={fieldLabelClass}>Jumlah</label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={item.quantity}
+                        disabled={isOrderLocked}
+                        onChange={e => onQuantityChange(i, Number(e.target.value))}
+                        className={`w-full ${controlClass}`}
                       />
                     </div>
-                  )}
-                </div>
+
+                    <div>
+                      <label className={fieldLabelClass}>Satuan</label>
+                      <select
+                        value={item.unit_id}
+                        disabled={isOrderLocked}
+                        onChange={e => onUnitChange(i, Number(e.target.value))}
+                        className={`w-full ${controlClass}`}
+                      >
+                        <option value={0} disabled>
+                          Satuan
+                        </option>
+                        {units.map(u => (
+                          <option key={u.id} value={u.id}>
+                            {u.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className={fieldLabelClass}>Harga Satuan</label>
+                      <div className="relative w-full">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-medium text-sm text-gray-500 dark:text-gray-400">
+                          Rp
+                        </span>
+                        <input
+                          type="text"
+                          value={formatQty(Number(item.price))}
+                          disabled={isOrderLocked}
+                          onChange={e =>
+                            onPriceChange(i, Number(e.target.value.replace(/[^0-9]/g, '')))
+                          }
+                          className="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 dark:border-gray-600 pt-3 mt-1">
+                      <div className="flex justify-between gap-3 items-end">
+                        <div>
+                          <div className={fieldLabelClass + ' mb-1'}>Total Harga Produk</div>
+                          <p className="text-base font-bold tabular-nums text-gray-900 dark:text-gray-100">
+                            {formatMoney(lineTotal)}
+                          </p>
+                        </div>
+                        {!isOrderLocked && (
+                          <DeleteIconButton
+                            onClick={() => onRemoveItem(i)}
+                            aria-label="Hapus baris"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Desktop: horizontal row (unchanged) */}
+                  <div className="hidden md:flex items-center gap-4">
+                    <select
+                      value={item.product_id}
+                      disabled={isOrderLocked}
+                      onChange={e => onProductChange(i, Number(e.target.value))}
+                      className={`flex-1 min-w-[200px] ${controlClass}`}
+                    >
+                      <option value={0} disabled>
+                        Pilih Produk...
+                      </option>
+                      {products.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="number"
+                      min={1}
+                      value={item.quantity}
+                      disabled={isOrderLocked}
+                      onChange={e => onQuantityChange(i, Number(e.target.value))}
+                      className={`w-1/4 min-w-[80px] ${controlClass}`}
+                    />
+
+                    <select
+                      value={item.unit_id}
+                      disabled={isOrderLocked}
+                      onChange={e => onUnitChange(i, Number(e.target.value))}
+                      className={`w-1/4 min-w-[100px] ${controlClass}`}
+                    >
+                      <option value={0} disabled>
+                        Satuan
+                      </option>
+                      {units.map(u => (
+                        <option key={u.id} value={u.id}>
+                          {u.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    <div className="w-1/4 min-w-[100px] relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 font-medium text-sm text-gray-500 dark:text-gray-400">Rp</span>
+                      <input
+                        type="text"
+                        value={formatQty(Number(item.price))}
+                        disabled={isOrderLocked}
+                        onChange={e =>
+                          onPriceChange(i, Number(e.target.value.replace(/[^0-9]/g, '')))
+                        }
+                        className={`w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm font-medium text-gray-900 dark:text-gray-100 disabled:opacity-70 dark:bg-gray-900/40 dark:border-gray-600`}
+                      />
+                    </div>
+
+                    <div className="w-1/4 min-w-[100px] text-right font-bold self-center tabular-nums text-gray-900 dark:text-gray-100">
+                      {formatMoney(lineTotal)}
+                    </div>
+
+                    {!isOrderLocked && (
+                      <div className="w-10 flex justify-center">
+                        <DeleteIconButton
+                          onClick={() => onRemoveItem(i)}
+                          aria-label="Hapus baris"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </Fragment>
               );
             })}
           </div>

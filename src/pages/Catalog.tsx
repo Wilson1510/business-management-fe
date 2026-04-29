@@ -94,14 +94,17 @@ export default function Catalog() {
   return (
     <div className="space-y-6">
       {error && <ErrorAlert message={error} />}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeading
-          title="Daftar Produk"
-          description="Mengelola item inventaris, satuan, dan harga"
-        />
-        
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="w-full min-w-0 sm:flex-1 sm:pr-1">
+          <PageHeading
+            title="Daftar Produk"
+            description="Mengelola item inventaris, satuan, dan harga"
+          />
+        </div>
         {isAdmin && (
-          <AddItemButton text="Tambah Produk" onClick={() => navigate('/catalog/product/new')} />
+          <div className="shrink-0 self-end sm:self-auto">
+            <AddItemButton text="Tambah Produk" onClick={() => navigate('/catalog/product/new')} />
+          </div>
         )}
       </div>
 
