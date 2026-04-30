@@ -1,12 +1,13 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { ShoppingBag, Box } from 'lucide-react';
 import { useAuthenticatedUser } from '../auth/AuthContext';
+import { ADMIN_ROLE_GROUP } from '../../utils/constant';
 
 export default function PurchasesLayout() {
   const user = useAuthenticatedUser();
 
   const tabs = [
-    ...(user.role === 'admin' ? [
+    ...(ADMIN_ROLE_GROUP.has(user.role) ? [
       { name: 'Pembelian', path: '/purchases', end: true, icon: ShoppingBag }
     ] : []),
     { name: 'Penerimaan', path: '/purchases/receipts', end: false, icon: Box },
@@ -16,7 +17,7 @@ export default function PurchasesLayout() {
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 flex items-center justify-between transition-colors">
-          <span>{user.role === 'admin' ? 'Pembelian dan Penerimaan' : 'Penerimaan'}</span>
+          <span>{ADMIN_ROLE_GROUP.has(user.role) ? 'Pembelian dan Penerimaan' : 'Penerimaan'}</span>
         </h1>
 
         {tabs.length > 1 && (

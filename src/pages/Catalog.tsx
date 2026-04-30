@@ -10,6 +10,7 @@ import { getProducts, deleteProduct, type ProductList, type ProductListItem } fr
 import { formatMoney, formatQty } from '../utils/format';
 import { useAuthenticatedUser } from '../components/auth/AuthContext';
 import { toastSuccessDelete } from '../utils/toast';
+import { ADMIN_ROLE_GROUP } from '../utils/constant';
 
 export default function Catalog() {
   const user = useAuthenticatedUser();
@@ -88,7 +89,7 @@ export default function Catalog() {
     }
   };
 
-  const isAdmin = user.role === 'admin';
+  const isAdmin = ADMIN_ROLE_GROUP.has(user.role);
   const tableColSpan = isAdmin ? 6 : 5;
 
   return (

@@ -6,9 +6,10 @@ import {
   LayoutDashboard, Box, Truck } from "lucide-react";
 import { useAuth, useAuthenticatedUser } from "../auth/AuthContext";
 import { readStoredThemeIsDark } from "../../theme";
+import { ADMIN_ROLE_GROUP } from "../../utils/constant";
 
 export function getNavItems(role: string) {
-  if (role !== 'admin') {
+  if (!ADMIN_ROLE_GROUP.has(role)) {
     return [
       { name: 'Produk', path: '/catalog', icon: Package },
       { name: 'Pengiriman', path: '/sales/deliveries', icon: Truck },

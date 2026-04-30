@@ -1,13 +1,14 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { Package, Tags, Scale } from 'lucide-react';
 import { useAuthenticatedUser } from '../auth/AuthContext';
+import { ADMIN_ROLE_GROUP } from '../../utils/constant';
 
 export default function CatalogLayout() {
   const user = useAuthenticatedUser();
 
   const tabs = [
     { name: 'Produk', path: '/catalog', end: true, icon: Package },
-    ...(user.role === 'admin' ? [
+    ...(ADMIN_ROLE_GROUP.has(user.role) ? [
       { name: 'Kategori', path: '/catalog/categories', end: false, icon: Tags },
       { name: 'Satuan', path: '/catalog/units', end: false, icon: Scale },
     ] : [])
@@ -17,7 +18,7 @@ export default function CatalogLayout() {
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 flex items-center justify-between transition-colors">
-          <span>{user.role === 'admin' ? 'Katalog' : 'Produk'}</span>
+          <span>{ADMIN_ROLE_GROUP.has(user.role) ? 'Katalog' : 'Produk'}</span>
         </h1>
         
         {tabs.length > 1 && (

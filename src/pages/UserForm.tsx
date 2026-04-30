@@ -172,6 +172,7 @@ export default function UserForm() {
                   >
                     <option value="admin">Admin</option>
                     <option value="staff">Staff</option>
+                    <option value="demo">Demo</option>
                   </select>
                 </div>
               </div>

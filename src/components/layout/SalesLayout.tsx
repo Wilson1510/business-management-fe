@@ -1,12 +1,13 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { ShoppingCart, Truck } from 'lucide-react';
 import { useAuthenticatedUser } from '../auth/AuthContext';
+import { ADMIN_ROLE_GROUP } from '../../utils/constant';
 
 export default function SalesLayout() {
   const user = useAuthenticatedUser();
 
   const tabs = [
-    ...(user.role === 'admin' ? [
+    ...(ADMIN_ROLE_GROUP.has(user.role) ? [
       { name: 'Penjualan', path: '/sales', end: true, icon: ShoppingCart }
     ] : []),
     { name: 'Pengiriman', path: '/sales/deliveries', end: false, icon: Truck },
@@ -16,7 +17,7 @@ export default function SalesLayout() {
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 flex items-center justify-between transition-colors">
-          <span>{user.role === 'admin' ? 'Penjualan dan Pengiriman' : 'Pengiriman'}</span>
+          <span>{ADMIN_ROLE_GROUP.has(user.role) ? 'Penjualan dan Pengiriman' : 'Pengiriman'}</span>
         </h1>
         
         {tabs.length > 1 && (

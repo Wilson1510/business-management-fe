@@ -41,6 +41,9 @@ export async function createUnit(payload: UnitCreate): Promise<UnitDetail> {
         throw new Error(`Satuan dengan nama '${payload.name}' sudah ada`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat satuan");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -55,6 +58,9 @@ export async function updateUnit(id: number, payload: UnitUpdate): Promise<UnitD
         throw new Error(`Satuan dengan nama '${payload.name}' sudah ada`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui satuan");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -68,6 +74,9 @@ export async function deleteUnit(id: number): Promise<void> {
       if (errorData && errorData.code === "has_references") {
         throw new Error("Satuan ini masih digunakan oleh penjualan atau pembelian");
       }
+    }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus satuan");
     }
     await handleCommonErrors(response)
   }

@@ -19,7 +19,7 @@ vi.mock('../../src/components/auth/AuthContext', () => ({
   useAuthenticatedUser: vi.fn(),
 }));
 
-function catalogTestUser(role: 'admin' | 'staff'): CurrentUser {
+function catalogTestUser(role: 'admin' | 'staff' | 'demo'): CurrentUser {
   return {
     id: 1,
     username: 'test',
@@ -58,7 +58,7 @@ const MOCK_PRODUCTS = [
   }
 ];
 
-function setupRouter(role: 'admin' | 'staff' = 'admin') {
+function setupRouter(role: 'admin' | 'staff' | 'demo' = 'admin') {
   vi.mocked(useAuthenticatedUser).mockReturnValue(catalogTestUser(role));
 
   return render(

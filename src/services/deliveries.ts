@@ -64,6 +64,9 @@ export async function getDelivery(id: number): Promise<DeliveryDetail> {
 export async function updateDelivery(id: number, payload: DeliveryUpdate): Promise<DeliveryDetail> {
     const response = await apiFetch(`/api/deliveries/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk memperbarui pengiriman");
+        }
         await handleCommonErrors(response)
     }
     return response.json()
@@ -72,6 +75,9 @@ export async function updateDelivery(id: number, payload: DeliveryUpdate): Promi
 export async function doneDelivery(id: number): Promise<void> {
     const response = await apiFetch(`/api/deliveries/${id}/done/`, { method: 'POST' })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk menyelesaikan pengiriman");
+        }
         await handleCommonErrors(response)
     }
 }
@@ -79,6 +85,9 @@ export async function doneDelivery(id: number): Promise<void> {
 export async function cancelDelivery(id: number): Promise<void> {
     const response = await apiFetch(`/api/deliveries/${id}/cancel/`, { method: 'POST' })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk membatalkan pengiriman");
+        }
         await handleCommonErrors(response)
     }
 }

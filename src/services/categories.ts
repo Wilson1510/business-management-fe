@@ -41,6 +41,9 @@ export async function createCategory(payload: CategoryCreate): Promise<CategoryD
         throw new Error(`Kategori dengan nama '${payload.name}' sudah ada`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat kategori");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -55,6 +58,9 @@ export async function updateCategory(id: number, payload: CategoryUpdate): Promi
         throw new Error(`Kategori dengan nama '${payload.name}' sudah ada`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui kategori");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -68,6 +74,9 @@ export async function deleteCategory(id: number): Promise<void> {
       if (errorData && errorData.code === "has_references") {
         throw new Error("Kategori ini masih digunakan oleh produk");
       }
+    }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus kategori");
     }
     await handleCommonErrors(response)
   }

@@ -1,6 +1,8 @@
+import { ADMIN_ROLE_GROUP } from "./constant";
+
 /** Halaman utama setelah login / "/" — staff tidak punya akses data dashboard di API. */
 export function getDefaultAuthenticatedPath(role: string): string {
-  return role === 'admin' ? '/dashboard' : '/catalog'
+  return ADMIN_ROLE_GROUP.has(role) ? '/dashboard' : '/catalog'
 }
 
 /**
