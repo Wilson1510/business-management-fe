@@ -65,6 +65,9 @@ export async function getPurchaseOrder(id: number): Promise<PurchaseOrderDetail>
 export async function createPurchaseOrder(payload: PurchaseOrderCreate): Promise<PurchaseOrderDetail> {
     const response = await apiFetch('/api/purchase-orders/', { method: 'POST', body: JSON.stringify(payload) })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk membuat pembelian");
+        }
         await handleCommonErrors(response)
     }
     return response.json()
@@ -73,6 +76,9 @@ export async function createPurchaseOrder(payload: PurchaseOrderCreate): Promise
 export async function updatePurchaseOrder(id: number, payload: PurchaseOrderUpdate): Promise<PurchaseOrderDetail> {
     const response = await apiFetch(`/api/purchase-orders/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk memperbarui pembelian");
+        }
         await handleCommonErrors(response)
     }
     return response.json()
@@ -87,6 +93,9 @@ export async function deletePurchaseOrder(id: number): Promise<void> {
                 throw new Error("Tidak dapat menghapus pembelian yang sudah dikonfirmasi");
             }
         }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk menghapus pembelian");
+        }
         await handleCommonErrors(response)
     }
 }
@@ -100,6 +109,9 @@ export async function confirmPurchaseOrder(id: number): Promise<void> {
                 throw new Error("Tanggal penerimaan harus lebih dari hari ini");
             }
         }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk mengkonfirmasi pembelian");
+        }
         await handleCommonErrors(response)
     }
 }
@@ -112,6 +124,9 @@ export async function cancelPurchaseOrder(id: number): Promise<void> {
             if (errorData && errorData.code === "purchase_order_has_done_receipts") {
                 throw new Error("Pembelian memiliki penerimaan yang sudah selesai");
             }
+        }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk membatalkan pembelian");
         }
         await handleCommonErrors(response)
     }

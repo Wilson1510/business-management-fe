@@ -107,6 +107,9 @@ export async function createProduct(payload: ProductCreate): Promise<ProductDeta
         throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat produk");
+    }
     await handleProductErrors(response)
   }
   return response.json()
@@ -120,6 +123,9 @@ export async function updateProduct(id: number, payload: ProductUpdate): Promise
       if (errorData && errorData.code === "unique") {
         throw new Error(`Produk dengan nama '${payload.name}' sudah ada`);
       }
+    }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui produk");
     }
     await handleProductErrors(response)
   }
@@ -136,6 +142,9 @@ export async function deleteProduct(id: number): Promise<void> {
       }
     }
 
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus produk");
+    }
     await handleCommonErrors(response)
   }
 }

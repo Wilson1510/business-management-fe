@@ -1,7 +1,7 @@
 import { apiFetch } from './api'
 import { handleCommonErrors } from '../utils/errorHandling'
 
-type Role = 'admin' | 'staff';
+type Role = 'admin' | 'staff' | 'demo';
 
 interface UserMetadata {
   id: number
@@ -68,6 +68,9 @@ export async function createUser(payload: UserCreate): Promise<UserDetail> {
         throw new Error(`Akun dengan username '${payload.username}' sudah digunakan`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat pengguna");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -85,6 +88,9 @@ export async function updateUser(id: number, payload: UserUpdate): Promise<UserD
         throw new Error(`Akun dengan username '${payload.username}' sudah digunakan`);
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui pengguna");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -95,6 +101,9 @@ export async function deleteUser(id: number): Promise<void> {
     method: 'DELETE',
   })
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus pengguna");
+    }
     await handleCommonErrors(response)
   }
 }
@@ -118,6 +127,9 @@ export async function changePassword(payload: ChangePassword): Promise<void> {
         throw new Error('Kata sandi saat ini salah');
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk mengubah kata sandi");
+    }
     await handleCommonErrors(response)
   }
 }
@@ -128,6 +140,9 @@ export async function resetPassword(id: number, payload: ResetPassword): Promise
     body: JSON.stringify(payload),
   })
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk mengatur ulang kata sandi");
+    }
     await handleCommonErrors(response)
   }
 }

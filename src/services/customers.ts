@@ -63,6 +63,9 @@ export async function createCustomer(payload: CustomerCreate): Promise<CustomerD
         }
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat pelanggan");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -85,6 +88,9 @@ export async function updateCustomer(id: number, payload: CustomerUpdate): Promi
         }
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui pelanggan");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -100,6 +106,9 @@ export async function deleteCustomer(id: number): Promise<void> {
       if (errorData && errorData.code === "has_references") {
         throw new Error("Pelanggan ini memiliki penjualan");
       }
+    }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus pelanggan");
     }
     await handleCommonErrors(response)
   }

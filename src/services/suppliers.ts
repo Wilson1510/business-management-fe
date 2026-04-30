@@ -63,6 +63,9 @@ export async function createSupplier(payload: SupplierCreate): Promise<SupplierD
         }
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk membuat pemasok");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -85,6 +88,9 @@ export async function updateSupplier(id: number, payload: SupplierUpdate): Promi
         }
       }
     }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk memperbarui pemasok");
+    }
     await handleCommonErrors(response)
   }
   return response.json()
@@ -100,6 +106,9 @@ export async function deleteSupplier(id: number): Promise<void> {
       if (errorData && errorData.code === "has_references") {
         throw new Error("Pemasok ini memiliki pembelian");
       }
+    }
+    else if (response.status === 403) {
+      throw new Error("Anda tidak memiliki akses untuk menghapus pemasok");
     }
     await handleCommonErrors(response)
   }

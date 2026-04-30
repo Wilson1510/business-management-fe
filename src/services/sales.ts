@@ -65,6 +65,9 @@ export async function getSalesOrder(id: number): Promise<SalesOrderDetail> {
 export async function createSalesOrder(payload: SalesOrderCreate): Promise<SalesOrderDetail> {
     const response = await apiFetch('/api/sales-orders/', { method: 'POST', body: JSON.stringify(payload) })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk membuat penjualan");
+        }
         await handleCommonErrors(response)
     }
     return response.json()
@@ -73,6 +76,9 @@ export async function createSalesOrder(payload: SalesOrderCreate): Promise<Sales
 export async function updateSalesOrder(id: number, payload: SalesOrderUpdate): Promise<SalesOrderDetail> {
     const response = await apiFetch(`/api/sales-orders/${id}/`, { method: 'PATCH', body: JSON.stringify(payload) })
     if (!response.ok) {
+        if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk memperbarui penjualan");
+        }
         await handleCommonErrors(response)
     }
     return response.json()
@@ -87,6 +93,9 @@ export async function deleteSalesOrder(id: number): Promise<void> {
                 throw new Error("Tidak dapat menghapus penjualan yang sudah dikonfirmasi");
             }
         }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk menghapus penjualan");
+        }
         await handleCommonErrors(response)
     }
 }
@@ -100,6 +109,9 @@ export async function confirmSalesOrder(id: number): Promise<void> {
                 throw new Error("Tanggal pengiriman harus lebih dari hari ini");
             }
         }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk mengkonfirmasi penjualan");
+        }
         await handleCommonErrors(response)
     }
 }
@@ -112,6 +124,9 @@ export async function cancelSalesOrder(id: number): Promise<void> {
             if (errorData && errorData.code === "sales_order_has_done_deliveries") {
                 throw new Error("Penjualan memiliki pengiriman yang sudah selesai");
             }
+        }
+        else if (response.status === 403) {
+            throw new Error("Anda tidak memiliki akses untuk membatalkan penjualan");
         }
         await handleCommonErrors(response)
     }
